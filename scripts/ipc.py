@@ -38,12 +38,13 @@ UA = {"User-Agent": "Mozilla/5.0 (indicadores-economia-colombiana)"}
 
 
 # ---------------------------------------------------------------- descarga
-def bajar(url, destino=None, intentos=6, timeout=120):
-    """Descarga con reintentos. Si el DANE pide esperar (error 429), espera lo que indique."""
+def bajar(url, destino=None, intentos=6, timeout=120, contexto=None):
+    """Descarga con reintentos. Si el servidor pide esperar (error 429), espera lo que indique.
+    `contexto` permite pasar una configuración de certificados propia (ver scripts/tasas.py)."""
     for i in range(intentos):
         try:
             req = urllib.request.Request(url, headers=UA)
-            with urllib.request.urlopen(req, timeout=timeout) as r:
+            with urllib.request.urlopen(req, timeout=timeout, context=contexto) as r:
                 data = r.read()
             if destino:
                 Path(destino).write_bytes(data)

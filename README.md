@@ -14,8 +14,9 @@ La idea es poder ir de lo general a lo particular: si la inflación sube, ver qu
 | Actividad económica (ISE) | Total, 3 grandes ramas y 9 agrupaciones cada mes; 12 agrupaciones cada trimestre. Serie original, desestacionalizada y tendencia | Enero 2005 | DANE |
 | Mercado laboral (GEIH) | Desempleo, ocupación, participación y subutilización para el total nacional, cabeceras, 13 ciudades y por sexo (mensual); 23 ciudades (trimestre móvil); ocupados por rama de actividad y por posición ocupacional; series desestacionalizadas | Enero 2001 | DANE |
 | Dólar (TRM) | Diaria, promedio y cierre de cada mes, variaciones | Diciembre 1991 | Superintendencia Financiera |
+| Tasas de interés | Tasa de política monetaria, IBR (a un día, 1 y 3 meses), tasa interbancaria, CDT a 90 días y DTF. Diarias, promedio y cierre de cada mes | 1986–2012 según la serie | Banco de la República |
 
-Próximamente: tasa de política monetaria, IBR, DTF y tasas de los créditos (Banco de la República), y presupuesto. El listado completo está en [`datos/catalogo.csv`](datos/catalogo.csv).
+Próximamente: tasas de interés de los créditos por tipo, encuestas sectoriales (industria, comercio, servicios) y presupuesto. El listado completo está en [`datos/catalogo.csv`](datos/catalogo.csv).
 
 ## Cómo usar los datos
 
@@ -55,9 +56,13 @@ Aquí la medida es el indicador: `td` (tasa de desocupación, o desempleo), `to`
 
 Cada serie (`series.csv`) dice su **dominio** (total nacional, una ciudad, hombres…), su **desagregación** (general, sexo, ciudad, rama de actividad, posición ocupacional), su **periodicidad** (mensual o trimestre móvil; en trimestre móvil la fecha es el último mes del trimestre) y si es **original o desestacionalizada**.
 
-### Dólar
+### Dólar y tasas de interés
 
-`datos/tasas/datos.csv` trae por mes `trm_promedio`, `trm_fin_mes` y sus variaciones (%). `datos/tasas/trm_diaria.csv` trae la TRM de cada día.
+`datos/tasas/datos.csv` trae por mes:
+- **TRM:** `trm_promedio`, `trm_fin_mes` y sus variaciones (%).
+- **Tasas (TPM, IBR_ON, IBR_1M, IBR_3M, TIB, CDT_90, DTF_90):** `promedio` y `fin_mes`, en %.
+
+Los datos día a día están en `datos/tasas/trm_diaria.csv` y `datos/tasas/tasas_diarias.csv`.
 
 ### ISE: versiones
 
@@ -74,6 +79,7 @@ Cada actualización descarga solo lo nuevo (con pausas, para no saturar los serv
 - **IPC:** desde enero de 2019 el DANE usa una canasta nueva (base diciembre 2018 = 100) organizada en 12 divisiones según la clasificación internacional COICOP. Antes se usaban 9 grupos de gasto, así que las categorías no son directamente comparables con años anteriores. Los aportes anuales de 2019 casi no están disponibles porque el DANE no los publicó durante el año de transición.
 - **ISE:** índices de volumen con año de referencia 2015, clasificados por secciones CIIU Rev. 4. Las cifras de los meses más recientes son preliminares y cambian cuando el DANE incorpora nueva información. El ISE no se publica con más detalle que las 12 agrupaciones; para ir más abajo (por ejemplo, ramas de la industria o del comercio) se usarán las encuestas sectoriales del DANE. La variación anual de la serie desestacionalizada (`var_anual_desest`) se calcula a partir del índice, porque el anexo no la trae.
 - **Mercado laboral:** desde enero de 2021 los resultados salen de la GEIH rediseñada, con el marco del Censo 2018; el DANE re-expresó la serie hacia atrás con ese marco, así que es comparable desde 2001. Algunos indicadores (fuerza de trabajo potencial y medidas compuestas de subutilización) solo existen desde el rediseño. Las cifras por ciudad son de trimestre móvil porque el tamaño de la muestra no alcanza para cifras mensuales confiables.
+- **Tasas de interés:** la tasa de política monetaria y la TIB se expresan en efectivo anual; la IBR en nominal anual. El servidor del Banco de la República no envía completa su cadena de certificados de seguridad, así que el proyecto guarda el certificado intermedio público de DigiCert (`scripts/certs/`) para conectarse sin desactivar la verificación.
 - **TRM:** cada TRM rige desde una fecha hasta otra (los fines de semana y festivos rige la del último día hábil). El promedio y el cierre de cada mes se calculan sobre todos los días calendario.
 
 ## Fuentes
@@ -81,6 +87,7 @@ Cada actualización descarga solo lo nuevo (con pausas, para no saturar los serv
 - DANE, [Índice de Precios al Consumidor](https://www.dane.gov.co/index.php/estadisticas-por-tema/precios-y-costos/indice-de-precios-al-consumidor-ipc)
 - DANE, [Indicador de Seguimiento a la Economía](https://www.dane.gov.co/index.php/estadisticas-por-tema/cuentas-nacionales/indicador-de-seguimiento-a-la-economia-ise)
 - DANE, [Mercado laboral (GEIH)](https://www.dane.gov.co/index.php/estadisticas-por-tema/mercado-laboral/empleo-y-desempleo)
+- Banco de la República, [estadísticas económicas](https://suameca.banrep.gov.co/estadisticas-economicas/)
 - Superintendencia Financiera en datos.gov.co, [TRM](https://www.datos.gov.co/Econom-a-y-Finanzas/Tasa-de-Cambio-Representativa-del-Mercado-TRM/32sa-8pi3)
 
 Los datos son de las entidades que los publican. Este proyecto solo los organiza y los hace más fáciles de consultar.

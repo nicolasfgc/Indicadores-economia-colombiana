@@ -1,2 +1,9 @@
 id_serie,indicador,categoria,nombre,unidad,frecuencia_origen,nota,fuente
 TRM,TRM,Total,Tasa Representativa del Mercado (pesos por dólar),Pesos por dólar (variaciones en %),Diaria,Promedio y cierre del mes calculados sobre todos los días calendario,Superintendencia Financiera (datos.gov.co)
+TPM,Tasas de interés,Tasa de política monetaria,Tasa de política monetaria,% efectivo anual,Diaria,Promedio y cierre del mes calculados sobre los días con dato,Banco de la República (serie 59)
+IBR_ON,Tasas de interés,"IBR (Indicador Bancario de Referencia) a un día, nominal","IBR (Indicador Bancario de Referencia) a un día, nominal",% nominal anual,Diaria,Promedio y cierre del mes calculados sobre los días con dato,Banco de la República (serie 241)
+IBR_1M,Tasas de interés,"IBR a 1 mes, nominal","IBR a 1 mes, nominal",% nominal anual,Diaria,Promedio y cierre del mes calculados sobre los días con dato,Banco de la República (serie 242)
+IBR_3M,Tasas de interés,"IBR a 3 meses, nominal","IBR a 3 meses, nominal",% nominal anual,Diaria,Promedio y cierre del mes calculados sobre los días con dato,Banco de la República (serie 243)
+TIB,Tasas de interés,Tasa interbancaria (TIB),Tasa interbancaria (TIB),% efectivo anual,Diaria,Promedio y cierre del mes calculados sobre los días con dato,Banco de la República (serie 89)
+CDT_90,Tasas de interés,Tasa de CDT a 90 días,Tasa de CDT a 90 días,% efectivo anual,Diaria,Promedio y cierre del mes calculados sobre los días con dato,Banco de la República (serie 238)
+DTF_90,Tasas de interés,DTF a 90 días (promedio mensual),DTF a 90 días (promedio mensual),% efectivo anual,Mensual,Valor mensual publicado,Banco de la República (serie 70)
