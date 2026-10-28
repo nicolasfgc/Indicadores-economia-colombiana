@@ -39,7 +39,7 @@ Se unen por la columna `id_serie`.
 
 Los datos se descargan directamente de las publicaciones oficiales (anexos del DANE) mediante los programas de la carpeta [`scripts/`](scripts/). Una tarea automática de GitHub los vuelve a descargar cada mes cuando hay publicación nueva, así que el explorador siempre muestra lo último.
 
-Cada actualización reconstruye la serie completa: si la fuente corrige cifras pasadas, el cambio queda reflejado y el historial del proyecto muestra qué cambió y cuándo.
+Cada actualización descarga solo lo nuevo (con pausas, para no saturar los servidores de la fuente) y vuelve a revisar el último mes publicado por si hubo correcciones. El historial del proyecto muestra qué cambió y cuándo.
 
 ## Notas metodológicas
 

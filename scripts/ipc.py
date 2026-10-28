@@ -7,15 +7,16 @@ nomenclatura COICOP) y construye:
   datos/ipc/series.csv   una fila por serie (total, división, grupo, subclase)
   datos/ipc/datos.csv    fecha | id_serie | medida | valor
 
-Siempre reconstruye la serie completa, así que si el DANE revisa algo hacia atrás
-queda reflejado (y el historial de git muestra qué cambió).
+Cada corrida descarga solo los meses nuevos (y vuelve a leer el último guardado,
+por si el DANE lo corrigió). Con --completo reconstruye toda la serie desde 2019.
 
-Uso:  python scripts/ipc.py [carpeta_cache]
+Uso:  python scripts/ipc.py [carpeta_cache] [--completo]
 """
 import os
 import re
 import sys
 import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -38,7 +39,8 @@ UA = {"User-Agent": "Mozilla/5.0 (indicadores-economia-colombiana)"}
 
 
 # ---------------------------------------------------------------- descarga
-def bajar(url, destino=None, intentos=4):
+def bajar(url, destino=None, intentos=6):
+    """Descarga con reintentos. Si el DANE pide esperar (error 429), espera lo que indique."""
     for i in range(intentos):
         try:
             req = urllib.request.Request(url, headers=UA)
@@ -50,7 +52,14 @@ def bajar(url, destino=None, intentos=4):
         except Exception as e:  # noqa: BLE001
             if i == intentos - 1:
                 raise RuntimeError(f"No se pudo descargar {url}: {e}") from e
-            time.sleep(5 * (i + 1))
+            espera = 10 * (i + 1)
+            if isinstance(e, urllib.error.HTTPError) and e.code == 429:
+                try:
+                    espera = max(int(e.headers.get("Retry-After", 0)), 30 * (i + 1))
+                except ValueError:
+                    espera = 30 * (i + 1)
+            print(f"  reintento {i + 1} en {espera}s ({e})")
+            time.sleep(espera)
 
 
 def periodo_de(nombre):
@@ -177,16 +186,37 @@ def limpia(s):
 
 # ---------------------------------------------------------------- principal
 def main():
-    cache = Path(sys.argv[1]) if len(sys.argv) > 1 else RAIZ / ".cache" / "ipc"
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    completo = "--completo" in sys.argv
+    cache = Path(args[0]) if args else RAIZ / ".cache" / "ipc"
     cache.mkdir(parents=True, exist_ok=True)
     anexos, url_indices = listar_anexos()
-    print(f"{len(anexos)} anexos mensuales: {min(anexos)} a {max(anexos)}")
+    print(f"{len(anexos)} anexos publicados: {min(anexos)} a {max(anexos)}")
+
+    # Solo se descarga lo que falta. El histórico ya está guardado en datos/ipc.
+    previo, series_prev = None, None
+    if not completo and (SALIDA / "datos.csv").exists() and (SALIDA / "series.csv").exists():
+        previo = pd.read_csv(SALIDA / "datos.csv", dtype={"fecha": str})
+        series_prev = pd.read_csv(SALIDA / "series.csv", dtype=str).fillna("")
+        tiene = set(previo.loc[(previo.id_serie == "IPC_TOTAL") & (previo.medida == "var_anual"), "fecha"])
+        nuevos = [p for p in anexos if f"{p[0]}-{p[1]:02d}-01" not in tiene]
+        if not nuevos:
+            print("Sin datos nuevos del DANE.")
+            return
+        # se vuelve a leer también el último mes guardado, por si el DANE lo corrigió
+        ultimo = max(p for p in anexos if f"{p[0]}-{p[1]:02d}-01" in tiene) if tiene else None
+        objetivo = sorted(set(nuevos) | ({ultimo} if ultimo else set()))
+    else:
+        objetivo = sorted(anexos)
+    print(f"Se procesan {len(objetivo)} meses: {objetivo[0]} a {objetivo[-1]}")
 
     filas, totales = [], {}
-    for (a, m), url in anexos.items():
+    for (a, m) in objetivo:
+        url = anexos[(a, m)]
         destino = cache / url.rsplit("/", 1)[-1]
-        if not destino.exists() or (a, m) == max(anexos):
+        if not destino.exists() or (a, m) in objetivo[-2:]:
             bajar(url, destino)
+            time.sleep(3)  # pausa para no saturar al DANE
         f, t = leer_anexo(destino, a, m)
         filas += f
         totales[(a, m)] = t
@@ -200,16 +230,22 @@ def main():
     df = df.drop_duplicates(["anio", "mes", "codigo"], keep="first")
 
     # chequeos de completitud
-    faltan = [p for p in anexos if totales.get(p) is None]
+    faltan = [p for p in objetivo if totales.get(p) is None]
     if faltan:
         raise RuntimeError(f"Sin total nacional para {faltan}")
     cuenta = df.groupby(["anio", "mes"]).codigo.nunique()
-    if cuenta.min() < 0.95 * cuenta.max():
-        raise RuntimeError(f"Meses incompletos:\n{cuenta[cuenta < cuenta.max()]}")
+    referencia = len(series_prev) - 1 if series_prev is not None else cuenta.max()
+    if cuenta.min() < 0.95 * referencia:
+        raise RuntimeError(f"Meses incompletos (se esperaban ~{referencia} series):\n{cuenta}")
 
-    # ---- series.csv
+    # ---- series.csv (nombres guardados + los más recientes del DANE)
     ord_ = df.anio * 100 + df.mes
-    nombres = df.assign(o=ord_).sort_values("o").groupby("codigo").nombre.last().map(limpia)
+    nombres = {}
+    if series_prev is not None:
+        nombres = dict(zip(series_prev.codigo_dane, series_prev.nombre))
+        nombres.pop("", None)
+    nombres.update(df.assign(o=ord_).sort_values("o").groupby("codigo").nombre.last().map(limpia).to_dict())
+    nombres = pd.Series(nombres).sort_index()
     div = {c[:2]: n for c, n in nombres.items() if nivel(c) == "division"}
     gru = {c[:3]: n for c, n in nombres.items() if nivel(c) == "grupo"}
     series = [dict(id_serie="IPC_TOTAL", nivel="total", codigo_dane="", division="Total", grupo="Total",
@@ -245,6 +281,9 @@ def main():
     largo = pd.concat([largo, pd.DataFrame(tot, columns=largo.columns)])
     largo = largo.dropna(subset=["valor"])
     largo["valor"] = largo.valor.astype(float).round(2)
+    if previo is not None:  # se reemplazan solo los meses procesados
+        procesados = {f"{a}-{m:02d}-01" for a, m in objetivo}
+        largo = pd.concat([previo[~previo.fecha.isin(procesados)], largo])
     largo = largo.sort_values(["fecha", "id_serie", "medida"]).reset_index(drop=True)
     assert not largo.duplicated(["fecha", "id_serie", "medida"]).any()
 
