@@ -11,7 +11,7 @@ registrar("ise", (() => {
   const T = () => `ISE${st.version}_TOTAL`;
   const deVersion = nivel => st.d.series.filter(s => s.version.startsWith(st.version + " ") && s.nivel === nivel);
   const ultimoMes = () => { const t = st.d.valores[T()].var_anual_original; for (let i = t.length - 1; i >= 0; i--) if (t[i] != null) return st.d.fechas[i]; };
-  const colorCrec = x => x.v >= 0 ? css("--accent") : css("--up");
+  const colorCrec = x => x.v >= 0 ? css("--down") : css("--up");
   let per = null, selCat = null;
 
   async function iniciar() {

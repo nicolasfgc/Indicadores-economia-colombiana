@@ -46,9 +46,9 @@ registrar("empleo", (() => {
     const F = st.d.fechas, h = g("Total Nacional Hombres").v[st.indSexo], m = g("Total Nacional Mujeres").v[st.indSexo];
     const brecha = F.map((f, i) => h[i] != null && m[i] != null ? +(m[i] - h[i]).toFixed(2) : null);
     $("emp-sexo-t").textContent = `${IND[st.indSexo]}: mujeres y hombres`;
-    serie("emp-sexo", F, [{label: "Mujeres", data: m, color: css("--s4"), ancho: 2.5}, {label: "Hombres", data: h, color: css("--s3"), ancho: 2.5}],
+    serie("emp-sexo", F, [{label: "Mujeres", data: m, color: css("--s2"), ancho: 2.5}, {label: "Hombres", data: h, color: css("--s1"), ancho: 2.5}],
           {unidad: "%", fmtValor: x => fmt(x, 1) + "%"});
-    const pos = css("--s4"), neg = css("--s3");
+    const pos = css("--s2"), neg = css("--s1");
     serie("emp-brecha", F, [{label: "Brecha: mujeres − hombres (puntos)", data: brecha, tipo: "bar", colores: brecha.map(b => b == null ? null : b >= 0 ? pos : neg)}],
           {fmtValor: x => (x > 0 ? "+" : "") + fmt(x, 1) + " pts", eje0: true, despues: (i0, i1) => {
       const f = st.mes, hi = at(h, f), mi = at(m, f), b = mi - hi;
@@ -58,7 +58,7 @@ registrar("empleo", (() => {
                        tgp: b < 0 ? "más baja para las mujeres: menos mujeres que hombres trabajan o buscan trabajo; muchas están por fuera del mercado laboral, por ejemplo en oficios del hogar" : "más alta para las mujeres"}[st.indSexo];
       $("emp-sexo-txt").innerHTML = `En <strong>${etqMesLargo(f)}</strong> la ${IND[st.indSexo].toLowerCase()} fue <strong>${fmt(mi, 1)}% para las mujeres</strong> y <strong>${fmt(hi, 1)}% para los hombres</strong>: ` +
         `una diferencia de ${fmt(Math.abs(b), 1)} puntos, ${sentido}. ` +
-        `Las barras muestran esa diferencia mes a mes: hacia arriba (morado) la tasa de las mujeres es mayor; hacia abajo (azul), la de los hombres. En el periodo elegido la brecha promedió ${fmt(prom, 1)} puntos.`;
+        `Las barras muestran esa diferencia mes a mes: hacia arriba (naranja) la tasa de las mujeres es mayor; hacia abajo (morado), la de los hombres. En el periodo elegido la brecha promedió ${fmt(prom, 1)} puntos.`;
     }});
   }
 
@@ -68,7 +68,7 @@ registrar("empleo", (() => {
     const items = lista.map(x => ({id: x.id, n: x.nombre, v: at(x.v, f) != null && at(x.v, f12) != null ? at(x.v, f) - at(x.v, f12) : null})).filter(x => x.v != null).sort((a, b) => b.v - a.v);
     $("emp-paso3-t").textContent = `¿Dónde se ganó o se perdió empleo? ${etqMes(f12)} a ${etqMes(f)}`;
     barras("emp-bar", items, {etiqueta: "Cambio en personas ocupadas (miles)", fmtValor: x => `${x >= 0 ? "+" : ""}${fmt(x, 0)} mil personas`,
-      colores: x => x.v >= 0 ? css("--accent") : css("--up"), alClic: x => { st.rama = x.id; ramaTiempo(); irA("emp-rama-box"); }});
+      colores: x => x.v >= 0 ? css("--down") : css("--up"), alClic: x => { st.rama = x.id; ramaTiempo(); irA("emp-rama-box"); }});
     ramaTiempo();
   }
   function ramaTiempo() {

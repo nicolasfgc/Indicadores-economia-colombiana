@@ -6,7 +6,7 @@ const GOBIERNOS = [["Pastrana", "1998-08-07"], ["Uribe I", "2002-08-07"], ["Urib
                    ["Santos II", "2014-08-07"], ["Duque", "2018-08-07"], ["Petro", "2022-08-07"], ["De la Espriella", "2026-08-07"]];
 
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-const PALETA = () => ["--s1", "--s2", "--s3", "--s4", "--s5", "--s6"].map(css);
+const PALETA = () => ["--s1", "--s2", "--s3", "--s4", "--s5", "--s6", "--s7", "--s8", "--s9", "--s10"].map(css);
 const fmt = (v, d = 2) => v == null || isNaN(v) ? "–" : Number(v).toLocaleString("es-CO", {minimumFractionDigits: d, maximumFractionDigits: d});
 const etqMes = f => { if (!f) return ""; if (f.length === 4) return f; const [y, m] = f.split("-"); return `${MESES[+m - 1]} ${y}`; };
 const etqMesLargo = f => { const [y, m] = f.split("-"); return `${MESES_L[+m - 1]} de ${y}`; };
@@ -151,7 +151,7 @@ const pluginGobiernos = {id: "gobiernos", beforeDatasetsDraw(chart, a, opts) {
 const pluginReferencias = {id: "referencias", afterDatasetsDraw(chart, a, opts) {
   if (!opts || !opts.lineas || !opts.lineas.length) return;
   const {ctx, chartArea: area, scales: {y}} = chart;
-  ctx.save(); ctx.setLineDash([5, 4]); ctx.strokeStyle = css("--s2"); ctx.fillStyle = css("--s2"); ctx.font = "11px Inter, sans-serif";
+  ctx.save(); ctx.setLineDash([5, 4]); ctx.strokeStyle = css("--naranja"); ctx.fillStyle = css("--naranja"); ctx.font = "11px Inter, sans-serif";
   for (const r of opts.lineas) { const py = y.getPixelForValue(r.y); if (py < area.top || py > area.bottom) continue;
     ctx.beginPath(); ctx.moveTo(area.left, py); ctx.lineTo(area.right, py); ctx.stroke(); if (r.t) ctx.fillText(r.t, area.right - ctx.measureText(r.t).width - 4, py - 4); }
   ctx.restore();

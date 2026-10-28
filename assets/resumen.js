@@ -23,7 +23,7 @@ registrar("resumen", (() => {
     $("res-ipc-cambio").textContent = `${etqMesLargo(f)} · ${sube(v, vp)} desde ${pct(vp, 2)} en ${MESES_L[+I.fechas[ii - 1].slice(5, 7) - 1]}`;
     $("res-ipc-txt").innerHTML = `Los precios de lo que compran los hogares están <strong>${pct(v, 2)} más altos que hace un año</strong>. Hace doce meses la inflación era ${pct(v12, 2)}. ` +
       `El Banco de la República busca que esté cerca del 3% (entre 2% y 4%): hoy está <strong>${rango} de ese rango</strong>. Desde 2004 el promedio ha sido ${pct(prom)}.`;
-    mini("res-ipc-g", I.fechas, I.v, css("--up"));
+    mini("res-ipc-g", I.fechas, I.v, css("--s1"));
 
     // --- crecimiento
     const E = R.ise, ei = ult(E), fe = E.fechas[ei], ve = E.v[ei], vm = E.mensual_desest[ei];
@@ -42,7 +42,7 @@ registrar("resumen", (() => {
     $("res-emp-txt").innerHTML = `De cada 100 personas que buscan trabajo, <strong>${fmt(td, 0)} no lo encuentran</strong>. ` +
       `Hay ${fmt(oc / 1000, 1)} millones de personas ocupadas, <strong>${oc >= oc12 ? fmt(oc - oc12, 0) + " mil más" : fmt(oc12 - oc, 0) + " mil menos"}</strong> que hace un año. ` +
       `El desempleo es más alto entre las mujeres (${pct(D.mujeres)}) que entre los hombres (${pct(D.hombres)}).`;
-    mini("res-emp-g", D.fechas, D.v, css("--s3"));
+    mini("res-emp-g", D.fechas, D.v, css("--s2"));
 
     // --- dólar
     const T = R.trm, [ft, vt] = T.ultimo, va = T.hace_un_anio, cambio = va ? (vt / va - 1) * 100 : null;
@@ -51,7 +51,7 @@ registrar("resumen", (() => {
     $("res-trm-txt").innerHTML = cambio == null ? "" : `Hace un año el dólar costaba $${fmt(va, 0)}: hoy está <strong>${fmt(Math.abs(cambio), 1)}% más ${cambio < 0 ? "barato" : "caro"}</strong>. ` +
       (cambio < 0 ? "Un dólar más barato abarata lo importado y ayuda a bajar la inflación, pero reduce los ingresos en pesos de exportadores y de quienes reciben remesas."
                   : "Un dólar más caro encarece lo importado y presiona la inflación, pero aumenta los ingresos en pesos de exportadores y de quienes reciben remesas.");
-    mini("res-trm-g", T.fechas, T.v, css("--s2"));
+    mini("res-trm-g", T.fechas, T.v, css("--s3"));
 
     // --- tasa del Banco de la República
     const P = R.tpm, pi = ult(P), [fp, vtpm] = P.ultimo, p12 = P.v[pi - 12], real = vtpm - v;
