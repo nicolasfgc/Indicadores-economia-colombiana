@@ -12,7 +12,6 @@ por si el DANE lo corrigió). Con --completo reconstruye toda la serie desde 201
 
 Uso:  python scripts/ipc.py [carpeta_cache] [--completo]
 """
-import os
 import re
 import sys
 import time
@@ -39,12 +38,12 @@ UA = {"User-Agent": "Mozilla/5.0 (indicadores-economia-colombiana)"}
 
 
 # ---------------------------------------------------------------- descarga
-def bajar(url, destino=None, intentos=6):
+def bajar(url, destino=None, intentos=6, timeout=120):
     """Descarga con reintentos. Si el DANE pide esperar (error 429), espera lo que indique."""
     for i in range(intentos):
         try:
             req = urllib.request.Request(url, headers=UA)
-            with urllib.request.urlopen(req, timeout=120) as r:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
                 data = r.read()
             if destino:
                 Path(destino).write_bytes(data)

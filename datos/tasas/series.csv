@@ -1,0 +1,2 @@
+id_serie,indicador,categoria,nombre,unidad,frecuencia_origen,nota,fuente
+TRM,TRM,Total,Tasa Representativa del Mercado (pesos por dólar),Pesos por dólar (variaciones en %),Diaria,Promedio y cierre del mes calculados sobre todos los días calendario,Superintendencia Financiera (datos.gov.co)

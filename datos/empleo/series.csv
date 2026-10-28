@@ -1,0 +1,76 @@
+id_serie,indicador,dominio,desagregacion,categoria,periodicidad,ajuste,fuente
+EMP_ARMENIA_TM,Mercado laboral,Armenia,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_BARRANQUILLA_A_M_TM,Mercado laboral,Barranquilla A.M.,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_BOGOTA_D_C_TM,Mercado laboral,Bogotá D.C.,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_BUCARAMANGA_A_M_TM,Mercado laboral,Bucaramanga A.M.,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_CALI_A_M_TM,Mercado laboral,Cali A.M.,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_CARTAGENA_TM,Mercado laboral,Cartagena,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_CUCUTA_A_M_TM,Mercado laboral,Cúcuta A.M.,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_FLORENCIA_TM,Mercado laboral,Florencia,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_IBAGUE_TM,Mercado laboral,Ibagué,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_MANIZALES_A_M_TM,Mercado laboral,Manizales A.M.,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_MEDELLIN_A_M_TM,Mercado laboral,Medellín A.M.,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_MONTERIA_TM,Mercado laboral,Montería,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_NEIVA_TM,Mercado laboral,Neiva,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_PASTO_TM,Mercado laboral,Pasto,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_PEREIRA_A_M_TM,Mercado laboral,Pereira A.M.,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_POPAYAN_TM,Mercado laboral,Popayán,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_QUIBDO_TM,Mercado laboral,Quibdó,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_RIOHACHA_TM,Mercado laboral,Riohacha,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_SANTA_MARTA_TM,Mercado laboral,Santa Marta,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_SINCELEJO_TM,Mercado laboral,Sincelejo,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_TOTAL_10_CIUDADES_TM,Mercado laboral,Total 10 ciudades,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_TOTAL_13_CIUDADES_Y_AREAS_METROPOLITANAS_M,Mercado laboral,Total 13 ciudades y áreas metropolitanas,general,Total,mensual,original,DANE - GEIH
+EMP_TOTAL_13_CIUDADES_Y_AREAS_METROPOLITANAS_M_DESEST,Mercado laboral,Total 13 ciudades y áreas metropolitanas,general,Total,mensual,desestacionalizada,DANE - GEIH
+EMP_TOTAL_13_CIUDADES_Y_AREAS_METROPOLITANAS_RAMA_ACTIVIDADES_ARTISTICAS_ENTRETE_M,Mercado laboral,Total 13 ciudades y áreas metropolitanas,rama,"Actividades artísticas, entretenimiento, recreación y otras actividades de servicios",mensual,original,DANE - GEIH
+EMP_TOTAL_13_CIUDADES_Y_AREAS_METROPOLITANAS_RAMA_ACTIVIDADES_FINANCIERAS_Y_DE_S_M,Mercado laboral,Total 13 ciudades y áreas metropolitanas,rama,Actividades financieras y de seguros,mensual,original,DANE - GEIH
+EMP_TOTAL_13_CIUDADES_Y_AREAS_METROPOLITANAS_RAMA_ACTIVIDADES_INMOBILIARIAS_M,Mercado laboral,Total 13 ciudades y áreas metropolitanas,rama,Actividades inmobiliarias,mensual,original,DANE - GEIH
+EMP_TOTAL_13_CIUDADES_Y_AREAS_METROPOLITANAS_RAMA_ACTIVIDADES_PROFESIONALES_CIEN_M,Mercado laboral,Total 13 ciudades y áreas metropolitanas,rama,"Actividades profesionales, científicas, técnicas y de servicios administrativos",mensual,original,DANE - GEIH
+EMP_TOTAL_13_CIUDADES_Y_AREAS_METROPOLITANAS_RAMA_ADMINISTRACION_PUBLICA_Y_DEFEN_M,Mercado laboral,Total 13 ciudades y áreas metropolitanas,rama,"Administración pública y defensa, educación y atención de la salud humana",mensual,original,DANE - GEIH
+EMP_TOTAL_13_CIUDADES_Y_AREAS_METROPOLITANAS_RAMA_ALOJAMIENTO_Y_SERVICIOS_DE_COM_M,Mercado laboral,Total 13 ciudades y áreas metropolitanas,rama,Alojamiento y servicios de comida,mensual,original,DANE - GEIH
+EMP_TOTAL_13_CIUDADES_Y_AREAS_METROPOLITANAS_RAMA_COMERCIO_Y_REPARACION_DE_VEHIC_M,Mercado laboral,Total 13 ciudades y áreas metropolitanas,rama,Comercio y reparación de vehículos,mensual,original,DANE - GEIH
+EMP_TOTAL_13_CIUDADES_Y_AREAS_METROPOLITANAS_RAMA_CONSTRUCCION_M,Mercado laboral,Total 13 ciudades y áreas metropolitanas,rama,Construcción,mensual,original,DANE - GEIH
+EMP_TOTAL_13_CIUDADES_Y_AREAS_METROPOLITANAS_RAMA_INDUSTRIAS_MANUFACTURERAS_M,Mercado laboral,Total 13 ciudades y áreas metropolitanas,rama,Industrias manufactureras,mensual,original,DANE - GEIH
+EMP_TOTAL_13_CIUDADES_Y_AREAS_METROPOLITANAS_RAMA_INFORMACION_Y_COMUNICACIONES_M,Mercado laboral,Total 13 ciudades y áreas metropolitanas,rama,Información y comunicaciones,mensual,original,DANE - GEIH
+EMP_TOTAL_13_CIUDADES_Y_AREAS_METROPOLITANAS_RAMA_NO_INFORMA_M,Mercado laboral,Total 13 ciudades y áreas metropolitanas,rama,No informa,mensual,original,DANE - GEIH
+EMP_TOTAL_13_CIUDADES_Y_AREAS_METROPOLITANAS_RAMA_OTRAS_RAMAS_M,Mercado laboral,Total 13 ciudades y áreas metropolitanas,rama,Otras ramas,mensual,original,DANE - GEIH
+EMP_TOTAL_13_CIUDADES_Y_AREAS_METROPOLITANAS_RAMA_TOTAL_M,Mercado laboral,Total 13 ciudades y áreas metropolitanas,rama,Total,mensual,original,DANE - GEIH
+EMP_TOTAL_13_CIUDADES_Y_AREAS_METROPOLITANAS_RAMA_TRANSPORTE_Y_ALMACENAMIENTO_M,Mercado laboral,Total 13 ciudades y áreas metropolitanas,rama,Transporte y almacenamiento,mensual,original,DANE - GEIH
+EMP_TOTAL_13_CIUDADES_Y_AREAS_METROPOLITANAS_TM,Mercado laboral,Total 13 ciudades y áreas metropolitanas,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_TOTAL_23_CIUDADES_Y_AREA_METROPOLITANAS_TM,Mercado laboral,Total 23 ciudades y área metropolitanas,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_TOTAL_CABECERAS_M,Mercado laboral,Total Cabeceras,general,Total,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_FUERA_FT_ESTUDIANDO_M,Mercado laboral,Total nacional,fuera_ft,Estudiando,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_FUERA_FT_OFICIOS_DEL_HOGAR_M,Mercado laboral,Total nacional,fuera_ft,Oficios del Hogar,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_FUERA_FT_OTROS_M,Mercado laboral,Total nacional,fuera_ft,Otros,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_FUERA_FT_TOTAL_M,Mercado laboral,Total nacional,fuera_ft,Total,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_HOMBRES_M,Mercado laboral,Total Nacional Hombres,sexo,Total,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_M,Mercado laboral,Total Nacional,general,Total,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_MUJERES_M,Mercado laboral,Total Nacional Mujeres,sexo,Total,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_M_DESEST,Mercado laboral,Total Nacional,general,Total,mensual,desestacionalizada,DANE - GEIH
+EMP_TOTAL_NACIONAL_POSICION_EMPLEADO_DOMESTICO_M,Mercado laboral,Total nacional,posicion,Empleado doméstico,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_POSICION_JORNALERO_O_PEON_M,Mercado laboral,Total nacional,posicion,Jornalero o Peón,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_POSICION_OBRERO_EMPLEADO_DEL_GOBIERNO_M,Mercado laboral,Total nacional,posicion,"Obrero, empleado del gobierno",mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_POSICION_OBRERO_EMPLEADO_PARTICULAR_M,Mercado laboral,Total nacional,posicion,"Obrero, empleado particular",mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_POSICION_OTRO_M,Mercado laboral,Total nacional,posicion,Otro,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_POSICION_PATRON_O_EMPLEADOR_M,Mercado laboral,Total nacional,posicion,Patrón o empleador,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_POSICION_TOTAL_M,Mercado laboral,Total nacional,posicion,Total,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_POSICION_TRABAJADOR_FAMILIAR_SIN_REMUNE_M,Mercado laboral,Total nacional,posicion,Trabajador familiar sin remuneración,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_POSICION_TRABAJADOR_POR_CUENTA_PROPIA_M,Mercado laboral,Total nacional,posicion,Trabajador por cuenta propia,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_RAMA_ACTIVIDADES_ARTISTICAS_ENTRETE_M,Mercado laboral,Total Nacional,rama,"Actividades artísticas, entretenimiento, recreación y otras actividades de servicios",mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_RAMA_ACTIVIDADES_FINANCIERAS_Y_DE_S_M,Mercado laboral,Total Nacional,rama,Actividades financieras y de seguros,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_RAMA_ACTIVIDADES_INMOBILIARIAS_M,Mercado laboral,Total Nacional,rama,Actividades inmobiliarias,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_RAMA_ACTIVIDADES_PROFESIONALES_CIEN_M,Mercado laboral,Total Nacional,rama,"Actividades profesionales, científicas, técnicas y servicios administrativos",mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_RAMA_ADMINISTRACION_PUBLICA_Y_DEFEN_M,Mercado laboral,Total Nacional,rama,"Administración pública y defensa, educación y atención de la salud humana",mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_RAMA_AGRICULTURA_GANADERIA_CAZA_SIL_M,Mercado laboral,Total Nacional,rama,"Agricultura, ganadería, caza, silvicultura y pesca",mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_RAMA_ALOJAMIENTO_Y_SERVICIOS_DE_COM_M,Mercado laboral,Total Nacional,rama,Alojamiento y servicios de comida,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_RAMA_COMERCIO_Y_REPARACION_DE_VEHIC_M,Mercado laboral,Total Nacional,rama,Comercio y reparación de vehículos,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_RAMA_CONSTRUCCION_M,Mercado laboral,Total Nacional,rama,Construcción,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_RAMA_INDUSTRIAS_MANUFACTURERAS_M,Mercado laboral,Total Nacional,rama,Industrias manufactureras,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_RAMA_INFORMACION_Y_COMUNICACIONES_M,Mercado laboral,Total Nacional,rama,Información y comunicaciones,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_RAMA_NO_INFORMA_M,Mercado laboral,Total Nacional,rama,No informa,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_RAMA_SUMINISTRO_DE_ELECTRICIDAD_GAS_M,Mercado laboral,Total Nacional,rama,"Suministro de electricidad, gas, agua y gestión de desechos",mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_RAMA_TOTAL_M,Mercado laboral,Total Nacional,rama,Total,mensual,original,DANE - GEIH
+EMP_TOTAL_NACIONAL_RAMA_TRANSPORTE_Y_ALMACENAMIENTO_M,Mercado laboral,Total Nacional,rama,Transporte y almacenamiento,mensual,original,DANE - GEIH
+EMP_TUNJA_TM,Mercado laboral,Tunja,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_VALLEDUPAR_TM,Mercado laboral,Valledupar,ciudad,Total,trimestre movil,original,DANE - GEIH
+EMP_VILLAVICENCIO_TM,Mercado laboral,Villavicencio,ciudad,Total,trimestre movil,original,DANE - GEIH

@@ -2,11 +2,12 @@ name: Actualizar datos
 
 # Calendario aproximado de publicación del DANE:
 #   IPC: primeros días del mes.   ISE: hacia la mitad del mes (con dos meses de rezago).
-# Corre todos los días del 4 al 25 a las 10:00 a. m. hora Colombia (15:00 UTC).
+#   Mercado laboral: final del mes siguiente.   TRM: diaria.
+# Corre todos los días a las 10:00 a. m. hora Colombia (15:00 UTC); el mercado laboral sale a fin de mes.
 # Si no hay datos nuevos, no guarda nada. También se puede correr a mano desde "Actions".
 on:
   schedule:
-    - cron: "0 15 4-25 * *"
+    - cron: "0 15 * * *"
   workflow_dispatch:
 
 permissions:
@@ -35,6 +36,14 @@ jobs:
       - name: ISE (DANE)
         if: always()
         run: python scripts/ise.py
+
+      - name: Mercado laboral (DANE)
+        if: always()
+        run: python scripts/empleo.py
+
+      - name: Tasas y dólar
+        if: always()
+        run: python scripts/tasas.py
 
       - name: Guardar cambios si hay datos nuevos
         if: always()

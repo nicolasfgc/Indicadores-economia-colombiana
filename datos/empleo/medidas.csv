@@ -1,0 +1,17 @@
+medida,unidad,nombre_medida
+desocupados,miles de personas,Población desocupada
+ftp,miles de personas,Fuerza de trabajo potencial
+fuera_ft,miles de personas,Población fuera de la fuerza de trabajo
+fuerza_trabajo,miles de personas,Fuerza de trabajo
+mcsft,%,Medida compuesta de subutilización de la fuerza de trabajo
+ocupados,miles de personas,Población ocupada
+pct_pet,%,% población en edad de trabajar
+pet,miles de personas,Población en edad de trabajar
+poblacion_total,miles de personas,Población total
+subocupados,miles de personas,Población subocupada
+tcdftp,%,Tasa combinada de desocupación y fuerza de trabajo potencial
+tcsd,%,Tasa combinada de subutilización (desocupación + subocupación)
+td,%,Tasa de desocupación (desempleo)
+tgp,%,Tasa global de participación
+to,%,Tasa de ocupación
+ts,%,Tasa de subocupación

@@ -12,8 +12,10 @@ La idea es poder ir de lo general a lo particular: si la inflación sube, ver qu
 |---|---|---|---|
 | Inflación (IPC) | Total, 12 divisiones, 42 grupos y 188 subclases. Variaciones y aportes (contribuciones) | Enero 2019 | DANE |
 | Actividad económica (ISE) | Total, 3 grandes ramas y 9 agrupaciones cada mes; 12 agrupaciones cada trimestre. Serie original, desestacionalizada y tendencia | Enero 2005 | DANE |
+| Mercado laboral (GEIH) | Desempleo, ocupación, participación y subutilización para el total nacional, cabeceras, 13 ciudades y por sexo (mensual); 23 ciudades (trimestre móvil); ocupados por rama de actividad y por posición ocupacional; series desestacionalizadas | Enero 2001 | DANE |
+| Dólar (TRM) | Diaria, promedio y cierre de cada mes, variaciones | Diciembre 1991 | Superintendencia Financiera |
 
-Próximamente: mercado laboral, tasas de interés, dólar y presupuesto. El listado completo está en [`datos/catalogo.csv`](datos/catalogo.csv).
+Próximamente: tasa de política monetaria, IBR, DTF y tasas de los créditos (Banco de la República), y presupuesto. El listado completo está en [`datos/catalogo.csv`](datos/catalogo.csv).
 
 ## Cómo usar los datos
 
@@ -47,6 +49,18 @@ Cada medida termina en el tipo de serie: `_original` (tal como se mide), `_deses
 | `var_mensual_desest`, `var_mensual_tendencia` | Crecimiento frente al mes anterior (%) |
 | `var_ano_corrido_*` | Crecimiento acumulado en lo corrido del año (%) |
 
+### Mercado laboral
+
+Aquí la medida es el indicador: `td` (tasa de desocupación, o desempleo), `to` (ocupación), `tgp` (participación), `ts` (subocupación), `ocupados`, `desocupados`, `fuera_ft` (fuera de la fuerza de trabajo), etc. El significado y la unidad de cada una están en [`datos/empleo/medidas.csv`](datos/empleo/medidas.csv). Las tasas están en % y las poblaciones en miles de personas.
+
+Cada serie (`series.csv`) dice su **dominio** (total nacional, una ciudad, hombres…), su **desagregación** (general, sexo, ciudad, rama de actividad, posición ocupacional), su **periodicidad** (mensual o trimestre móvil; en trimestre móvil la fecha es el último mes del trimestre) y si es **original o desestacionalizada**.
+
+### Dólar
+
+`datos/tasas/datos.csv` trae por mes `trm_promedio`, `trm_fin_mes` y sus variaciones (%). `datos/tasas/trm_diaria.csv` trae la TRM de cada día.
+
+### ISE: versiones
+
 El ISE tiene dos versiones (columna `version` en `series.csv`): **9 agrupaciones**, que sale cada mes, y **12 agrupaciones**, con más detalle (separa agro de minería e industria de construcción) pero que sale cada trimestre junto con el PIB. Los identificadores empiezan por `ISE9_` o `ISE12_`.
 
 ## De dónde salen y cada cuánto se actualizan
@@ -59,10 +73,14 @@ Cada actualización descarga solo lo nuevo (con pausas, para no saturar los serv
 
 - **IPC:** desde enero de 2019 el DANE usa una canasta nueva (base diciembre 2018 = 100) organizada en 12 divisiones según la clasificación internacional COICOP. Antes se usaban 9 grupos de gasto, así que las categorías no son directamente comparables con años anteriores. Los aportes anuales de 2019 casi no están disponibles porque el DANE no los publicó durante el año de transición.
 - **ISE:** índices de volumen con año de referencia 2015, clasificados por secciones CIIU Rev. 4. Las cifras de los meses más recientes son preliminares y cambian cuando el DANE incorpora nueva información. El ISE no se publica con más detalle que las 12 agrupaciones; para ir más abajo (por ejemplo, ramas de la industria o del comercio) se usarán las encuestas sectoriales del DANE. La variación anual de la serie desestacionalizada (`var_anual_desest`) se calcula a partir del índice, porque el anexo no la trae.
+- **Mercado laboral:** desde enero de 2021 los resultados salen de la GEIH rediseñada, con el marco del Censo 2018; el DANE re-expresó la serie hacia atrás con ese marco, así que es comparable desde 2001. Algunos indicadores (fuerza de trabajo potencial y medidas compuestas de subutilización) solo existen desde el rediseño. Las cifras por ciudad son de trimestre móvil porque el tamaño de la muestra no alcanza para cifras mensuales confiables.
+- **TRM:** cada TRM rige desde una fecha hasta otra (los fines de semana y festivos rige la del último día hábil). El promedio y el cierre de cada mes se calculan sobre todos los días calendario.
 
 ## Fuentes
 
 - DANE, [Índice de Precios al Consumidor](https://www.dane.gov.co/index.php/estadisticas-por-tema/precios-y-costos/indice-de-precios-al-consumidor-ipc)
 - DANE, [Indicador de Seguimiento a la Economía](https://www.dane.gov.co/index.php/estadisticas-por-tema/cuentas-nacionales/indicador-de-seguimiento-a-la-economia-ise)
+- DANE, [Mercado laboral (GEIH)](https://www.dane.gov.co/index.php/estadisticas-por-tema/mercado-laboral/empleo-y-desempleo)
+- Superintendencia Financiera en datos.gov.co, [TRM](https://www.datos.gov.co/Econom-a-y-Finanzas/Tasa-de-Cambio-Representativa-del-Mercado-TRM/32sa-8pi3)
 
 Los datos son de las entidades que los publican. Este proyecto solo los organiza y los hace más fáciles de consultar.
