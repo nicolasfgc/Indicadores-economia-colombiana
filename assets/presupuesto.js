@@ -138,8 +138,10 @@ registrar("presupuesto", (() => {
     const datos = sec && sec[st.hTipo];
     if (!datos) { $("preh-nota").textContent = "Este sector no tiene datos para ese tipo de gasto."; return; }
     $("preh-nota").textContent = st.hPrecios === "constantes" ? "Precios constantes: descuenta la inflación para comparar años distintos (deflactores de Hacienda)." : "Precios corrientes: pesos de cada año, sin ajustar por inflación.";
-    const anios = H.anios.map(String);
-    const serie = m => (datos[m]?.[st.hPrecios] || []).map(v => v == null ? null : v * 1000);  // miles de millones -> millones
+    // el último año del archivo histórico va solo hasta septiembre: se deja por fuera (está completo y mensual arriba)
+    const n = st.d.fechas.at(-1).slice(0, 4) === String(H.anios.at(-1)) ? H.anios.length - 1 : H.anios.length;
+    const anios = H.anios.slice(0, n).map(String);
+    const serie = m => (datos[m]?.[st.hPrecios] || []).slice(0, n).map(v => v == null ? null : v * 1000);  // miles de millones -> millones
     lineas("preh-montos", anios, [{label: "Apropiación", data: serie("apropiacion"), color: css("--muted")},
       {label: "Compromisos", data: serie("compromisos"), color: css("--s3")}, {label: "Obligaciones", data: serie("obligaciones"), color: css("--accent"), ancho: 2.5}],
       {fmtX: x => x, fmtValor: x => plata(x, 1), marcas: GOBIERNOS.map(g => ({x: String(g.x), t: g.t}))});

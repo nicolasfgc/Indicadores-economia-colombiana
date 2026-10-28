@@ -31,9 +31,9 @@ registrar("ise", (() => {
   function render() {
     const f = st.mes, T = total();
     const va = v(T, "var_anual_original", f), vd = v(T, "var_mensual_desest", f), ac = v(T, "var_ano_corrido_original", f);
-    $("ise-k1").textContent = fmt(va) + "%"; $("ise-k1").className = "v " + clsSigno(va);
+    $("ise-k1").textContent = fmt(va) + "%"; $("ise-k1").className = "v " + (va < 0 ? "pos" : "");
     $("ise-k1d").textContent = `frente a ${etqMes(st.d.fechas[st.d.fechas.indexOf(f) - 12] || f)}`;
-    $("ise-k2").textContent = fmt(vd) + "%"; $("ise-k2").className = "v " + clsSigno(vd);
+    $("ise-k2").textContent = fmt(vd) + "%"; $("ise-k2").className = "v " + (vd < 0 ? "pos" : "");
     $("ise-k3").textContent = fmt(ac) + "%";
     const ag = st.d.series.filter(s => s.version.startsWith(st.version) && s.nivel === "agrupacion").map(s => [s, v(s.id_serie, "var_anual_original", f)]).filter(x => x[1] != null).sort((a, b) => a[1] - b[1]);
     $("ise-k4").textContent = ag.length ? ag[0][0].nombre_corto : "–";
@@ -49,6 +49,8 @@ registrar("ise", (() => {
     if (st.nodo === T) lista = st.d.series.filter(s => s.version.startsWith(st.version) && s.nivel === "agrupacion").map(s => s.id_serie);
     const items = lista.map(id => ({id, n: meta(id).nombre_corto, v: v(id, st.medida, f), resaltar: id === st.nodo})).filter(x => x.v != null).sort((a, b) => b.v - a.v);
     barras("ise-bar", items, {unidad: "%", etiqueta: ETQ[st.medida], alClic: x => { st.nodo = x.id; render(); }});
+    // en actividad, crecer es bueno: verde si crece, rojo si cae
+    const gb = graficos["ise-bar"]; gb.data.datasets[0].backgroundColor = items.map(x => x.resaltar ? css("--s3") : x.v >= 0 ? css("--accent") : css("--up")); gb.update();
 
     const fs = st.d.fechas.filter(x => x <= ultimoMes());
     const sel = st.nodo === T ? null : st.nodo;

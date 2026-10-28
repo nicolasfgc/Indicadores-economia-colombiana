@@ -2,7 +2,7 @@
 
 Un lugar abierto y gratuito para ver **cómo va la economía colombiana y por qué**, con las cifras oficiales y todo su detalle.
 
-👉 **Explorador:** https://nicolasfgc.github.io/Indicadores-economia-colombiana/
+👉 **Explorador:** https://nicolasfgc.github.io/Indicadores-economia-colombiana/ — inflación, actividad económica, empleo, tasas y dólar, y presupuesto (de sector a entidad, programa y rubro).
 
 La idea es poder ir de lo general a lo particular: si la inflación sube, ver qué parte de la canasta la está empujando; si la economía se frena, ver qué sector cayó; y así hasta el último nivel que publica la fuente oficial.
 
