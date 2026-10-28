@@ -14,7 +14,7 @@ La idea es poder ir de lo general a lo particular: si la inflación sube, ver qu
 | Actividad económica (ISE) | Total, 3 grandes ramas y 9 agrupaciones cada mes; 12 agrupaciones cada trimestre. Serie original, desestacionalizada y tendencia | Enero 2005 | DANE |
 | Mercado laboral (GEIH) | Desempleo, ocupación, participación y subutilización para el total nacional, cabeceras, 13 ciudades y por sexo (mensual); 23 ciudades (trimestre móvil); ocupados por rama de actividad y por posición ocupacional; series desestacionalizadas | Enero 2001 | DANE |
 | Dólar (TRM) | Diaria, promedio y cierre de cada mes, variaciones | Diciembre 1991 | Superintendencia Financiera |
-| Tasas de interés | Tasa de política monetaria, IBR (a un día, 1 y 3 meses), tasa interbancaria, CDT a 90 días y DTF. Diarias, promedio y cierre de cada mes | 1986–2012 según la serie | Banco de la República |
+| Tasas de interés y UVR | Tasa de política monetaria, IBR (a un día, 1 y 3 meses), tasa interbancaria, CDT a 90 días, DTF y UVR. Diarias, promedio y cierre de cada mes | 1986–2012 según la serie | Banco de la República |
 
 Próximamente: tasas de interés de los créditos por tipo, encuestas sectoriales (industria, comercio, servicios) y presupuesto. El listado completo está en [`datos/catalogo.csv`](datos/catalogo.csv).
 
@@ -61,6 +61,7 @@ Cada serie (`series.csv`) dice su **dominio** (total nacional, una ciudad, hombr
 `datos/tasas/datos.csv` trae por mes:
 - **TRM:** `trm_promedio`, `trm_fin_mes` y sus variaciones (%).
 - **Tasas (TPM, IBR_ON, IBR_1M, IBR_3M, TIB, CDT_90, DTF_90):** `promedio` y `fin_mes`, en %.
+- **UVR:** `promedio` y `fin_mes`, en pesos.
 
 Los datos día a día están en `datos/tasas/trm_diaria.csv` y `datos/tasas/tasas_diarias.csv`.
 

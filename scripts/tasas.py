@@ -4,7 +4,7 @@ Tasas y dólar.
   - TRM (Tasa Representativa del Mercado), diaria desde 1991. Fuente: Superintendencia
     Financiera, vía datos.gov.co (conjunto 32sa-8pi3).
 
-  - Tasa de política monetaria, IBR, tasa interbancaria, CDT y DTF. Fuente: Banco de la
+  - Tasa de política monetaria, IBR, tasa interbancaria, CDT, DTF y UVR. Fuente: Banco de la
     República, servidor de estadísticas (suameca).
 
 Salida:
@@ -49,6 +49,7 @@ SERIES_BANREP = {
     89: ("TIB", "Tasa interbancaria (TIB)", "% efectivo anual"),
     238: ("CDT_90", "Tasa de CDT a 90 días", "% efectivo anual"),
     70: ("DTF_90", "DTF a 90 días (promedio mensual)", "% efectivo anual"),
+    850: ("UVR", "Unidad de Valor Real (UVR)", "pesos"),
 }
 
 

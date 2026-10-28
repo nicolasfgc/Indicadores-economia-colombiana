@@ -7,3 +7,4 @@ IBR_3M,Tasas de interés,"IBR a 3 meses, nominal","IBR a 3 meses, nominal",% nom
 TIB,Tasas de interés,Tasa interbancaria (TIB),Tasa interbancaria (TIB),% efectivo anual,Diaria,Promedio y cierre del mes calculados sobre los días con dato,Banco de la República (serie 89)
 CDT_90,Tasas de interés,Tasa de CDT a 90 días,Tasa de CDT a 90 días,% efectivo anual,Diaria,Promedio y cierre del mes calculados sobre los días con dato,Banco de la República (serie 238)
 DTF_90,Tasas de interés,DTF a 90 días (promedio mensual),DTF a 90 días (promedio mensual),% efectivo anual,Mensual,Valor mensual publicado,Banco de la República (serie 70)
+UVR,Tasas de interés,Unidad de Valor Real (UVR),Unidad de Valor Real (UVR),pesos,Diaria,Promedio y cierre del mes calculados sobre los días con dato,Banco de la República (serie 850)
