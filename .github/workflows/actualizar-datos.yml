@@ -1,0 +1,42 @@
+name: Actualizar datos
+
+# El DANE publica el IPC en los primeros días de cada mes.
+# Corre todos los días del 4 al 15 a las 10:00 a. m. hora Colombia (15:00 UTC);
+# si no hay datos nuevos, no guarda nada. También se puede correr a mano desde la pestaña "Actions".
+on:
+  schedule:
+    - cron: "0 15 4-15 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: IPC (DANE)
+        run: python scripts/ipc.py
+
+      - name: Guardar cambios si hay datos nuevos
+        run: |
+          git config user.name "actualizador-automatico"
+          git config user.email "actions@users.noreply.github.com"
+          git add datos/
+          if git diff --cached --quiet; then
+            echo "Sin datos nuevos."
+          else
+            git commit -m "Actualización automática de datos $(date -u +%Y-%m-%d)"
+            git push
+          fi
