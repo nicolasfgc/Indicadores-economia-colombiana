@@ -7,15 +7,16 @@
 <meta name="description" content="Explorador abierto de los principales indicadores de la economía colombiana, con todo el detalle y actualización automática.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/estilos.css?v=3">
+<link rel="stylesheet" href="assets/estilos.css?v=4">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/comun.js?v=3"></script>
-<script src="assets/ipc.js?v=3"></script>
-<script src="assets/ise.js?v=3"></script>
-<script src="assets/empleo.js?v=3"></script>
-<script src="assets/tasas.js?v=3"></script>
-<script src="assets/presupuesto.js?v=3"></script>
+<script src="assets/comun.js?v=4"></script>
+<script src="assets/resumen.js?v=4"></script>
+<script src="assets/ipc.js?v=4"></script>
+<script src="assets/ise.js?v=4"></script>
+<script src="assets/empleo.js?v=4"></script>
+<script src="assets/tasas.js?v=4"></script>
+<script src="assets/presupuesto.js?v=4"></script>
 </head>
 <body>
 <div class="wrap">
@@ -24,50 +25,65 @@
     <p class="sub">Las cifras oficiales, con todo el detalle, para entender qué está pasando y por qué.</p>
   </header>
 
-  <nav class="tabs">
-    <a href="#ipc" data-tab="ipc">Inflación</a>
-    <a href="#ise" data-tab="ise">Actividad económica</a>
-    <a href="#empleo" data-tab="empleo">Empleo</a>
-    <a href="#tasas" data-tab="tasas">Tasas y dólar</a>
-    <a href="#presupuesto" data-tab="presupuesto">Presupuesto</a>
-  </nav>
+  <div class="top-controles">
+    <nav class="tabs">
+      <a href="#resumen" data-tab="resumen">Resumen</a>
+      <a href="#ipc" data-tab="ipc">Inflación</a>
+      <a href="#ise" data-tab="ise">Actividad económica</a>
+      <a href="#empleo" data-tab="empleo">Empleo</a>
+      <a href="#tasas" data-tab="tasas">Tasas y dólar</a>
+      <a href="#presupuesto" data-tab="presupuesto">Presupuesto</a>
+    </nav>
+    <label class="toggle"><input type="checkbox" id="ver-gobiernos" checked> Marcar gobiernos en las gráficas</label>
+  </div>
+
+  <!-- ===================================================== RESUMEN -->
+  <section class="tab" id="tab-resumen" hidden>
+    <div class="cargando">Cargando datos…</div>
+    <div class="contenido" hidden>
+      <p class="hint mb">Lo más reciente de cada indicador y qué significa. Toca “Ver más” para ir al detalle.</p>
+      <div class="tarjetas">
+        <div class="tarjeta"><div class="tt"><h3>Inflación</h3></div><div class="num" id="res-ipc-num"></div><div class="cambio" id="res-ipc-cambio"></div><div class="mini"><canvas id="res-ipc-g"></canvas></div><p id="res-ipc-txt"></p><a class="mas" href="#ipc">Ver más sobre inflación ›</a></div>
+        <div class="tarjeta"><div class="tt"><h3>Crecimiento de la economía</h3></div><div class="num" id="res-ise-num"></div><div class="cambio" id="res-ise-cambio"></div><div class="mini"><canvas id="res-ise-g"></canvas></div><p id="res-ise-txt"></p><a class="mas" href="#ise">Ver más sobre actividad ›</a></div>
+        <div class="tarjeta"><div class="tt"><h3>Desempleo</h3></div><div class="num" id="res-emp-num"></div><div class="cambio" id="res-emp-cambio"></div><div class="mini"><canvas id="res-emp-g"></canvas></div><p id="res-emp-txt"></p><a class="mas" href="#empleo">Ver más sobre empleo ›</a></div>
+        <div class="tarjeta"><div class="tt"><h3>Dólar</h3></div><div class="num" id="res-trm-num"></div><div class="cambio" id="res-trm-cambio"></div><div class="mini"><canvas id="res-trm-g"></canvas></div><p id="res-trm-txt"></p><a class="mas" href="#tasas">Ver más sobre el dólar ›</a></div>
+        <div class="tarjeta"><div class="tt"><h3>Tasa del Banco de la República</h3></div><div class="num" id="res-tpm-num"></div><div class="cambio" id="res-tpm-cambio"></div><div class="mini"><canvas id="res-tpm-g"></canvas></div><p id="res-tpm-txt"></p><a class="mas" href="#tasas">Ver más sobre tasas ›</a></div>
+        <div class="tarjeta"><div class="tt"><h3>Ejecución del presupuesto</h3></div><div class="num" id="res-pre-num"></div><div class="cambio" id="res-pre-cambio"></div><div class="mini"><canvas id="res-pre-g"></canvas></div><p id="res-pre-txt"></p><a class="mas" href="#presupuesto">Ver más sobre el presupuesto ›</a></div>
+      </div>
+      <p class="foot">Fuentes: DANE, Banco de la República, Superintendencia Financiera y Ministerio de Hacienda.</p>
+    </div>
+  </section>
 
   <!-- ===================================================== INFLACIÓN -->
   <section class="tab" id="tab-ipc" hidden>
     <div class="cargando">Cargando datos…</div>
     <div class="contenido" hidden>
-      <div class="row spread mb">
-        <div class="row"><label class="lbl" for="ipc-mes">Mes</label><select id="ipc-mes"></select></div>
-        <span class="badge" id="ipc-ultima"></span>
-      </div>
+      <div class="row spread mb"><div id="ipc-periodo"></div><span class="badge" id="ipc-ultima"></span></div>
       <section class="kpis">
         <div class="kpi"><div class="l">Inflación anual</div><div class="v" id="ipc-k1"></div><div class="d" id="ipc-k1d"></div></div>
         <div class="kpi"><div class="l">Variación del mes</div><div class="v" id="ipc-k2"></div><div class="d" id="ipc-k2d"></div></div>
         <div class="kpi"><div class="l">En lo corrido del año</div><div class="v" id="ipc-k3"></div><div class="d">desde enero</div></div>
         <div class="kpi"><div class="l">Lo que más empujó</div><div class="v small" id="ipc-k4"></div><div class="d" id="ipc-k4d"></div></div>
       </section>
-      <section class="panel">
-        <h2>¿Qué explica la inflación?</h2>
-        <p class="hint">Cada barra es una parte de la canasta. Toca una barra para ver qué hay adentro.</p>
-        <div class="seg" id="ipc-medida">
-          <button data-v="contrib_anual" class="on">Aporte a la inflación anual</button><button data-v="var_anual">Variación anual</button><button data-v="contrib_mensual">Aporte del mes</button><button data-v="var_mensual">Variación del mes</button>
-        </div>
-        <div class="crumbs" id="ipc-crumbs"></div>
-        <p class="hint" id="ipc-explica"></p>
+      <section class="panel" id="ipc-paso1b">
+        <span class="paso">1 · EL PANORAMA</span>
+        <h2>La inflación en el tiempo</h2>
+        <p class="hint">Variación anual de los precios. Las líneas punteadas marcan la meta del Banco de la República (3%, entre 2% y 4%).</p>
+        <div id="ipc-cat"></div>
+        <div class="chartbox" style="height:340px"><canvas id="ipc-hist"></canvas></div>
+        <p class="interp" id="ipc-hist-txt"></p>
+      </section>
+      <section class="panel" id="ipc-paso2">
+        <span class="paso">2 · QUÉ LA EXPLICA</span>
+        <h2 id="ipc-paso2-t"></h2>
+        <div class="migas" id="ipc-migas"></div>
+        <div class="seg" id="ipc-medida"><button data-v="contrib_anual" class="on">Aporte a la inflación anual</button><button data-v="var_anual">Variación anual</button><button data-v="contrib_mensual">Aporte del mes</button><button data-v="var_mensual">Variación del mes</button></div>
+        <p class="hint" id="ipc-explica" style="margin-top:8px"></p>
         <div class="chartbox"><canvas id="ipc-bar"></canvas></div>
+        <div class="tabla" style="margin-top:12px"><table id="ipc-tabla"></table></div>
       </section>
-      <section class="panel">
-        <h2 id="ipc-hist-t">Inflación anual en el tiempo</h2>
-        <p class="hint">Variación anual (%). Elige una categoría arriba para compararla con el total.</p>
-        <div class="chartbox" style="height:320px"><canvas id="ipc-linea"></canvas></div>
-      </section>
-      <section class="panel">
-        <h2>Detalle</h2>
-        <p class="hint">Toca una fila para entrar. Toca un encabezado para ordenar.</p>
-        <div class="tabla"><table id="ipc-tabla"></table></div>
-      </section>
-      <p class="foot">Fuente: DANE, anexos mensuales del IPC (base diciembre 2018 = 100). El “aporte” es la contribución en puntos porcentuales: cuánto de la inflación total explica cada categoría según su peso en la canasta.
-        Datos: <a href="datos/ipc/datos.csv">datos.csv</a> · <a href="datos/ipc/series.csv">series.csv</a></p>
+      <p class="foot">Fuente: DANE, IPC (base diciembre 2018 = 100; serie empalmada desde 2003). El “aporte” es cuánto de la inflación total explica cada categoría según su peso en la canasta.
+        Datos: <a href="datos/ipc/datos.csv">datos.csv</a> · <a href="datos/ipc/series.csv">series.csv</a> · <a href="datos/ipc/total_historico.csv">total_historico.csv</a></p>
     </div>
   </section>
 
@@ -76,31 +92,35 @@
     <div class="cargando">Cargando datos…</div>
     <div class="contenido" hidden>
       <div class="row spread mb">
-        <div class="row">
-          <label class="lbl" for="ise-mes">Mes</label><select id="ise-mes"></select>
-          <div class="seg" id="ise-version"><button data-v="9" class="on">9 actividades (mensual)</button><button data-v="12">12 actividades (trimestral)</button></div>
-        </div>
+        <div class="row"><div id="ise-periodo"></div><div class="seg" id="ise-version"><button data-v="9" class="on">9 sectores (mensual)</button><button data-v="12">12 sectores (trimestral)</button></div></div>
         <span class="badge" id="ise-ultima"></span>
       </div>
       <section class="kpis">
         <div class="kpi"><div class="l">Crecimiento anual de la economía</div><div class="v" id="ise-k1"></div><div class="d" id="ise-k1d"></div></div>
-        <div class="kpi"><div class="l">Frente al mes anterior</div><div class="v" id="ise-k2"></div><div class="d">serie desestacionalizada</div></div>
+        <div class="kpi"><div class="l">Frente al mes anterior</div><div class="v" id="ise-k2"></div><div class="d">sin efectos de temporada</div></div>
         <div class="kpi"><div class="l">En lo corrido del año</div><div class="v" id="ise-k3"></div><div class="d">frente al mismo periodo del año anterior</div></div>
-        <div class="kpi"><div class="l">La actividad más débil</div><div class="v small" id="ise-k4"></div><div class="d" id="ise-k4d"></div></div>
+        <div class="kpi"><div class="l">El sector más débil</div><div class="v small" id="ise-k4"></div><div class="d" id="ise-k4d"></div></div>
+      </section>
+      <section class="panel" id="ise-paso1b">
+        <span class="paso">1 · EL PANORAMA</span>
+        <h2 id="ise-hist-t"></h2>
+        <p class="hint">Crecimiento anual de la producción (%). Por debajo de cero, la economía produce menos que un año antes.</p>
+        <div id="ise-cat"></div>
+        <div class="chartbox" style="height:320px"><canvas id="ise-hist"></canvas></div>
+        <p class="interp" id="ise-hist-txt"></p>
+        <h2 style="margin-top:20px" id="ise-nivel-t"></h2>
+        <p class="hint">Índice de volumen (2015 = 100): muestra si se produce más o menos que antes.</p>
+        <div class="chartbox" style="height:260px"><canvas id="ise-nivel"></canvas></div>
       </section>
       <section class="panel">
-        <h2>¿Qué sectores jalan y cuáles frenan?</h2>
-        <p class="hint">Toca una actividad para ver su evolución frente al total.</p>
+        <span class="paso">2 · QUÉ LA MUEVE</span>
+        <h2 id="ise-paso2-t"></h2>
         <div class="seg" id="ise-medida"><button data-v="var_anual_original" class="on">Anual</button><button data-v="var_anual_desest">Anual sin estacionalidad</button><button data-v="var_mensual_desest">Frente al mes anterior</button></div>
-        <div class="crumbs" id="ise-crumbs"></div>
-        <p class="hint" id="ise-explica"></p>
+        <p class="hint" id="ise-explica" style="margin-top:8px"></p>
         <div class="chartbox"><canvas id="ise-bar"></canvas></div>
+        <div class="tabla" style="margin-top:12px"><table id="ise-tabla"></table></div>
       </section>
-      <div class="grid2 mb">
-        <section class="panel"><h2 id="ise-hist-t"></h2><p class="hint">Crecimiento anual (%)</p><div class="chartbox" style="height:300px"><canvas id="ise-linea"></canvas></div></section>
-        <section class="panel"><h2 id="ise-indice-t"></h2><p class="hint">Índice de volumen</p><div class="chartbox" style="height:300px"><canvas id="ise-indice"></canvas></div></section>
-      </div>
-      <p class="foot">Fuente: DANE, Indicador de Seguimiento a la Economía (base 2015 = 100). La versión de 12 actividades sale con el PIB trimestral y separa, por ejemplo, el agro de la minería.
+      <p class="foot">Fuente: DANE, Indicador de Seguimiento a la Economía (base 2015 = 100). La versión de 12 sectores sale con el PIB trimestral.
         Datos: <a href="datos/ise/datos.csv">datos.csv</a> · <a href="datos/ise/series.csv">series.csv</a></p>
     </div>
   </section>
@@ -109,31 +129,42 @@
   <section class="tab" id="tab-empleo" hidden>
     <div class="cargando">Cargando datos…</div>
     <div class="contenido" hidden>
-      <div class="row spread mb">
-        <div class="row"><label class="lbl" for="emp-mes">Mes</label><select id="emp-mes"></select></div>
-        <span class="badge" id="emp-ultima"></span>
-      </div>
+      <div class="row spread mb"><div id="emp-periodo"></div><span class="badge" id="emp-ultima"></span></div>
       <section class="kpis">
         <div class="kpi"><div class="l">Desempleo nacional</div><div class="v" id="emp-k1"></div><div class="d" id="emp-k1d"></div></div>
         <div class="kpi"><div class="l">Desempleo en 13 ciudades</div><div class="v" id="emp-k2"></div><div class="d" id="emp-k2d"></div></div>
         <div class="kpi"><div class="l">Desempleo sin estacionalidad</div><div class="v" id="emp-k3"></div><div class="d">total nacional</div></div>
         <div class="kpi"><div class="l">Personas ocupadas</div><div class="v" id="emp-k4"></div><div class="d" id="emp-k4d"></div></div>
       </section>
-      <section class="panel">
-        <div class="row spread"><h2 id="emp-linea-t"></h2>
-          <div class="row"><div class="seg" id="emp-ind"><button data-v="td" class="on">Desempleo</button><button data-v="to">Ocupación</button><button data-v="tgp">Participación</button></div>
-          <div class="seg" id="emp-linea"><button data-v="nac" class="on">Nacional</button><button data-v="sexo">Hombres y mujeres</button><button data-v="zonas">Ciudades y cabeceras</button></div></div></div>
-        <div class="chartbox" style="height:320px;margin-top:10px"><canvas id="emp-graf"></canvas></div>
+      <section class="panel" id="emp-paso1b">
+        <span class="paso">1 · EL PANORAMA</span>
+        <div class="row spread"><h2 id="emp-hist-t"></h2><div class="seg" id="emp-ind"><button data-v="td" class="on">Desempleo</button><button data-v="to">Ocupación</button><button data-v="tgp">Participación</button></div></div>
+        <p class="hint" id="emp-hist-h"></p>
+        <div id="emp-cat"></div>
+        <div class="chartbox" style="height:320px"><canvas id="emp-hist"></canvas></div>
+        <p class="interp" id="emp-hist-txt"></p>
       </section>
       <section class="panel">
-        <h2>¿Dónde se ganó o se perdió empleo?</h2>
-        <p class="hint">Cambio en el número de personas ocupadas frente al mismo mes del año anterior.</p>
+        <span class="paso">2 · MUJERES Y HOMBRES</span>
+        <div class="row spread"><h2 id="emp-sexo-t"></h2><div class="seg" id="emp-indsexo"><button data-v="td" class="on">Desempleo</button><button data-v="to">Ocupación</button><button data-v="tgp">Participación</button></div></div>
+        <div class="chartbox" style="height:280px;margin-top:8px"><canvas id="emp-sexo"></canvas></div>
+        <h2 style="margin-top:18px">La brecha mes a mes</h2>
+        <p class="hint">Tasa de las mujeres menos tasa de los hombres, en puntos.</p>
+        <div class="chartbox" style="height:200px"><canvas id="emp-brecha"></canvas></div>
+        <p class="interp" id="emp-sexo-txt"></p>
+      </section>
+      <section class="panel">
+        <span class="paso">3 · POR SECTOR Y TIPO DE TRABAJO</span>
+        <h2 id="emp-paso3-t"></h2>
+        <p class="hint">Cambio en el número de personas ocupadas frente al mismo mes del año anterior. Toca una barra para verla en el tiempo.</p>
         <div class="seg" id="emp-desg"><button data-v="ramas" class="on">Por actividad</button><button data-v="posiciones">Por tipo de trabajo</button></div>
         <div class="chartbox" style="margin-top:10px"><canvas id="emp-bar"></canvas></div>
+        <div id="emp-rama-box" style="margin-top:18px"><h2 id="emp-rama-t"></h2><p class="hint" id="emp-rama-h"></p><div class="chartbox" style="height:260px"><canvas id="emp-rama"></canvas></div></div>
       </section>
       <section class="panel">
+        <span class="paso">4 · POR CIUDAD</span>
         <h2 id="emp-ciud-t"></h2>
-        <p class="hint">Las cifras por ciudad se publican en trimestre móvil porque la muestra no alcanza para datos mensuales confiables.</p>
+        <p class="hint">Trimestre móvil (la muestra no alcanza para cifras mensuales por ciudad). Toca una ciudad para verla en el tiempo arriba.</p>
         <div class="chartbox"><canvas id="emp-ciud"></canvas></div>
       </section>
       <p class="foot">Fuente: DANE, Gran Encuesta Integrada de Hogares. Datos: <a href="datos/empleo/datos.csv">datos.csv</a> · <a href="datos/empleo/series.csv">series.csv</a> · <a href="datos/empleo/medidas.csv">medidas.csv</a></p>
@@ -150,19 +181,27 @@
         <div class="kpi"><div class="l">IBR a un día</div><div class="v" id="tas-k3"></div><div class="d" id="tas-k3d"></div></div>
         <div class="kpi"><div class="l">UVR</div><div class="v" id="tas-k4"></div><div class="d" id="tas-k4d"></div></div>
       </section>
-      <div class="grid2 mb">
-        <section class="panel">
-          <div class="row spread"><h2>Dólar: promedio mensual</h2><div class="seg" id="tas-rtrm"><button data-v="5">5 años</button><button data-v="10" class="on">10 años</button><button data-v="todo">Desde 1991</button></div></div>
-          <div class="chartbox" style="height:280px;margin-top:10px"><canvas id="tas-trm"></canvas></div>
-        </section>
-        <section class="panel"><h2>Dólar: último año, día a día</h2><div class="chartbox" style="height:280px;margin-top:10px"><canvas id="tas-trmd"></canvas></div></section>
-      </div>
       <section class="panel">
-        <div class="row spread"><h2>Tasas de interés</h2><div class="seg" id="tas-rtasas"><button data-v="5">5 años</button><button data-v="10" class="on">10 años</button><button data-v="todo">Desde 2008</button></div></div>
-        <p class="hint">Cierre de cada mes. La tasa del Banco de la República guía a las demás: la IBR es la referencia de los créditos y la interbancaria es a la que se prestan los bancos entre sí.</p>
-        <div class="chartbox" style="height:340px"><canvas id="tas-tasas"></canvas></div>
+        <span class="paso">1 · EL DÓLAR</span>
+        <h2>El dólar en el tiempo</h2>
+        <p class="hint">Promedio de la TRM en cada mes, desde 1991.</p>
+        <div class="chartbox" style="height:320px"><canvas id="tas-trm"></canvas></div>
+        <p class="interp" id="tas-trm-txt"></p>
+        <h2 style="margin-top:20px">El último año, día a día</h2>
+        <div class="chartbox" style="height:240px"><canvas id="tas-trmd"></canvas></div>
       </section>
-      <section class="panel"><h2>UVR</h2><p class="hint">Unidad que crece con la inflación; se usa en créditos de vivienda y bonos del Gobierno.</p><div class="chartbox" style="height:240px"><canvas id="tas-uvr"></canvas></div></section>
+      <section class="panel">
+        <span class="paso">2 · LAS TASAS DE INTERÉS</span>
+        <h2>Tasas de interés en el tiempo</h2>
+        <p class="hint">Cierre de cada mes. La tasa del Banco de la República guía a las demás: la IBR es la referencia de los créditos y la interbancaria (TIB) es a la que se prestan los bancos entre sí.</p>
+        <div class="chartbox" style="height:340px"><canvas id="tas-tasas"></canvas></div>
+        <p class="interp" id="tas-tasas-txt"></p>
+      </section>
+      <section class="panel">
+        <span class="paso">3 · LA UVR</span>
+        <h2>UVR</h2><p class="hint">Unidad que crece con la inflación; se usa en créditos de vivienda y bonos del Gobierno.</p>
+        <div class="chartbox" style="height:240px"><canvas id="tas-uvr"></canvas></div>
+      </section>
       <p class="foot">Fuentes: Superintendencia Financiera (TRM) y Banco de la República (tasas y UVR). Datos: <a href="datos/tasas/datos.csv">datos.csv</a> · <a href="datos/tasas/trm_diaria.csv">trm_diaria.csv</a> · <a href="datos/tasas/tasas_diarias.csv">tasas_diarias.csv</a></p>
     </div>
   </section>
@@ -172,50 +211,53 @@
     <div class="cargando">Cargando datos…</div>
     <div class="contenido" hidden>
       <div class="row spread mb">
-        <div class="row">
-          <label class="lbl" for="pre-anio">Año</label><select id="pre-anio"></select>
-          <label class="lbl" for="pre-mes">Mes</label><select id="pre-mes"></select>
-          <div class="seg" id="pre-tipo"><button data-v="todos" class="on">Todo</button><button data-v="0">Funcionamiento</button><button data-v="1">Inversión</button><button data-v="2">Deuda</button></div>
-        </div>
+        <div class="row"><div id="pre-periodo"></div>
+          <div class="seg" id="pre-tipo"><button data-v="todos" class="on">Todo</button><button data-v="0">Funcionamiento</button><button data-v="1">Inversión</button><button data-v="2">Deuda</button></div></div>
         <span class="badge" id="pre-ultima"></span>
       </div>
-      <div class="crumbs" id="pre-crumbs"></div>
-      <section class="kpis">
-        <div class="kpi"><div class="l">Apropiación vigente</div><div class="v small" id="pre-k1"></div><div class="d" id="pre-k1d"></div></div>
-        <div class="kpi"><div class="l">Comprometido</div><div class="v" id="pre-k2"></div><div class="d" id="pre-k2d"></div></div>
-        <div class="kpi"><div class="l">Ejecutado (obligado)</div><div class="v" id="pre-k3"></div><div class="d" id="pre-k3d"></div></div>
-        <div class="kpi"><div class="l">Comprometido en el mes</div><div class="v small" id="pre-k4"></div><div class="d" id="pre-k4d"></div></div>
+      <section class="panel" id="pre-paso1">
+        <span class="paso">1 · EL PANORAMA</span>
+        <h2 id="pre-paso1-t"></h2>
+        <div class="migas" id="pre-migas"></div>
+        <section class="kpis" style="margin:8px 0 0">
+          <div class="kpi"><div class="l">Apropiación vigente</div><div class="v small" id="pre-k1"></div><div class="d" id="pre-k1d"></div></div>
+          <div class="kpi"><div class="l">Comprometido</div><div class="v" id="pre-k2"></div><div class="d" id="pre-k2d"></div></div>
+          <div class="kpi"><div class="l">Ejecutado (obligado)</div><div class="v" id="pre-k3"></div><div class="d" id="pre-k3d"></div></div>
+          <div class="kpi"><div class="l">Comprometido en el mes</div><div class="v small" id="pre-k4"></div><div class="d" id="pre-k4d"></div></div>
+        </section>
       </section>
       <section class="panel">
+        <span class="paso">2 · LA HISTORIA</span>
+        <h2 id="preh-t"></h2>
+        <div class="row"><div id="preh-cat"></div>
+          <div class="seg" id="preh-tipo"><button data-v="Total sin deuda" class="on">Todo (sin deuda)</button><button data-v="Funcionamiento">Funcionamiento</button><button data-v="Inversión">Inversión</button></div>
+          <div class="seg" id="preh-precios"><button data-v="constantes" class="on">Sin inflación</button><button data-v="corrientes">Pesos de cada año</button></div></div>
+        <div class="chartbox" style="height:320px;margin-top:8px"><canvas id="preh-montos"></canvas></div>
+        <p class="interp" id="preh-txt"></p>
+        <h2 style="margin-top:18px">Qué tanto se ejecutó cada año</h2>
+        <p class="hint">Obligaciones sobre apropiación, años completos.</p>
+        <div class="chartbox" style="height:220px"><canvas id="preh-pct"></canvas></div>
+      </section>
+      <section class="panel">
+        <span class="paso">3 · MES A MES (2019 EN ADELANTE)</span>
+        <h2 id="pre-evo-t"></h2>
+        <p class="hint">La línea es el porcentaje ejecutado acumulado en cada año (vuelve a cero en enero). Las barras, lo comprometido en cada mes. Sigue lo que tengas seleccionado en la navegación.</p>
+        <div class="chartbox" style="height:320px"><canvas id="pre-evo"></canvas></div>
+        <h2 style="margin-top:18px">¿Va más rápido o más lento que el año pasado?</h2>
+        <div class="chartbox" style="height:240px"><canvas id="pre-curva"></canvas></div>
+        <p class="interp" id="pre-curva-txt"></p>
+      </section>
+      <section class="panel" id="pre-paso2">
+        <span class="paso">4 · DÓNDE ESTÁ LA PLATA</span>
         <h2 id="pre-bar-t"></h2>
-        <p class="hint">Toca una barra o una fila para bajar: sector › entidad › programa › rubro. Las cifras son acumuladas del año hasta el mes elegido (presupuesto de la vigencia).</p>
-        <div class="seg" id="pre-medida"><button data-v="pct_oblig" class="on">% ejecutado</button><button data-v="pct_comp">% comprometido</button><button data-v="comp_mes">Comprometido en el mes</button><button data-v="oblig_mes">Obligado en el mes</button><button data-v="aprop">Apropiación</button></div>
+        <div class="migas" id="pre-migas2"></div>
+        <div class="seg" id="pre-medida"><button data-v="pct_oblig" class="on">% ejecutado</button><button data-v="pct_comp">% comprometido</button><button data-v="comp_mes">Comprometido en el mes</button><button data-v="aprop">Apropiación</button></div>
         <div class="chartbox" style="margin-top:10px"><canvas id="pre-bar"></canvas></div>
         <p class="hint" id="pre-bar-nota"></p>
-      </section>
-      <section class="panel">
-        <h2>¿Va más rápido o más lento que el año pasado?</h2>
-        <p class="hint">Porcentaje ejecutado (obligaciones sobre apropiación), acumulado mes a mes, para lo que está seleccionado arriba.</p>
-        <div class="chartbox" style="height:280px"><canvas id="pre-curva"></canvas></div>
-      </section>
-      <section class="panel">
-        <h2>Detalle</h2>
         <div class="tabla"><table id="pre-tabla"></table></div>
       </section>
-      <section class="panel">
-        <div class="row spread"><h2>Desde el año 2000, por sector</h2>
-          <div class="row"><select id="preh-sector"></select>
-            <div class="seg" id="preh-tipo"><button data-v="Total sin deuda" class="on">Todo (sin deuda)</button><button data-v="Funcionamiento">Funcionamiento</button><button data-v="Inversión">Inversión</button></div>
-            <div class="seg" id="preh-precios"><button data-v="constantes" class="on">Sin inflación</button><button data-v="corrientes">Pesos de cada año</button></div></div></div>
-        <p class="hint" id="preh-nota"></p>
-        <div class="chartbox" style="height:320px"><canvas id="preh-montos"></canvas></div>
-        <h2 style="margin-top:18px">Qué tanto se ejecutó cada año</h2>
-        <p class="hint">Obligaciones sobre apropiación, años completos. El año en curso está arriba, mes a mes.</p>
-        <div class="chartbox" style="height:240px"><canvas id="preh-pct"></canvas></div>
-      </section>
       <p class="foot">Fuentes: Ministerio de Hacienda — ejecución mensual por entidad y rubro (datos.gov.co, 2019 en adelante) y Cifras Presupuestales Históricas por sector (2000 en adelante).
-        <strong>Compromisos</strong>: lo contratado. <strong>Obligaciones</strong>: lo que ya se recibió y se debe pagar (la medida usual de ejecución). <strong>Pagos</strong>: lo efectivamente pagado.
-        Datos: <a href="https://github.com/nicolasfgc/Indicadores-economia-colombiana/tree/main/datos/presupuesto">presupuesto mensual</a> · <a href="https://github.com/nicolasfgc/Indicadores-economia-colombiana/tree/main/datos/presupuesto_historico">histórico por sector</a></p>
+        <strong>Compromisos</strong>: lo contratado. <strong>Obligaciones</strong>: lo que ya se recibió y se debe pagar (la medida usual de ejecución). <strong>Pagos</strong>: lo efectivamente pagado.</p>
     </div>
   </section>
 

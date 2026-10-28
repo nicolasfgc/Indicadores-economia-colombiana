@@ -63,3 +63,46 @@ td .sub2{display:block;color:var(--muted);font-size:12px}
 section.tab[hidden]{display:none}
 @media (max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.grid2 > .panel{margin-bottom:16px}}
 @media (max-width:420px){.kpi .v{font-size:22px}}
+
+/* ---------- rediseño: componentes ---------- */
+.top-controles{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.toggle{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer}
+.periodo{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.selcat{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.selcat select{min-width:260px}
+.migas{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:4px 0 12px;font-size:14px}
+.migas .volver{border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:999px;padding:7px 14px;font:inherit;font-weight:600;cursor:pointer}
+.migas a{color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.migas .aqui{font-weight:700;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:5px 12px}
+.migas .sep{color:var(--muted)}
+.hint.inline{margin:0 0 0 6px}
+button.ver{border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:8px;padding:4px 10px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+button.ver:hover{background:var(--accent);color:#fff}
+button.ver.sec{border-color:var(--line);color:var(--ink);font-weight:500}
+td.acciones{display:flex;gap:6px;justify-content:flex-end}
+.paso{display:inline-block;background:var(--chip);color:var(--muted);border-radius:6px;padding:1px 8px;font-size:12px;font-weight:600;margin-bottom:6px;letter-spacing:.02em}
+.interp{background:var(--accent-soft);border-radius:10px;padding:12px 14px;margin:10px 0 0;font-size:14px}
+.interp strong{color:var(--ink)}
+/* barra de rango */
+.rango{margin-top:10px}
+.rango-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.rango-atajos button{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:3px 9px;font:inherit;font-size:12px;cursor:pointer;margin-left:4px}
+.rango-atajos button:hover{border-color:var(--accent);color:var(--accent)}
+.dual{position:relative;height:28px;margin-top:4px}
+.dual .pista{position:absolute;left:8px;right:8px;top:12px;height:5px;background:var(--line);border-radius:3px}
+.dual .relleno{position:absolute;top:0;height:100%;background:var(--accent);border-radius:3px}
+.dual input[type=range]{position:absolute;left:0;top:4px;width:100%;margin:0;background:none;pointer-events:none;-webkit-appearance:none;appearance:none;height:20px}
+.dual input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;pointer-events:auto;width:18px;height:18px;border-radius:50%;background:var(--panel);border:3px solid var(--accent);cursor:grab}
+.dual input[type=range]::-moz-range-thumb{pointer-events:auto;width:14px;height:14px;border-radius:50%;background:var(--panel);border:3px solid var(--accent);cursor:grab}
+.dual input[type=range]::-moz-range-track{background:none}
+/* resumen */
+.tarjetas{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.tarjeta{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.tarjeta .tt{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.tarjeta h3{margin:0;font-size:15px;color:var(--muted);font-weight:600}
+.tarjeta .num{font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.tarjeta .cambio{font-size:13px;color:var(--muted)}
+.tarjeta .mini{height:90px;position:relative}
+.tarjeta p{margin:4px 0 0;font-size:14px}
+.tarjeta a.mas{color:var(--accent);font-size:13px;font-weight:600;text-decoration:none;margin-top:auto}
+@media (max-width:820px){.tarjetas{grid-template-columns:1fr}.selcat select{min-width:0;width:100%}}

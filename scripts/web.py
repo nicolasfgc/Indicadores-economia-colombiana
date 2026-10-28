@@ -45,7 +45,7 @@ def series_alineadas(datos, ids, medidas, fechas, dec=2):
 def ise():
     d = pd.read_csv(DATOS / "ise" / "datos.csv")
     s = pd.read_csv(DATOS / "ise" / "series.csv", dtype=str).fillna("")
-    d = d[d.fecha >= "2015-01-01"]
+    d = d[d.fecha >= "2005-01-01"]
     fechas = sorted(d.fecha.unique())
     medidas = ["indice_original", "var_anual_original", "indice_desest", "var_mensual_desest", "var_anual_desest", "var_ano_corrido_original"]
     meta = s[["id_serie", "version", "nivel", "padre", "nombre_corto", "codigo_ciiu"]].to_dict("records")
@@ -56,7 +56,6 @@ def ise():
 def empleo():
     d = pd.read_csv(DATOS / "empleo" / "datos.csv")
     s = pd.read_csv(DATOS / "empleo" / "series.csv", dtype=str).fillna("")
-    d = d[d.fecha >= "2010-01-01"]
     fechas = sorted(d.fecha.unique())
     gen = s[s.desagregacion.isin(["general", "sexo"])]
     out = {"fechas": fechas, "general": [], "ramas": [], "posiciones": [], "ciudades": []}
@@ -147,8 +146,57 @@ def presupuesto_historico():
     guardar("presupuesto/historico.json", out)
 
 
+def ipc_historico():
+    h = pd.read_csv(DATOS / "ipc" / "total_historico.csv")
+    guardar("ipc_historico.json", {"fechas": h.fecha.tolist(), "var_anual": [limpiar(x) for x in h.var_anual],
+                                   "var_mensual": [limpiar(x) for x in h.var_mensual]})
+
+
+def resumen():
+    """Datos clave de cada indicador para la pestaña de resumen (la interpretación se arma en la página)."""
+    out = {}
+    h = pd.read_csv(DATOS / "ipc" / "total_historico.csv").dropna(subset=["var_anual"])
+    out["ipc"] = {"fechas": h.fecha.tolist(), "v": h.var_anual.round(2).tolist(), "mensual": h.var_mensual.round(2).tolist()}
+    d = pd.read_csv(DATOS / "ise" / "datos.csv")
+    t = d[(d.id_serie == "ISE9_TOTAL")].pivot(index="fecha", columns="medida", values="valor").dropna(subset=["var_anual_original"])
+    out["ise"] = {"fechas": t.index.tolist(), "v": t.var_anual_original.round(2).tolist(), "mensual_desest": t.var_mensual_desest.round(2).tolist()}
+    ag = d[d.id_serie.str.match(r"ISE9_(AB|CF|DE|GHI|J|K|L|MN|OPQRST)$") & (d.medida == "var_anual_original") & (d.fecha == t.index[-1])]
+    s9 = pd.read_csv(DATOS / "ise" / "series.csv", dtype=str).set_index("id_serie").nombre_corto
+    out["ise"]["sectores"] = sorted([[s9[r.id_serie], round(r.valor, 2)] for r in ag.itertuples()], key=lambda x: -x[1])
+    e = pd.read_csv(DATOS / "empleo" / "datos.csv")
+    n = e[e.id_serie == "EMP_TOTAL_NACIONAL_M"].pivot(index="fecha", columns="medida", values="valor").dropna(subset=["td"])
+    out["empleo"] = {"fechas": n.index.tolist(), "v": n.td.round(2).tolist(), "ocupados": n.ocupados.round(1).tolist()}
+    sx = {k: e[(e.id_serie == f"EMP_TOTAL_NACIONAL_{k}_M") & (e.medida == "td")].set_index("fecha").valor for k in ("HOMBRES", "MUJERES")}
+    out["empleo"]["hombres"], out["empleo"]["mujeres"] = round(sx["HOMBRES"].iloc[-1], 2), round(sx["MUJERES"].iloc[-1], 2)
+    ta = pd.read_csv(DATOS / "tasas" / "datos.csv")
+    trm = ta[(ta.id_serie == "TRM") & (ta.medida == "trm_promedio")].set_index("fecha").valor
+    tpm = ta[(ta.id_serie == "TPM") & (ta.medida == "fin_mes")].set_index("fecha").valor
+    dia = pd.read_csv(DATOS / "tasas" / "trm_diaria.csv")
+    dd = pd.read_csv(DATOS / "tasas" / "tasas_diarias.csv")
+    tpm_d = dd[dd.id_serie == "TPM"].sort_values("fecha")
+    out["trm"] = {"fechas": trm.index.tolist(), "v": trm.round(2).tolist(), "ultimo": [dia.fecha.iloc[-1], float(dia.trm.iloc[-1])],
+                  "hace_un_anio": float(dia.trm.iloc[-366]) if len(dia) > 366 else None}
+    out["tpm"] = {"fechas": tpm.index.tolist(), "v": tpm.round(2).tolist(), "ultimo": [tpm_d.fecha.iloc[-1], float(tpm_d.valor.iloc[-1])]}
+    r = pd.read_csv(DATOS / "presupuesto" / "resumen.csv")
+    r = r[(r.vigencia == "Vigencia actual") & (r.tipo_gasto != "SERVICIO DE LA DEUDA PÚBLICA")]
+    g = r.groupby("fecha")[["apropiacion_vigente", "compromisos", "obligaciones"]].sum()
+    ult = g.index[-1]
+    mismo_mes_ant = f"{int(ult[:4]) - 1}{ult[4:]}"
+    sec = r[r.fecha == ult].groupby("sector")[["apropiacion_vigente", "obligaciones"]].sum()
+    sec = sec[sec.apropiacion_vigente > 5e11]
+    sec["pct"] = sec.obligaciones / sec.apropiacion_vigente * 100
+    out["presupuesto"] = {"fecha": ult, "apropiacion": float(g.loc[ult, "apropiacion_vigente"] / 1e6), "obligaciones": float(g.loc[ult, "obligaciones"] / 1e6),
+                          "pct": float(g.loc[ult, "obligaciones"] / g.loc[ult, "apropiacion_vigente"] * 100),
+                          "pct_anio_anterior": float(g.loc[mismo_mes_ant, "obligaciones"] / g.loc[mismo_mes_ant, "apropiacion_vigente"] * 100) if mismo_mes_ant in g.index else None,
+                          "mas_lentos": [[s, round(p, 1)] for s, p in sec.pct.sort_values().head(3).items()],
+                          "mas_rapidos": [[s, round(p, 1)] for s, p in sec.pct.sort_values().tail(3).items()]}
+    guardar("resumen.json", out)
+
+
 def main():
     print("Preparando datos para la web:")
+    resumen()
+    ipc_historico()
     ise()
     empleo()
     tasas()

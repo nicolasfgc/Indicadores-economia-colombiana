@@ -1,15 +1,19 @@
-// Utilidades compartidas por todas las pestañas del explorador.
+// Utilidades y componentes compartidos por todas las pestañas del explorador.
 const MESES = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
 const MESES_L = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+// Gobiernos: [nombre, fecha de posesión]
+const GOBIERNOS = [["Pastrana", "1998-08-07"], ["Uribe I", "2002-08-07"], ["Uribe II", "2006-08-07"], ["Santos I", "2010-08-07"],
+                   ["Santos II", "2014-08-07"], ["Duque", "2018-08-07"], ["Petro", "2022-08-07"], ["De la Espriella", "2026-08-07"]];
 
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-const PALETA = () => ["--s1","--s2","--s3","--s4","--s5","--s6"].map(css);
+const PALETA = () => ["--s1", "--s2", "--s3", "--s4", "--s5", "--s6"].map(css);
 const fmt = (v, d = 2) => v == null || isNaN(v) ? "–" : Number(v).toLocaleString("es-CO", {minimumFractionDigits: d, maximumFractionDigits: d});
-const etqMes = f => { const [y, m] = f.split("-"); return `${MESES[+m - 1]} ${y}`; };
-const etqMesLargo = f => { const [y, m] = f.split("-"); return `${MESES_L[+m - 1]} ${y}`; };
+const etqMes = f => { if (!f) return ""; if (f.length === 4) return f; const [y, m] = f.split("-"); return `${MESES[+m - 1]} ${y}`; };
+const etqMesLargo = f => { const [y, m] = f.split("-"); return `${MESES_L[+m - 1]} de ${y}`; };
 const titulo = s => s ? s.toLowerCase().replace(/(^|[\s,(\/-])([a-záéíóúñü])/g, (a, b, c) => b + c.toUpperCase()).replace(/\b(De|Del|La|Las|Los|Y|E|En|Para|Por|A|El|Al|Con|Sin)\b/g, w => w.toLowerCase()) : s;
 const $ = id => document.getElementById(id);
 const clsSigno = v => v == null ? "" : v > 0 ? "pos" : v < 0 ? "neg" : "";
+const gobiernoDe = f => { const d = f.length === 4 ? f + "-07" : f.slice(0, 7); let g = null; for (const x of GOBIERNOS) if (d >= x[1].slice(0, 7)) g = x[0]; return g; };
 
 // Plata en millones de pesos -> texto corto
 function plata(millones, d = 1) {
@@ -21,7 +25,7 @@ function plata(millones, d = 1) {
 }
 
 const cache = {};
-async function json(url) {
+function json(url) {
   if (!cache[url]) cache[url] = fetch(url).then(r => { if (!r.ok) throw new Error(url + ": " + r.status); return r.json(); });
   return cache[url];
 }
@@ -30,7 +34,7 @@ function csv(url) {
   return cache[url];
 }
 
-// Botones segmentados: <div class="seg" id=...><button data-v=...>
+// ------------------------------------------------------------ controles
 function seg(id, alCambiar) {
   const el = $(id);
   el.querySelectorAll("button").forEach(b => b.onclick = () => {
@@ -39,9 +43,57 @@ function seg(id, alCambiar) {
     alCambiar(b.dataset.v);
   });
 }
+function marcarSeg(id, v) { $(id).querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.v === v)); }
 function opciones(sel, items, actual) {
   sel.innerHTML = items.map(([v, t]) => `<option value="${v}"${v == actual ? " selected" : ""}>${t}</option>`).join("");
 }
+
+// Selector de periodo: primero el año y luego el mes
+function periodo(contId, fechas, actual, alCambiar) {
+  const c = $(contId);
+  c.classList.add("periodo");
+  c.innerHTML = `<label class="lbl">Año</label><select class="p-anio"></select><label class="lbl">Mes</label><select class="p-mes"></select>`;
+  const sa = c.querySelector(".p-anio"), sm = c.querySelector(".p-mes");
+  const anios = [...new Set(fechas.map(f => f.slice(0, 4)))].sort().reverse();
+  let f = actual;
+  function llenarMeses() {
+    const ms = fechas.filter(x => x.startsWith(sa.value));
+    if (!ms.includes(f)) f = ms.find(x => x.slice(5, 7) === f.slice(5, 7)) || ms.at(-1);
+    opciones(sm, ms.map(x => [x, MESES_L[+x.slice(5, 7) - 1]]), f);
+  }
+  opciones(sa, anios.map(a => [a, a]), f.slice(0, 4));
+  llenarMeses();
+  sa.onchange = () => { llenarMeses(); alCambiar(f); };
+  sm.onchange = () => { f = sm.value; alCambiar(f); };
+  return {set(x) { f = x; sa.value = x.slice(0, 4); llenarMeses(); }};
+}
+
+// Selector "Total / una categoría": grupos = [{g: "nombre del grupo", items: [[id, nombre], ...]}]
+function selectorCategoria(contId, grupos, alCambiar, {total = "Total", otra = "Una categoría específica"} = {}) {
+  const c = $(contId);
+  c.classList.add("selcat");
+  c.innerHTML = `<div class="seg"><button data-v="total" class="on">${total}</button><button data-v="cat">${otra}</button></div><select hidden></select>`;
+  const sel = c.querySelector("select"), botones = c.querySelectorAll("button");
+  sel.innerHTML = grupos.map(g => g.g ? `<optgroup label="${g.g}">${g.items.map(([v, t]) => `<option value="${v}">${t}</option>`).join("")}</optgroup>`
+                                      : g.items.map(([v, t]) => `<option value="${v}">${t}</option>`).join("")).join("");
+  const modo = m => { botones.forEach(b => b.classList.toggle("on", b.dataset.v === m)); sel.hidden = m === "total"; };
+  botones.forEach(b => b.onclick = () => { modo(b.dataset.v); alCambiar(b.dataset.v === "total" ? null : sel.value); });
+  sel.onchange = () => alCambiar(sel.value);
+  return {set(id) { if (!id) { modo("total"); } else { modo("cat"); sel.value = id; } alCambiar(id); }};
+}
+
+// Navegación por niveles: "← Volver" grande y el camino completo
+function migas(contId, pasos, ir) {
+  const c = $(contId);
+  c.classList.add("migas");
+  if (pasos.length <= 1) { c.innerHTML = `<span class="aqui">${pasos[0].t}</span><span class="hint inline">Toca una barra o “Ver detalle” para bajar de nivel.</span>`; return; }
+  c.innerHTML = `<button class="volver">← Volver a ${pasos.at(-2).t}</button>` +
+    pasos.map((p, k) => k === pasos.length - 1 ? `<span class="aqui">${p.t}</span>` : `<a data-k="${k}">${p.t}</a><span class="sep">›</span>`).join("");
+  c.querySelector(".volver").onclick = () => ir(pasos.at(-2));
+  c.querySelectorAll("a").forEach(a => a.onclick = () => ir(pasos[+a.dataset.k]));
+}
+
+const irA = id => $(id)?.scrollIntoView({behavior: "smooth", block: "start"});
 
 // ------------------------------------------------------------ gráficos
 const graficos = {};
@@ -51,21 +103,22 @@ function dibujar(canvasId, config) {
   return graficos[canvasId];
 }
 
-// Barras horizontales ordenadas; items = [{id, n, v, resaltar}]
-function barras(canvasId, items, {unidad = "", alClic = null, etiqueta = "", fmtValor = null, alto = 26} = {}) {
+// Barras horizontales ordenadas; items = [{id, n, v, resaltar, color}]
+function barras(canvasId, items, {unidad = "", alClic = null, etiqueta = "", fmtValor = null, alto = 26, colores = null} = {}) {
   const box = $(canvasId).parentElement;
   box.style.height = Math.max(160, items.length * alto + 50) + "px";
   const up = css("--up"), down = css("--down"), acc = css("--accent");
   const f = fmtValor || (v => `${fmt(v)}${unidad}`);
+  const col = colores || (x => x.resaltar ? acc : (x.v >= 0 ? up : down));
   return dibujar(canvasId, {
     type: "bar",
-    data: {labels: items.map(x => x.n), datasets: [{data: items.map(x => x.v), backgroundColor: items.map(x => x.resaltar ? acc : (x.v >= 0 ? up : down)), borderRadius: 4, barThickness: Math.min(18, alto - 8)}]},
+    data: {labels: items.map(x => x.n), datasets: [{data: items.map(x => x.v), backgroundColor: items.map(col), borderRadius: 4, barThickness: Math.min(18, alto - 8)}]},
     options: {
       indexAxis: "y", responsive: true, maintainAspectRatio: false, animation: {duration: 250},
-      plugins: {legend: {display: false}, tooltip: {callbacks: {label: c => f(c.raw)}}},
+      plugins: {legend: {display: false}, tooltip: {callbacks: {label: c => f(c.raw), footer: () => alClic ? "Toca para ver el detalle" : ""}}},
       scales: {
         x: {grid: {color: css("--line")}, ticks: {color: css("--muted")}, title: {display: !!etiqueta, text: etiqueta, color: css("--muted")}},
-        y: {grid: {display: false}, ticks: {color: css("--ink"), autoSkip: false, callback(v) { const t = this.getLabelForValue(v); return t.length > 40 ? t.slice(0, 38) + "…" : t; }}}
+        y: {grid: {display: false}, ticks: {color: css("--ink"), autoSkip: false, callback(v) { const t = this.getLabelForValue(v); return t.length > 42 ? t.slice(0, 40) + "…" : t; }}}
       },
       onClick: (e, el) => { if (el.length && alClic) alClic(items[el[0].index]); },
       onHover: (e, el) => { e.native.target.style.cursor = el.length && alClic ? "pointer" : "default"; }
@@ -73,30 +126,113 @@ function barras(canvasId, items, {unidad = "", alClic = null, etiqueta = "", fmt
   });
 }
 
-// Líneas; series = [{label, data, color, dash, ancho}]; etiquetasX = fechas o años
-function lineas(canvasId, etiquetasX, series, {unidad = "", fmtX = etqMes, marcas = [], fmtValor = null, eje0 = false} = {}) {
+// Franjas de gobiernos detrás de las series
+let verGobiernos = true;
+const pluginGobiernos = {id: "gobiernos", beforeDatasetsDraw(chart, a, opts) {
+  if (!verGobiernos || !opts || !opts.activo) return;
+  const etq = chart.data.labels, {ctx, chartArea: area, scales: {x}} = chart;
+  if (!etq.length) return;
+  const paso = etq.length > 1 ? x.getPixelForValue(1) - x.getPixelForValue(0) : 20;
+  let ini = 0;
+  ctx.save(); ctx.font = "11px Inter, sans-serif"; ctx.textBaseline = "top";
+  for (let i = 1; i <= etq.length; i++) {
+    const g = gobiernoDe(etq[ini]);
+    if (i < etq.length && gobiernoDe(etq[i]) === g) continue;
+    const x0 = Math.max(area.left, x.getPixelForValue(ini) - paso / 2), x1 = Math.min(area.right, x.getPixelForValue(i - 1) + paso / 2);
+    const k = GOBIERNOS.findIndex(z => z[0] === g);
+    if (k % 2 === 0) { ctx.fillStyle = css("--chip"); ctx.globalAlpha = .7; ctx.fillRect(x0, area.top, x1 - x0, area.bottom - area.top); ctx.globalAlpha = 1; }
+    ctx.strokeStyle = css("--line"); ctx.beginPath(); ctx.moveTo(x0, area.top); ctx.lineTo(x0, area.bottom); ctx.stroke();
+    if (g && x1 - x0 > ctx.measureText(g).width + 6) { ctx.fillStyle = css("--muted"); ctx.fillText(g, x0 + 4, area.top + 3); }
+    ini = i;
+  }
+  ctx.restore();
+}};
+// Líneas horizontales de referencia (p. ej. la meta de inflación)
+const pluginReferencias = {id: "referencias", afterDatasetsDraw(chart, a, opts) {
+  if (!opts || !opts.lineas || !opts.lineas.length) return;
+  const {ctx, chartArea: area, scales: {y}} = chart;
+  ctx.save(); ctx.setLineDash([5, 4]); ctx.strokeStyle = css("--s2"); ctx.fillStyle = css("--s2"); ctx.font = "11px Inter, sans-serif";
+  for (const r of opts.lineas) { const py = y.getPixelForValue(r.y); if (py < area.top || py > area.bottom) continue;
+    ctx.beginPath(); ctx.moveTo(area.left, py); ctx.lineTo(area.right, py); ctx.stroke(); if (r.t) ctx.fillText(r.t, area.right - ctx.measureText(r.t).width - 4, py - 4); }
+  ctx.restore();
+}};
+
+// Serie de tiempo con barra de rango y franjas de gobiernos.
+// series = [{label, data, color, dash, ancho, tipo: "bar"}]; etiquetas = "AAAA-MM-01" (mensual) o "AAAA" (anual)
+const rangos = {}, ultimosArgs = {};
+function serie(canvasId, etiquetas, series, opts = {}) {
+  ultimosArgs[canvasId] = [etiquetas, series, opts];
+  const anual = etiquetas.length && etiquetas[0].length === 4;
+  const n = etiquetas.length;
+  let r = rangos[canvasId];
+  if (!r || etiquetas.indexOf(r.d) < 0 || etiquetas.indexOf(r.h) < 0) {
+    const hasta = n - 1, pasos = opts.inicio != null ? opts.inicio : (anual ? n : 120);
+    r = rangos[canvasId] = {d: etiquetas[Math.max(0, hasta - pasos + 1)], h: etiquetas[hasta]};
+  }
+  const i0 = etiquetas.indexOf(r.d), i1 = etiquetas.indexOf(r.h);
+  controlRango(canvasId, etiquetas, i0, i1, anual, opts.atajos);
+  const et = etiquetas.slice(i0, i1 + 1);
   const pal = PALETA();
-  const f = fmtValor || (v => `${fmt(v)}${unidad}`);
+  const f = opts.fmtValor || (v => `${fmt(v)}${opts.unidad || ""}`);
+  const fx = opts.fmtX || etqMes;
+  if (opts.despues) setTimeout(() => opts.despues(i0, i1), 0);   // p. ej. actualizar el texto que interpreta el periodo visible
   return dibujar(canvasId, {
     type: "line",
-    data: {labels: etiquetasX, datasets: series.map((s, i) => ({label: s.label, data: s.data, borderColor: s.color || pal[i % pal.length], backgroundColor: "transparent",
-      borderWidth: s.ancho || 2, borderDash: s.dash || [], pointRadius: 0, tension: .2, spanGaps: true}))},
+    data: {labels: et, datasets: series.map((s, i) => {
+      const c = s.color || pal[i % pal.length];
+      const base = {label: s.label, data: s.data.slice(i0, i1 + 1), borderColor: c, order: s.tipo === "bar" ? 2 : 1};
+      return s.tipo === "bar" ? {...base, type: "bar", backgroundColor: s.colores ? s.colores.slice(i0, i1 + 1) : c, borderWidth: 0, borderRadius: 2, yAxisID: s.eje || "y"}
+        : {...base, backgroundColor: "transparent", borderWidth: s.ancho || 2, borderDash: s.dash || [], pointRadius: 0, tension: .2, spanGaps: true, yAxisID: s.eje || "y"};
+    })},
     options: {
-      responsive: true, maintainAspectRatio: false, animation: {duration: 250}, interaction: {mode: "index", intersect: false},
+      responsive: true, maintainAspectRatio: false, animation: {duration: 200}, interaction: {mode: "index", intersect: false},
       plugins: {legend: {display: series.length > 1, labels: {color: css("--ink"), boxWidth: 14}},
-        tooltip: {callbacks: {title: c => fmtX(etiquetasX[c[0].dataIndex]), label: c => `${c.dataset.label}: ${f(c.raw)}`}}},
-      scales: {x: {grid: {display: false}, ticks: {color: css("--muted"), maxTicksLimit: 10, callback: (v, i) => fmtX(etiquetasX[i])}},
-               y: {beginAtZero: eje0, grid: {color: css("--line")}, ticks: {color: css("--muted"), callback: v => f(v)}}}
+        tooltip: {callbacks: {title: c => { const e = et[c[0].dataIndex]; const g = gobiernoDe(e); return fx(e) + (g ? ` · ${g}` : ""); },
+                              label: c => `${c.dataset.label}: ${(c.dataset.yAxisID === "y2" && opts.fmtValor2 ? opts.fmtValor2 : f)(c.raw)}`}},
+        gobiernos: {activo: opts.gobiernos !== false}, referencias: {lineas: opts.referencias || []}},
+      scales: {x: {grid: {display: false}, ticks: {color: css("--muted"), maxTicksLimit: 10, callback: (v, i) => fx(et[i])}},
+               y: {beginAtZero: !!opts.eje0, grid: {color: css("--line")}, ticks: {color: css("--muted"), callback: v => f(v)}},
+               ...(series.some(s => s.eje === "y2") ? {y2: {position: "right", grid: {display: false}, ticks: {color: css("--muted"), callback: v => (opts.fmtValor2 || f)(v)}}} : {})}
     },
-    plugins: [{id: "marcas", afterDatasetsDraw(chart) {   // líneas verticales con etiqueta (p. ej. cambios de gobierno)
-      if (!marcas.length) return;
-      const {ctx, chartArea: a, scales: {x}} = chart;
-      ctx.save(); ctx.strokeStyle = css("--muted"); ctx.fillStyle = css("--muted"); ctx.setLineDash([3, 3]); ctx.font = "11px Inter, sans-serif";
-      marcas.forEach(m => { const i = etiquetasX.indexOf(m.x); if (i < 0) return; const px = x.getPixelForValue(i);
-        ctx.beginPath(); ctx.moveTo(px, a.top); ctx.lineTo(px, a.bottom); ctx.stroke(); ctx.fillText(m.t, px + 3, a.top + 10); });
-      ctx.restore();
-    }}]
+    plugins: [pluginGobiernos, pluginReferencias]
   });
+}
+function redibujar(canvasId) { const a = ultimosArgs[canvasId]; if (a) serie(canvasId, ...a); }
+
+// Barra para escoger desde qué mes hasta qué mes (dos manijas) y atajos
+function controlRango(canvasId, etiquetas, i0, i1, anual, atajosPropios) {
+  let c = $(canvasId + "-rango");
+  const n = etiquetas.length;
+  if (!c) {
+    c = document.createElement("div"); c.className = "rango"; c.id = canvasId + "-rango";
+    $(canvasId).parentElement.after(c);
+    const atajos = atajosPropios || (anual ? [["10 años", 10], ["20 años", 20], ["Todo", 0]] : [["1 año", 12], ["5 años", 60], ["10 años", 120], ["Todo", 0]]);
+    c.innerHTML = `<div class="rango-top"><span class="rango-txt"></span><span class="rango-atajos">${atajos.map(([t, k]) => `<button data-k="${k}">${t}</button>`).join("")}</span></div>
+      <div class="dual"><div class="pista"><div class="relleno"></div></div><input type="range" class="r0" min="0" step="1"><input type="range" class="r1" min="0" step="1"></div>`;
+    const a = c.querySelector(".r0"), b = c.querySelector(".r1");
+    const aplicar = () => {
+      const et = ultimosArgs[canvasId][0];
+      let x = +a.value, y = +b.value; if (x > y) [x, y] = [y, x];
+      rangos[canvasId] = {d: et[x], h: et[y]}; redibujar(canvasId);
+    };
+    let pendiente = null;
+    const alMover = () => { pintar(c, ultimosArgs[canvasId][0], +a.value, +b.value); if (!pendiente) pendiente = requestAnimationFrame(() => { pendiente = null; aplicar(); }); };
+    a.oninput = alMover; b.oninput = alMover;
+    c.querySelectorAll(".rango-atajos button").forEach(btn => btn.onclick = () => {
+      const et = ultimosArgs[canvasId][0], k = +btn.dataset.k, h = et.length - 1;
+      rangos[canvasId] = {d: et[k ? Math.max(0, h - k + 1) : 0], h: et[h]}; redibujar(canvasId);
+    });
+  }
+  const a = c.querySelector(".r0"), b = c.querySelector(".r1");
+  a.max = b.max = n - 1; a.value = i0; b.value = i1;
+  pintar(c, etiquetas, i0, i1);
+}
+function pintar(c, et, x, y) {
+  if (x > y) [x, y] = [y, x];
+  const n = Math.max(1, et.length - 1);
+  c.querySelector(".relleno").style.left = (x / n * 100) + "%";
+  c.querySelector(".relleno").style.width = ((y - x) / n * 100) + "%";
+  c.querySelector(".rango-txt").innerHTML = `Mostrando <strong>${etqMes(et[x])}</strong> a <strong>${etqMes(et[y])}</strong> · mueve las manijas para cambiar el periodo`;
 }
 
 // ------------------------------------------------------------ pestañas
@@ -104,7 +240,7 @@ const PESTANAS = {};
 function registrar(id, modulo) { PESTANAS[id] = modulo; }
 let actual = null;
 async function mostrar(id) {
-  if (!PESTANAS[id]) id = "ipc";
+  if (!PESTANAS[id]) id = "resumen";
   document.querySelectorAll("nav.tabs a").forEach(a => a.classList.toggle("on", a.dataset.tab === id));
   document.querySelectorAll("section.tab").forEach(s => s.hidden = s.id !== "tab-" + id);
   actual = id;
@@ -121,4 +257,8 @@ async function mostrar(id) {
 }
 window.addEventListener("hashchange", () => mostrar(location.hash.slice(1)));
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => actual && PESTANAS[actual].listo && PESTANAS[actual].render());
-document.addEventListener("DOMContentLoaded", () => mostrar(location.hash.slice(1) || "ipc"));
+document.addEventListener("DOMContentLoaded", () => {
+  const g = $("ver-gobiernos");
+  if (g) g.onchange = () => { verGobiernos = g.checked; Object.keys(ultimosArgs).forEach(id => { if ($(id)?.offsetParent) redibujar(id); }); };
+  mostrar(location.hash.slice(1) || "resumen");
+});

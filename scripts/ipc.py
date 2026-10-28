@@ -184,6 +184,20 @@ def limpia(s):
     return s[:1].upper() + s[1:].lower()
 
 
+def escribir_historico(ind_total, largo):
+    """IPC total desde 2003 (serie de empalme del DANE, dic 2018 = 100) para ver la historia larga.
+    Las variaciones se calculan del índice; desde 2019 se usan las oficiales publicadas en los anexos."""
+    h = pd.Series({pd.Timestamp(a, m, 1): v for (a, m), v in ind_total.items()}).sort_index()
+    df = pd.DataFrame({"indice": h, "var_mensual": h.pct_change() * 100, "var_anual": h.pct_change(12) * 100})
+    df.index = df.index.strftime("%Y-%m-%d")
+    of = largo[largo.id_serie == "IPC_TOTAL"].pivot_table(index="fecha", columns="medida", values="valor")
+    for c in ["var_mensual", "var_anual"]:
+        if c in of:
+            df.loc[df.index.intersection(of.index), c] = of[c]
+    df["fuente_variacion"] = ["oficial (anexo mensual)" if f in of.index else "calculada del índice" for f in df.index]
+    df.round(2).rename_axis("fecha").reset_index().dropna(subset=["indice"]).to_csv(SALIDA / "total_historico.csv", index=False)
+
+
 # ---------------------------------------------------------------- principal
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
@@ -202,6 +216,10 @@ def main():
         nuevos = [p for p in anexos if f"{p[0]}-{p[1]:02d}-01" not in tiene]
         if not nuevos:
             print("Sin datos nuevos del DANE.")
+            if not (SALIDA / "total_historico.csv").exists():
+                ruta = cache / url_indices.rsplit("/", 1)[-1]
+                bajar(url_indices, ruta)
+                escribir_historico(leer_indice_total(ruta), previo)
             return
         # se vuelve a leer también el último mes guardado, por si el DANE lo corrigió
         ultimo = max(p for p in anexos if f"{p[0]}-{p[1]:02d}-01" in tiene) if tiene else None
@@ -290,6 +308,7 @@ def main():
     SALIDA.mkdir(parents=True, exist_ok=True)
     series.to_csv(SALIDA / "series.csv", index=False, encoding="utf-8")
     largo.to_csv(SALIDA / "datos.csv", index=False, encoding="utf-8")
+    escribir_historico(ind_total, largo)
     print(f"series.csv: {len(series)} series | datos.csv: {len(largo)} filas | último mes {largo.fecha.max()}")
 
 
