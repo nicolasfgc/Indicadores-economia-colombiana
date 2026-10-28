@@ -50,7 +50,7 @@ registrar("empleo", (() => {
           {unidad: "%", fmtValor: x => fmt(x, 1) + "%"});
     const pos = css("--s4"), neg = css("--s3");
     serie("emp-brecha", F, [{label: "Brecha: mujeres − hombres (puntos)", data: brecha, tipo: "bar", colores: brecha.map(b => b == null ? null : b >= 0 ? pos : neg)}],
-          {fmtValor: x => (x > 0 ? "+" : "") + fmt(x, 1) + " pts", despues: (i0, i1) => {
+          {fmtValor: x => (x > 0 ? "+" : "") + fmt(x, 1) + " pts", eje0: true, despues: (i0, i1) => {
       const f = st.mes, hi = at(h, f), mi = at(m, f), b = mi - hi;
       const tramo = brecha.slice(i0, i1 + 1).filter(x => x != null), prom = tramo.reduce((a, c) => a + c, 0) / (tramo.length || 1);
       const sentido = {td: b > 0 ? "más alta para las mujeres: proporcionalmente, más mujeres que hombres buscan trabajo y no lo encuentran" : "más alta para los hombres",

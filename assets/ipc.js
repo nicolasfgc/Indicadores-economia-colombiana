@@ -43,12 +43,14 @@ registrar("ipc", (() => {
   }
   function interpretar(i0, i1) {
     const H = st.H;
-    const tramo = H.var_anual.slice(i0, i1 + 1).map((v, k) => [v, H.fechas[i0 + k]]).filter(x => x[0] != null);
+    const datos = st.cat ? H.fechas.map(f => val(st.cat, "var_anual", f) ?? null) : H.var_anual;
+    const quien = st.cat ? `la inflación de ${nombre(st.cat).toLowerCase()}` : "la inflación";
+    const tramo = datos.slice(i0, i1 + 1).map((v, k) => [v, H.fechas[i0 + k]]).filter(x => x[0] != null);
     if (tramo.length) {
       const prom = tramo.reduce((a, b) => a + b[0], 0) / tramo.length;
       const max = tramo.reduce((a, b) => b[0] > a[0] ? b : a), min = tramo.reduce((a, b) => b[0] < a[0] ? b : a);
       const dentro = tramo.filter(x => x[0] >= 2 && x[0] <= 4).length / tramo.length * 100;
-      $("ipc-hist-txt").innerHTML = `Entre <strong>${etqMes(tramo[0][1])}</strong> y <strong>${etqMes(tramo.at(-1)[1])}</strong> la inflación promedió <strong>${fmt(prom)}%</strong>. ` +
+      $("ipc-hist-txt").innerHTML = `Entre <strong>${etqMes(tramo[0][1])}</strong> y <strong>${etqMes(tramo.at(-1)[1])}</strong> ${quien} promedió <strong>${fmt(prom)}%</strong>. ` +
         `Lo más alto fue ${fmt(max[0])}% (${etqMes(max[1])}, gobierno ${gobiernoDe(max[1])}) y lo más bajo ${fmt(min[0])}% (${etqMes(min[1])}). ` +
         `Estuvo dentro del rango meta (2% a 4%) el ${fmt(dentro, 0)}% de los meses.`;
     }
