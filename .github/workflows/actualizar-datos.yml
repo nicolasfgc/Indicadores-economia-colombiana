@@ -2,7 +2,7 @@ name: Actualizar datos
 
 # Calendario aproximado de publicación del DANE:
 #   IPC: primeros días del mes.   ISE: hacia la mitad del mes (con dos meses de rezago).
-#   Mercado laboral: final del mes siguiente.   TRM: diaria.
+#   Mercado laboral: final del mes siguiente.   TRM y tasas: diarias.   Presupuesto: mensual (MinHacienda).
 # Corre todos los días a las 10:00 a. m. hora Colombia (15:00 UTC); el mercado laboral sale a fin de mes.
 # Si no hay datos nuevos, no guarda nada. También se puede correr a mano desde "Actions".
 on:
@@ -44,6 +44,10 @@ jobs:
       - name: Tasas y dólar
         if: always()
         run: python scripts/tasas.py
+
+      - name: Presupuesto General de la Nación
+        if: always()
+        run: python scripts/presupuesto.py
 
       - name: Guardar cambios si hay datos nuevos
         if: always()
