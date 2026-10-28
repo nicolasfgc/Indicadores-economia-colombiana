@@ -49,6 +49,11 @@ jobs:
         if: always()
         run: python scripts/presupuesto.py
 
+      # Lee los archivos históricos de Hacienda guardados en fuentes/minhacienda/ (se actualizan a mano)
+      - name: Presupuesto histórico por sector
+        if: always()
+        run: python scripts/presupuesto_historico.py
+
       - name: Guardar cambios si hay datos nuevos
         if: always()
         run: |

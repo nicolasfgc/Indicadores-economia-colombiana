@@ -15,6 +15,7 @@ La idea es poder ir de lo general a lo particular: si la inflación sube, ver qu
 | Mercado laboral (GEIH) | Desempleo, ocupación, participación y subutilización para el total nacional, cabeceras, 13 ciudades y por sexo (mensual); 23 ciudades (trimestre móvil); ocupados por rama de actividad y por posición ocupacional; series desestacionalizadas | Enero 2001 | DANE |
 | Dólar (TRM) | Diaria, promedio y cierre de cada mes, variaciones | Diciembre 1991 | Superintendencia Financiera |
 | Presupuesto General de la Nación (gastos) | Apropiación inicial y vigente, adiciones, reducciones, compromisos, obligaciones y pagos, cada mes, por sector, entidad y rubro presupuestal (hasta 5 niveles), fuente, situación de fondos y recurso | Enero 2019 | Ministerio de Hacienda |
+| Presupuesto histórico por sector | Apropiación, compromisos, obligaciones y pagos por sector, anual, en precios corrientes y constantes; funcionamiento e inversión; Nación y recursos propios; desglose por concepto (personal, transferencias, deuda…); pérdidas de apropiación y rezago | 2000 | Ministerio de Hacienda |
 | Tasas de interés y UVR | Tasa de política monetaria, IBR (a un día, 1 y 3 meses), tasa interbancaria, CDT a 90 días, DTF y UVR. Diarias, promedio y cierre de cada mes | 1986–2012 según la serie | Banco de la República |
 
 Próximamente: encuestas sectoriales (industria, comercio, servicios) e ingresos del presupuesto. El listado completo está en [`datos/catalogo.csv`](datos/catalogo.csv).
@@ -83,6 +84,23 @@ Cómo leer las cifras:
 - **Apropiación vigente:** lo que la entidad tiene autorizado gastar (inicial + adiciones − reducciones).
 - **Compromisos:** lo ya contratado o comprometido. **Obligaciones:** lo que ya se recibió y se debe pagar (es la medida usual de "ejecución"). **Pagos:** lo efectivamente pagado.
 - **Vigencia:** `Vigencia actual` es el presupuesto del año; `Reservas presupuestales` y `Cuentas por pagar` son compromisos del año anterior que se pagan en este. Para analizar el presupuesto de un año, se usa la vigencia actual.
+
+### Presupuesto histórico por sector (2000 en adelante)
+
+Para comparar gobiernos con las mismas reglas, `datos/presupuesto_historico/` trae la ejecución **anual por sector** desde el año 2000:
+
+| Archivo | Qué trae |
+|---|---|
+| `sectores.csv` | `anio`, `sector`, `tipo_gasto` (Total sin deuda, Funcionamiento, Inversión), `fuente` (Total, Nación, Propios), `medida` (apropiacion, compromisos, obligaciones, pagos), `precios` (corrientes o constantes) y `valor` |
+| `conceptos.csv` | Lo mismo por concepto de gasto: gastos de personal, transferencias, inversión, deuda externa e interna (principal e intereses)… |
+| `perdidas_apropiacion.csv` | Lo que se apropió y no se comprometió, por sector y año |
+| `rezago.csv` | Reservas presupuestales y cuentas por pagar que pasan al año siguiente, por sector y año |
+
+- Valores en **miles de millones de pesos**. Los de precios constantes usan los deflactores de Hacienda.
+- La columna `sector_comparable` agrupa los sectores que se dividieron después de 2018 (Salud y Trabajo; Interior y Justicia) para que la serie sea comparable de punta a punta.
+- El último año es parcial (corte a septiembre).
+- Los archivos originales están en `fuentes/minhacienda/`. El sitio de Hacienda bloquea descargas automáticas, así que se actualizan a mano: basta con reemplazar los archivos (los años cerrados no cambian).
+- Para el detalle por entidad, rubro y proyecto (2019 en adelante) se usa `datos/presupuesto/`.
 
 ### ISE: versiones
 
