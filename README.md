@@ -81,6 +81,7 @@ Es la base más grande, así que va **normalizada** en `datos/presupuesto/`:
 
 Cómo leer las cifras:
 - Cada mes es **acumulado en el año**: la cifra de septiembre es lo ejecutado de enero a septiembre.
+- Las columnas **`cambio_mes_apropiacion_vigente`, `cambio_mes_compromisos`, `cambio_mes_obligaciones` y `cambio_mes_pagos`** dicen cuánto se movió frente al mes anterior: por ejemplo, cuánto se comprometió *en* octubre. Están en `gastos_<año>.csv` (por rubro) y en `resumen.csv` (por entidad; sumando se obtiene el sector). En enero el cambio es el valor completo; en la apropiación vigente, enero se compara contra la apropiación inicial (es decir, muestra adiciones menos reducciones). La columna `mes_anterior` dice contra qué mes se comparó: si la fuente se salta meses (como febrero y marzo de 2026), el cambio de abril cubre todo lo ocurrido desde enero.
 - **Apropiación vigente:** lo que la entidad tiene autorizado gastar (inicial + adiciones − reducciones).
 - **Compromisos:** lo ya contratado o comprometido. **Obligaciones:** lo que ya se recibió y se debe pagar (es la medida usual de "ejecución"). **Pagos:** lo efectivamente pagado.
 - **Vigencia:** `Vigencia actual` es el presupuesto del año; `Reservas presupuestales` y `Cuentas por pagar` son compromisos del año anterior que se pagan en este. Para analizar el presupuesto de un año, se usa la vigencia actual.

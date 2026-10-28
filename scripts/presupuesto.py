@@ -66,6 +66,26 @@ def bajar_anio(anio):
     return d
 
 
+CAMBIOS = ["apropiacion_vigente", "compromisos", "obligaciones", "pagos"]
+
+
+def agregar_cambios(df, claves):
+    """Agrega el cambio frente al mes anterior (las cifras son acumuladas en el año).
+    cambio_mes_<medida> = valor de este mes - valor del mes anterior disponible del mismo año.
+    En el primer mes del año (o la primera vez que aparece un rubro) el cambio es el valor completo,
+    salvo la apropiación vigente, que se compara contra la apropiación inicial (= adiciones - reducciones).
+    mes_anterior dice contra qué mes se comparó (importa cuando la fuente se salta meses)."""
+    df = df.sort_values("fecha").copy()
+    df["_anio"] = df.fecha.str[:4]
+    g = df.groupby(claves + ["_anio"], sort=False)
+    df["mes_anterior"] = g.fecha.shift(1).fillna("")
+    for m in CAMBIOS:
+        previo = g[m].shift(1)
+        base = df["apropiacion_inicial"] if m == "apropiacion_vigente" else 0
+        df[f"cambio_mes_{m}"] = (df[m] - previo.where(previo.notna(), base)).round(2)
+    return df.drop(columns="_anio")
+
+
 def main():
     completo = "--completo" in sys.argv
     SALIDA.mkdir(parents=True, exist_ok=True)
@@ -118,6 +138,8 @@ def main():
             raise RuntimeError(f"{anio}: filas duplicadas en el grano esperado")
         for v in hechos.columns[6:]:
             hechos[v] = hechos[v].round(2)
+        hechos = agregar_cambios(hechos, ["vigencia", "fuente", "situacion", "recurso", "id_rubro"])
+        hechos = hechos.sort_values(clave_grano)
         hechos.to_csv(SALIDA / f"gastos_{anio}.csv", index=False, encoding="utf-8", float_format="%.15g")
         print(f"  {anio}: {len(hechos):,} filas, meses {sorted(d.mes.unique().astype(int).tolist())}")
         time.sleep(2)
@@ -135,10 +157,15 @@ def main():
     partes = []
     for p in sorted(SALIDA.glob("gastos_*.csv")):
         h = pd.read_csv(p, dtype={"id_rubro": int, "recurso": str})
+        if "cambio_mes_compromisos" not in h.columns:  # archivos de años cerrados escritos antes de agregar los cambios
+            h = agregar_cambios(h, ["vigencia", "fuente", "situacion", "recurso", "id_rubro"])
+            h.sort_values(["fecha", "id_rubro", "vigencia", "fuente", "situacion", "recurso"]).to_csv(
+                p, index=False, encoding="utf-8", float_format="%.15g")
         h = h.merge(rub, on="id_rubro").merge(ent, on="codigo_entidad")
         partes.append(h.groupby(["fecha", "vigencia", "sector", "codigo_entidad", "entidad", "tipo_gasto"], as_index=False)
                       [["apropiacion_inicial", "apropiacion_vigente", "compromisos", "obligaciones", "pagos"]].sum())
-    resumen = pd.concat(partes)
+    resumen = agregar_cambios(pd.concat(partes), ["vigencia", "codigo_entidad", "tipo_gasto"])
+    resumen = resumen.sort_values(["fecha", "vigencia", "sector", "codigo_entidad", "tipo_gasto"])
     resumen.round(2).to_csv(SALIDA / "resumen.csv", index=False, encoding="utf-8", float_format="%.15g")
     print(f"rubros: {len(rubros):,} | entidades: {len(ent)} | resumen: {len(resumen):,} filas")
 
