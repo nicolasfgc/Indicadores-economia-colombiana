@@ -1,7 +1,7 @@
 indicador,tema,descripcion,desagregacion,medidas,frecuencia,fuente,desde,estado,carpeta
-IPC,Precios,"Índice de Precios al Consumidor: cómo cambian los precios de lo que compran los hogares","Total > División (12) > Grupo (42) > Subclase (188)","indice; var_mensual; var_ano_corrido; var_anual; contrib_mensual; contrib_ano_corrido; contrib_anual",Mensual,DANE,2019-01,Disponible,datos/ipc
-ISE,Actividad económica,"Indicador de Seguimiento a la Economía: cómo va la producción mes a mes","Total > Gran rama > Actividad > Subactividad",,Mensual,DANE,,Pendiente,
-Mercado laboral,Empleo,"Gran Encuesta Integrada de Hogares: desempleo, ocupación y participación","Nacional > Ciudades / Sexo / Rama",,Mensual,DANE,,Pendiente,
-TRM,Tasas y dólar,"Tasa Representativa del Mercado: precio del dólar en pesos",Total,,Diaria / mensual,Banco de la República,,Pendiente,
-Tasa de política monetaria,Tasas y dólar,"Tasa de interés que fija el Banco de la República",Total,,Por decisión / mensual,Banco de la República,,Pendiente,
-Presupuesto General de la Nación,Fiscal,"Apropiación y ejecución del presupuesto","Sector > Entidad > Rubro",,Mensual,Ministerio de Hacienda,,Pendiente,
+IPC,Precios,Índice de Precios al Consumidor: cómo cambian los precios de lo que compran los hogares,Total > División (12) > Grupo (42) > Subclase (188),indice; var_mensual; var_ano_corrido; var_anual; contrib_mensual; contrib_ano_corrido; contrib_anual,Mensual,DANE,2019-01,Disponible,datos/ipc
+ISE,Actividad económica,Indicador de Seguimiento a la Economía: cómo va la producción mes a mes,Total > Gran rama (3) > Agrupación (9 mensual / 12 trimestral),"indice; var_anual; var_mensual; var_ano_corrido (serie original, desestacionalizada y tendencia)",Mensual,DANE,2005-01,Disponible,datos/ise
+Mercado laboral,Empleo,"Gran Encuesta Integrada de Hogares: desempleo, ocupación y participación",Nacional > Ciudades / Sexo / Rama,,Mensual,DANE,,Pendiente,
+TRM,Tasas y dólar,Tasa Representativa del Mercado: precio del dólar en pesos,Total,,Diaria / mensual,Banco de la República,,Pendiente,
+Tasa de política monetaria,Tasas y dólar,Tasa de interés que fija el Banco de la República,Total,,Por decisión / mensual,Banco de la República,,Pendiente,
+Presupuesto General de la Nación,Fiscal,Apropiación y ejecución del presupuesto,Sector > Entidad > Rubro,,Mensual,Ministerio de Hacienda,,Pendiente,
