@@ -9,17 +9,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/estilos.css?v=29">
+<link rel="stylesheet" href="assets/estilos.css?v=30">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/comun.js?v=29"></script>
-<script src="assets/resumen.js?v=29"></script>
-<script src="assets/ipc.js?v=29"></script>
-<script src="assets/ise.js?v=29"></script>
-<script src="assets/empleo.js?v=29"></script>
-<script src="assets/tasas.js?v=29"></script>
-<script src="assets/presupuesto.js?v=29"></script>
-<script src="assets/comercio.js?v=29"></script>
+<script src="assets/comun.js?v=30"></script>
+<script src="assets/resumen.js?v=30"></script>
+<script src="assets/ipc.js?v=30"></script>
+<script src="assets/ise.js?v=30"></script>
+<script src="assets/empleo.js?v=30"></script>
+<script src="assets/tasas.js?v=30"></script>
+<script src="assets/presupuesto.js?v=30"></script>
+<script src="assets/comercio.js?v=30"></script>
 </head>
 <body>
 <div class="wrap">
@@ -82,7 +82,7 @@
       <section class="panel">
         <span class="paso">2 · LA INFLACIÓN Y LA TASA DEL BANCO DE LA REPÚBLICA</span>
         <h2>¿El Banco de la República está frenando la inflación?</h2>
-        <p class="hint">Cuando la inflación sube, el Banco sube su tasa para encarecer el crédito y frenar los precios. Las barras muestran la tasa real: cuánto está la tasa por encima (aguamarina) o por debajo (rojo) de la inflación. La tasa llega hasta hoy y la inflación, hasta el último mes publicado por el DANE.</p>
+        <p class="hint">Cuando la inflación sube, el Banco sube su tasa para encarecer el crédito y frenar los precios. Las barras muestran la tasa real: cuánto está la tasa por encima (barras hacia arriba) o por debajo (barras rojas, hacia abajo) de la inflación. La tasa llega hasta hoy y la inflación, hasta el último mes publicado por el DANE.</p>
         <div class="chartbox" style="height:340px"><canvas id="ipc-vs"></canvas></div>
         <p class="interp" id="ipc-vs-txt"></p>
       </section>
@@ -216,7 +216,7 @@
       <section class="panel">
         <span class="paso">1 · LA TASA DEL BANCO DE LA REPÚBLICA Y LA INFLACIÓN</span>
         <h2>¿El Banco de la República está frenando la inflación?</h2>
-        <p class="hint">Cuando la inflación sube, el Banco sube su tasa para encarecer el crédito y frenar los precios. Las barras muestran la tasa real: cuánto está la tasa por encima (aguamarina) o por debajo (rojo) de la inflación. Cierre de cada mes; la tasa llega hasta hoy y la inflación, hasta el último mes publicado por el DANE.</p>
+        <p class="hint">Cuando la inflación sube, el Banco sube su tasa para encarecer el crédito y frenar los precios. Las barras muestran la tasa real: cuánto está la tasa por encima (barras hacia arriba) o por debajo (barras rojas, hacia abajo) de la inflación. Cierre de cada mes; la tasa llega hasta hoy y la inflación, hasta el último mes publicado por el DANE.</p>
         <div class="chartbox" style="height:340px"><canvas id="tas-vs"></canvas></div>
         <p class="interp" id="tas-vs-txt"></p>
       </section>
@@ -259,7 +259,7 @@
       <section class="panel">
         <span class="paso">1 · EL PANORAMA</span>
         <h2>Lo que Colombia le vende y le compra al mundo</h2>
-        <p class="hint">Millones de dólares por mes. Las barras son la <strong>balanza comercial</strong>: exportaciones menos importaciones. Hacia arriba (aguamarina), el país vendió más de lo que compró; hacia abajo (rojo), compró más de lo que vendió.</p>
+        <p class="hint">Millones de dólares por mes. Las barras son la <strong>balanza comercial</strong>: exportaciones menos importaciones. Hacia arriba, el país vendió más de lo que compró; hacia abajo, en rojo, compró más de lo que vendió.</p>
         <div class="chartbox" style="height:340px"><canvas id="com-pan"></canvas></div>
         <p class="interp" id="com-pan-txt"></p>
       </section>
@@ -289,7 +289,7 @@
       <section class="panel" id="com-paises-box">
         <span class="paso">4 · CON QUIÉN</span>
         <div class="row spread"><h2 id="com-paises-t"></h2><div class="seg" id="com-paises-anio"></div></div>
-        <p class="hint">Balanza comercial con cada país o bloque: exportaciones menos importaciones del año. Aguamarina: Colombia le vende más de lo que le compra. Rojo: al revés. Toca una barra para verla desde 1995.</p>
+        <p class="hint">Balanza comercial con cada país o bloque: exportaciones menos importaciones del año. Hacia la derecha, Colombia le vende más de lo que le compra; hacia la izquierda, en rojo, al revés. Toca una barra para verla desde 1995.</p>
         <div class="chartbox"><canvas id="com-paises"></canvas></div>
         <div id="com-pais-tiempo" hidden></div>
         <p class="interp" id="com-paises-txt"></p>
