@@ -133,7 +133,8 @@ function selectorVarias(contId, arbol, alCambiar, {total = "Total", otra = "Comp
   abrir.onclick = () => { if (ids.length >= max) return; panel.hidden = !panel.hidden; abrir.classList.toggle("on", !panel.hidden); if (!panel.hidden) { buscador.value = ""; dibujarArbol(); buscador.focus({preventScroll: true}); } };
   panel.querySelector(".cerrar").onclick = cerrar;
   buscador.oninput = dibujarArbol;
-  document.addEventListener("click", e => { if (!panel.hidden && !caja.querySelector(".agregar").contains(e.target)) cerrar(); });
+  // clic afuera cierra (se mira la ruta del clic porque el árbol se redibuja y el botón tocado ya no está en la página)
+  document.addEventListener("click", e => { if (!panel.hidden && !e.composedPath().includes(caja.querySelector(".agregar"))) cerrar(); });
   document.addEventListener("keydown", e => { if (e.key === "Escape") cerrar(); });
 
   const pintar = () => {
