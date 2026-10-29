@@ -43,6 +43,9 @@ registrar("presupuesto", (() => {
       t += ` Además, <strong>el Ministerio no ha publicado ${listaMeses(falt)}</strong>. En las gráficas esos meses aparecen vacíos` +
         (despues.length ? `, y lo comprometido en ${listaMeses(despues)} incluye también lo de los meses que faltan.` : ".");
     }
+    const siif = st.d.desde_siif || [];
+    if (siif.length) t += ` ${listaMeses(siif).replace(/^./, c => c.toUpperCase())} no ${siif.length > 1 ? "están" : "está"} en la base de datos abiertos del Ministerio; ` +
+      `se ${siif.length > 1 ? "tomaron" : "tomó"} del mismo reporte del SIIF que el Ministerio publica en el Portal de Transparencia Económica.`;
     $("pre-aviso").innerHTML = t;
   }
 

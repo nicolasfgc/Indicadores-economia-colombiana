@@ -15,6 +15,7 @@ Para que pese poco, se guarda normalizado:
 
 Cada corrida vuelve a descargar el año en curso y el anterior (el MinHacienda los ajusta);
 los años cerrados se conservan. Con --completo se descarga todo de nuevo.
+Si a datos.gov.co le falta un mes, se completa con el reporte del SIIF guardado en fuentes/minhacienda/siif/.
 
 Uso:  python scripts/presupuesto.py [--completo]
 """
@@ -66,6 +67,64 @@ def bajar_anio(anio):
     return d
 
 
+# ---------------------------------------------------------------- meses que faltan en datos.gov.co
+# El MinHacienda a veces no publica un mes en datos abiertos, pero sí publica el mismo reporte del SIIF en el
+# Portal de Transparencia Económica ("03. Reporte de SIIF Ejecución Agregada Vigencia actual, Reservas presupuestal, CxP").
+# Ese portal bloquea robots, así que esos archivos se bajan a mano y se guardan como fuentes/minhacienda/siif/AAAA-MM.xlsx.
+# Solo se usan para los meses que datos.gov.co no trae: si el Ministerio publica el mes después, manda datos.gov.co.
+SIIF = RAIZ / "fuentes" / "minhacienda" / "siif"
+HOJAS_SIIF = {"Actual": "VigenciaActual", "Reservas": "Reservas Presupuestales", "CxP": "Cuentas por Pagar"}
+COLUMNAS_SIIF = {"APR. INICIAL": "apropiacioninicial", "APR. ADICIONADA": "adiciones", "APR. REDUCIDA": "reducciones",
+                 "APR. VIGENTE": "apropiacionvigente", "COMPROMISO": "compromisos", "OBLIGACION": "obligaciones", "PAGOS": "pagos"}
+
+
+DESDE_SIIF = []  # meses completados en esta corrida
+
+
+def complementar_siif(d, anio):
+    archivos = [p for p in sorted(SIIF.glob(f"{anio}-*.xlsx")) if int(p.stem[5:7]) not in set(d.mes)]
+    if not archivos:
+        return d
+    ruta = lambda df: df[CODIGOS].apply(lambda r: "-".join(c for c in r if c and c != "CD"), axis=1)
+    d = d.copy()
+    d["_ruta"], d["_rec"] = ruta(d), d.recursospresupuestales.str.split(" - ").str[0].str.strip()
+    orden = d.sort_values("mes")
+    llave = ["codigoentidad", "_ruta", "vigencia", "fuente", "situacion", "_rec"]
+    ref = orden.drop_duplicates(llave, keep="last").set_index(llave, drop=False)          # misma combinación ya vista en el año
+    ref_rubro = orden.drop_duplicates(["codigoentidad", "_ruta"], keep="last").set_index(["codigoentidad", "_ruta"], drop=False)
+    nombre_rec = dict(zip(d._rec, d.recursospresupuestales))
+    fijos = ["anio", "sector", "codigoentidad", "nombreentidad", "detalleprogramas"] + CODIGOS + NOMBRES
+    nuevas = []
+    for p in archivos:
+        mes = int(p.stem[5:7])
+        for hoja, vig in HOJAS_SIIF.items():
+            enc = pd.read_excel(p, sheet_name=hoja, header=None, nrows=3, dtype=str)
+            periodo = str(enc.iloc[2, 1]).strip().lower()
+            if not periodo.endswith(MESES[mes - 1]) or str(enc.iloc[0, 1]).strip() != str(anio):
+                raise RuntimeError(f"{p.name} ({hoja}): dice '{enc.iloc[0, 1]} {periodo}', se esperaba {MESES[mes - 1]} de {anio}")
+            x = pd.read_excel(p, sheet_name=hoja, header=3, dtype=str).dropna(subset=["UEJ", "RUBRO"])
+            x.columns = [" ".join(str(c).split()) for c in x.columns]
+            x = x.apply(lambda col: col.str.strip())   # todo se leyó como texto
+            for col, v in COLUMNAS_SIIF.items():
+                x[v] = pd.to_numeric(x[col], errors="coerce").fillna(0) if col in x.columns else 0.0
+            for r in x.itertuples(index=False):
+                ent, rut, fue, sit, rec = r.UEJ, r.RUBRO, r.FUENTE, r.SIT, str(r.REC)
+                k = (ent, rut, vig, fue, sit, rec)
+                base = ref.loc[k] if k in ref.index else ref_rubro.loc[(ent, rut)] if (ent, rut) in ref_rubro.index else None
+                if base is None:
+                    raise RuntimeError(f"{p.name}: rubro {ent} {rut} no aparece en datos.gov.co para {anio}")
+                fila = {c: base[c] for c in fijos}
+                fila.update(fuente=fue, situacion=sit, vigencia=vig, recursospresupuestales=nombre_rec.get(rec, rec + " - "),
+                            nombremes=MESES[mes - 1].capitalize(), mes=mes, fecha=f"{anio}-{mes:02d}-01",
+                            **{v: getattr(r, v) for v in COLUMNAS_SIIF.values()})
+                nuevas.append(fila)
+        print(f"  {anio}: {MESES[mes - 1]} tomado del reporte SIIF del Portal de Transparencia ({p.name})")
+        DESDE_SIIF.append(f"{anio}-{mes:02d}-01")
+    n = pd.DataFrame(nuevas)
+    n = n.groupby([c for c in n.columns if c not in VALORES], as_index=False, dropna=False)[VALORES].sum()
+    return pd.concat([d.drop(columns=["_ruta", "_rec"]), n], ignore_index=True)
+
+
 CAMBIOS = ["apropiacion_vigente", "compromisos", "obligaciones", "pagos"]
 
 
@@ -110,7 +169,7 @@ def main():
         recursos = dict(pd.read_csv(SALIDA / "recursos.csv", dtype=str).values)
 
     for anio in rehacer:
-        d = bajar_anio(anio)
+        d = complementar_siif(bajar_anio(anio), anio)
         # id de rubro: entidad + los 5 códigos + nombre del 4.º nivel (en inversión es el proyecto; algunos proyectos
         # viejos de reservas comparten códigos genéricos). Del 5.º nivel se guarda el nombre más reciente.
         d["nombre4_norm"] = d.nombrecuartonivel.map(lambda x: " ".join(x.split()).upper())
@@ -143,6 +202,12 @@ def main():
         hechos.to_csv(SALIDA / f"gastos_{anio}.csv", index=False, encoding="utf-8", float_format="%.15g")
         print(f"  {anio}: {len(hechos):,} filas, meses {sorted(d.mes.unique().astype(int).tolist())}")
         time.sleep(2)
+
+    # registro de los meses que vienen del reporte SIIF (la página lo avisa); se conservan los de años no recalculados
+    reg = SALIDA / "meses_siif.csv"
+    previos = pd.read_csv(reg, dtype=str).fecha.tolist() if reg.exists() else []
+    previos = [f for f in previos if int(f[:4]) not in rehacer]
+    pd.DataFrame({"fecha": sorted(set(previos + DESDE_SIIF))}).to_csv(reg, index=False)
 
     rubros = pd.DataFrame(list(nombres_rubro.values())).sort_values("id_rubro")
     rubros["tipo_gasto"] = rubros.nombre_1

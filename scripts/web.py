@@ -119,7 +119,9 @@ def presupuesto():
     # meses que MinHacienda no publicó (huecos entre el primero y el último): la página avisa de ellos
     todos = pd.date_range(fechas[0], fechas[-1], freq="MS").strftime("%Y-%m-%d").tolist()
     faltantes = [f for f in todos if f not in fechas]
-    guardar("presupuesto/entidades.json", {"fechas": fechas, "faltantes": faltantes, "tipos": ["Funcionamiento", "Inversión", "Deuda"],
+    reg = carpeta / "meses_siif.csv"
+    desde_siif = [f for f in pd.read_csv(reg, dtype=str).fecha if f in fechas] if reg.exists() else []
+    guardar("presupuesto/entidades.json", {"fechas": fechas, "faltantes": faltantes, "desde_siif": desde_siif, "tipos": ["Funcionamiento", "Inversión", "Deuda"],
                                            "entidades": lista_ent[["codigo_entidad", "entidad", "sector"]].values.tolist(),
                                            "campos": VAL, "filas": filas})
     # detalle por rubro, un archivo por año (solo vigencia actual, sumando fuentes y recursos)
