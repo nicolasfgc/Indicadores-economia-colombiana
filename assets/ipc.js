@@ -40,7 +40,7 @@ registrar("ipc", (() => {
     const H = st.H, c = st.cats, F = c.length ? H.fechas.filter(f => f >= "2019-01-01") : H.fechas;
     const total = F.map(f => H.var_anual[H.fechas.indexOf(f)]);
     const ds = [{label: "Inflación total (anual)", data: total, color: c.length ? css("--muted") : css("--accent"), ancho: c.length ? 1.6 : 2.5, dash: c.length ? [4, 3] : []}];
-    c.forEach((id, k) => ds.push({label: nombre(id), data: F.map(f => val(id, "var_anual", f) ?? null), color: PALETA()[k], ancho: 2.5}));
+    c.forEach((id, k) => ds.push({label: nombre(id), data: F.map(f => val(id, "var_anual", f) ?? null), color: DISTINTOS()[k], ancho: 2.5}));
     serie("ipc-hist", F, ds, {unidad: "%", referencias: [{y: 3, t: "Meta 3%"}, {y: 4, t: "4%"}, {y: 2, t: "2%"}], inicio: c.length ? F.length : 12 * 23,
       despues: (i0, i1) => interpretar(F, ds, i0, i1)});
   }
