@@ -123,8 +123,8 @@ function selectorVarias(contId, arbol, alCambiar, {total = "Total", otra = "Comp
     const q = buscador.value.trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
     if (q.length >= 2) {
       const res = Object.entries(info).filter(([, v]) => v.t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").includes(q)).slice(0, 40);
-      cont.innerHTML = res.length ? `<ul>${res.map(([id, v]) => `<li style="--p:0"><div class="fila"><span class="flecha"></span><button class="nombre${ids.includes(id) ? " ya" : ""}" data-id="${id}" ${ids.includes(id) ? "disabled" : ""}>${ids.includes(id) ? "✓ " : ""}${esc(v.t)}</button>` +
-        `${v.ruta.length ? `<span class="cuenta">en ${esc(v.ruta.join(" › "))}</span>` : ""}</div></li>`).join("")}</ul>` : `<p class="hint">No hay categorías con ese nombre.</p>`;
+      cont.innerHTML = res.length ? `<ul>${res.map(([id, v]) => `<li style="--p:0"><div class="fila res"><span class="flecha"></span><button class="nombre${ids.includes(id) ? " ya" : ""}" data-id="${id}" ${ids.includes(id) ? "disabled" : ""}>${ids.includes(id) ? "✓ " : ""}${esc(v.t)}</button>` +
+        `${v.ruta.length ? `<span class="ruta">en ${esc(v.ruta.join(" › "))}</span>` : ""}</div></li>`).join("")}</ul>` : `<p class="hint">No hay categorías con ese nombre.</p>`;
     } else cont.innerHTML = `<ul>${arbol.map(n => nodoHTML(n, 0)).join("")}</ul>`;
     cont.querySelectorAll("[data-k]").forEach(b => b.onclick = () => { const k = b.dataset.k; abiertos.has(k) ? abiertos.delete(k) : abiertos.add(k); dibujarArbol(); });
     cont.querySelectorAll(".nombre[data-id]").forEach(b => b.onclick = () => agregar(b.dataset.id, true));

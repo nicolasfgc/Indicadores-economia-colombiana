@@ -178,3 +178,5 @@ tr.rama td{background:var(--accent-soft)}
 .agregar .cuenta{font-size:12px;color:var(--muted);margin-left:auto;padding-left:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:45%}
 .agregar .pie{display:flex;justify-content:flex-end}
 .agregar .pie .cerrar{border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:8px;padding:4px 12px;font:inherit;font-size:13px;cursor:pointer}
+.agregar .fila.res{flex-wrap:wrap}
+.agregar .fila.res .ruta{flex-basis:100%;padding-left:34px;font-size:12px;color:var(--muted);margin-top:-2px}
