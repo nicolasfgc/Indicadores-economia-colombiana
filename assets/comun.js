@@ -190,7 +190,7 @@ async function tasaVsInflacion(canvasId, txtId) {
                    : x > 0 ? "por encima de la inflación: el crédito cuesta algo más de lo que suben los precios"
                    : "por debajo de la inflación: endeudarse sale barato, lo que impulsa el crédito y el consumo";
       let txt = `En <strong>${etqMesLargo(F[a])}</strong>, último mes con dato de inflación, la tasa del Banco de la República cerró en <strong>${fmt(t[a])}%</strong> y la inflación anual fue <strong>${fmt(p[a])}%</strong>. ` +
-        `La diferencia entre las dos, llamada <strong>tasa real</strong>, fue de ${fmt(real[a])} puntos: la tasa estaba ${estado(real[a])}. `;
+        `La diferencia entre las dos, llamada <strong>tasa real</strong>, fue de ${fmt(real[a])} puntos. Es decir, la tasa estaba ${estado(real[a])}. `;
       if (i1 > a && t[i1] !== t[a]) {   // la tasa cambió después del último dato de inflación
         const r2 = t[i1] - p[a];
         txt += `<strong>Hoy la tasa está en ${fmt(t[i1])}%</strong>; con la última inflación conocida, la tasa real sería de ${fmt(r2)} puntos. `;
