@@ -86,42 +86,79 @@ function selectorCategoria(contId, grupos, alCambiar, {total = "Total", otra = "
   return {set(id) { if (!id) { modo("total"); } else { modo("cat"); sel.value = id; } alCambiar(id); }};
 }
 
-// Selector "Total / varias categorías": se agregan categorías desde una lista y se quitan con la ✕ de cada etiqueta.
+// Selector "Total / varias categorías" con un árbol que se va abriendo por niveles y un buscador.
+// arbol = [{id, t, nivel, hijos: [...]}] (un nodo sin id es solo un encabezado que agrupa).
 // alCambiar(ids) recibe [] cuando se vuelve al total. colorDe(k) da el color de la k-ésima categoría elegida.
-function selectorVarias(contId, grupos, alCambiar, {total = "Total", otra = "Comparar categorías", max = 6, colorDe = k => DISTINTOS()[k]} = {}) {
+function selectorVarias(contId, arbol, alCambiar, {total = "Total", otra = "Comparar categorías", max = 6, ayuda = "", colorDe = k => DISTINTOS()[k]} = {}) {
   const c = $(contId);
   c.classList.add("selcat");
-  const nombres = {};
-  grupos.forEach(g => g.items.forEach(([v, t]) => nombres[v] = t.trim().replace(/^· /, "").replace(/ \(división\)$/, "")));
-  const opts = grupos.map(g => g.g ? `<optgroup label="${g.g}">${g.items.map(([v, t]) => `<option value="${v}">${t}</option>`).join("")}</optgroup>`
-                                   : g.items.map(([v, t]) => `<option value="${v}">${t}</option>`).join("")).join("");
+  const info = {};   // id -> {t, ruta}
+  (function indexar(nodos, ruta) { for (const n of nodos) { if (n.id) info[n.id] = {t: n.t, ruta}; if (n.hijos) indexar(n.hijos, n.id || n.t ? [...ruta, n.t] : ruta); } })(arbol, []);
+  const primero = (function buscar(ns) { for (const n of ns) { if (n.id) return n.id; const x = n.hijos && buscar(n.hijos); if (x) return x; } })(arbol);
   c.innerHTML = `<div class="seg"><button data-v="total" class="on">${total}</button><button data-v="cat">${otra}</button></div>
-    <div class="varias" hidden><select><option value="">+ Agregar una categoría…</option>${opts}</select><div class="chips"></div></div>`;
-  const caja = c.querySelector(".varias"), sel = caja.querySelector("select"), chips = caja.querySelector(".chips"), botones = c.querySelectorAll(".seg button");
+    <div class="varias" hidden>
+      <div class="agregar"><button class="abrir" type="button">+ Agregar una categoría <span>▾</span></button>
+        <div class="panel" hidden>
+          ${ayuda ? `<p class="hint">${ayuda}</p>` : ""}
+          <input type="search" placeholder="Buscar por nombre (por ejemplo: arroz, arriendo, gasolina)…">
+          <div class="arbol"></div>
+          <div class="pie"><button class="cerrar" type="button">Cerrar</button></div>
+        </div></div>
+      <div class="chips"></div></div>`;
+  const caja = c.querySelector(".varias"), panel = caja.querySelector(".panel"), abrir = caja.querySelector(".abrir"), buscador = panel.querySelector("input"),
+        cont = panel.querySelector(".arbol"), chips = caja.querySelector(".chips"), botones = c.querySelectorAll(".seg button");
   let ids = [];
+  const abiertos = new Set();
+  const esc = t => t.replace(/[&<>"]/g, x => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[x]));
+
+  function nodoHTML(n, prof) {
+    const tiene = n.hijos && n.hijos.length, ab = abiertos.has(n.id || n.t), ya = n.id && ids.includes(n.id);
+    const flecha = tiene ? `<button class="flecha" data-k="${esc(n.id || n.t)}" title="${ab ? "Cerrar" : "Ver lo que contiene"}">${ab ? "▾" : "▸"}</button>` : `<span class="flecha"></span>`;
+    const nombre = n.id ? `<button class="nombre${ya ? " ya" : ""}" data-id="${n.id}" ${ya ? "disabled" : ""}>${ya ? "✓ " : ""}${esc(n.t)}</button>`
+                        : `<button class="nombre grupo" data-k="${esc(n.t)}">${esc(n.t)}</button>`;
+    const extra = tiene ? `<span class="cuenta">${n.nivel ? n.nivel + " · " : ""}${n.hijos.length} adentro</span>` : n.nivel ? `<span class="cuenta">${n.nivel}</span>` : "";
+    return `<li style="--p:${prof}"><div class="fila">${flecha}${nombre}${extra}</div>${tiene && ab ? `<ul>${n.hijos.map(h => nodoHTML(h, prof + 1)).join("")}</ul>` : ""}</li>`;
+  }
+  function dibujarArbol() {
+    const q = buscador.value.trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+    if (q.length >= 2) {
+      const res = Object.entries(info).filter(([, v]) => v.t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").includes(q)).slice(0, 40);
+      cont.innerHTML = res.length ? `<ul>${res.map(([id, v]) => `<li style="--p:0"><div class="fila"><span class="flecha"></span><button class="nombre${ids.includes(id) ? " ya" : ""}" data-id="${id}" ${ids.includes(id) ? "disabled" : ""}>${ids.includes(id) ? "✓ " : ""}${esc(v.t)}</button>` +
+        `${v.ruta.length ? `<span class="cuenta">en ${esc(v.ruta.join(" › "))}</span>` : ""}</div></li>`).join("")}</ul>` : `<p class="hint">No hay categorías con ese nombre.</p>`;
+    } else cont.innerHTML = `<ul>${arbol.map(n => nodoHTML(n, 0)).join("")}</ul>`;
+    cont.querySelectorAll("[data-k]").forEach(b => b.onclick = () => { const k = b.dataset.k; abiertos.has(k) ? abiertos.delete(k) : abiertos.add(k); dibujarArbol(); });
+    cont.querySelectorAll(".nombre[data-id]").forEach(b => b.onclick = () => agregar(b.dataset.id, true));
+  }
+  const cerrar = () => { panel.hidden = true; abrir.classList.remove("on"); };
+  abrir.onclick = () => { if (ids.length >= max) return; panel.hidden = !panel.hidden; abrir.classList.toggle("on", !panel.hidden); if (!panel.hidden) { buscador.value = ""; dibujarArbol(); buscador.focus({preventScroll: true}); } };
+  panel.querySelector(".cerrar").onclick = cerrar;
+  buscador.oninput = dibujarArbol;
+  document.addEventListener("click", e => { if (!panel.hidden && !caja.querySelector(".agregar").contains(e.target)) cerrar(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") cerrar(); });
+
   const pintar = () => {
-    chips.innerHTML = ids.map((id, k) => `<span class="chip" style="border-color:${colorDe(k)}"><i style="background:${colorDe(k)}"></i>${nombres[id]}<button data-id="${id}" title="Quitar">✕</button></span>`).join("") +
-      (ids.length >= max ? `<span class="hint inline">Máximo ${max} a la vez</span>` : "");
-    sel.disabled = ids.length >= max;
+    chips.innerHTML = ids.map((id, k) => `<span class="chip" style="border-color:${colorDe(k)}" title="${esc([...info[id].ruta, info[id].t].join(" › "))}"><i style="background:${colorDe(k)}"></i>${esc(info[id].t)}<button data-id="${id}" title="Quitar">✕</button></span>`).join("") +
+      (ids.length >= max ? `<span class="hint inline">Máximo ${max} a la vez: quita una para agregar otra.</span>` : "");
+    abrir.disabled = ids.length >= max;
     chips.querySelectorAll("button").forEach(b => b.onclick = () => { ids = ids.filter(x => x !== b.dataset.id); if (!ids.length) return modo("total", true); pintar(); alCambiar(ids); });
   };
   function modo(m, avisar) {
     botones.forEach(b => b.classList.toggle("on", b.dataset.v === m));
     caja.hidden = m === "total";
-    if (m === "total") ids = [];
-    else if (!ids.length) ids = [sel.options[1].value];
+    if (m === "total") { ids = []; cerrar(); }
+    else if (!ids.length) ids = [primero];
     pintar();
     if (avisar) alCambiar(ids);
   }
-  botones.forEach(b => b.onclick = () => modo(b.dataset.v, true));
-  sel.onchange = () => {
-    const v = sel.value; sel.value = "";
-    if (!v || ids.includes(v) || ids.length >= max) return;
-    if (caja.hidden) modo("cat");          // por si acaso: agregar siempre pasa al modo de comparar
-    if (!ids.includes(v)) ids = [...ids, v];
+  function agregar(id, desdePanel) {
+    if (!info[id]) return;
+    if (caja.hidden) modo("cat");
+    if (!ids.includes(id)) { if (ids.length >= max) ids.shift(); ids.push(id); }
+    if (desdePanel) cerrar();
     pintar(); alCambiar(ids);
-  };
-  return {agregar(id) { if (caja.hidden) modo("cat"); if (!ids.includes(id)) { if (ids.length >= max) ids.shift(); ids.push(id); } pintar(); alCambiar(ids); }};
+  }
+  botones.forEach(b => b.onclick = () => modo(b.dataset.v, true));
+  return {agregar: id => agregar(id)};
 }
 
 // Navegación por niveles: "← Volver" grande y el camino completo

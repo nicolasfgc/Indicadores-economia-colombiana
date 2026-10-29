@@ -155,3 +155,26 @@ tr.rama td{background:var(--accent-soft)}
 .autor strong{color:var(--ink)}
 .autor a{color:var(--accent);text-decoration:none}
 .autor a:hover{text-decoration:underline}
+/* agregar categorías: árbol que se abre por niveles */
+.agregar{position:relative;align-self:flex-start}
+.agregar .abrir{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:8px 14px;font:inherit;font-size:14px;cursor:pointer}
+.agregar .abrir:hover,.agregar .abrir.on{border-color:var(--accent);color:var(--accent)}
+.agregar .abrir:disabled{opacity:.5;cursor:not-allowed}
+.agregar .panel{position:absolute;z-index:20;top:calc(100% + 6px);left:0;width:min(560px,calc(100vw - 32px));max-height:min(460px,70vh);display:flex;flex-direction:column;gap:8px;
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;box-shadow:0 12px 30px rgba(15,23,42,.25)}
+.agregar .panel .hint{margin:0}
+.agregar .panel input{font:inherit;font-size:14px;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.agregar .arbol{overflow-y:auto;flex:1;min-height:80px}
+.agregar .arbol ul{list-style:none;margin:0;padding:0}
+.agregar .fila{display:flex;align-items:center;gap:4px;padding:2px 0 2px calc(var(--p) * 22px);border-radius:6px}
+.agregar .fila:hover{background:var(--chip)}
+.agregar .flecha{width:24px;flex:none;border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:13px;padding:4px 0;text-align:center}
+.agregar .flecha:hover{color:var(--accent)}
+.agregar .nombre{border:0;background:transparent;color:var(--ink);font:inherit;font-size:14px;text-align:left;cursor:pointer;padding:4px 6px;border-radius:6px}
+.agregar .nombre:hover{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.agregar .nombre.grupo{font-weight:600}
+.agregar .nombre.ya{color:var(--muted);cursor:default;text-decoration:none}
+.agregar .arbol > ul > li > .fila .nombre{font-weight:600}
+.agregar .cuenta{font-size:12px;color:var(--muted);margin-left:auto;padding-left:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:45%}
+.agregar .pie{display:flex;justify-content:flex-end}
+.agregar .pie .cerrar{border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:8px;padding:4px 12px;font:inherit;font-size:13px;cursor:pointer}

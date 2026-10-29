@@ -31,8 +31,11 @@ registrar("ipc", (() => {
     seg("ipc-medida", v => { st.medida = v; detalle(); });
     $("ipc-ultima").textContent = "Último dato: " + etqMesLargo(st.fechas.at(-1));
     // categorías para ver en el tiempo: divisiones, y dentro de cada una sus grupos y subclases
-    const grupos = st.hijos.IPC_TOTAL.map(d => ({g: nombre(d), items: [[d, nombre(d) + " (división)"], ...(st.hijos[d] || []).flatMap(g => [[g, "  " + nombre(g)], ...(st.hijos[g] || []).map(s => [s, "      · " + nombre(s)])])]}));
-    selCat = selectorVarias("ipc-cat", grupos, ids => { delete rangos["ipc-hist"]; st.cats = ids; historia(); }, {total: "Inflación total", otra: "Comparar categorías (desde 2019)"});
+    // árbol de categorías: división (lo más general) › grupo › subclase (lo más específico)
+    const nodo = (id, nivel) => ({id, t: nombre(id), nivel, hijos: (st.hijos[id] || []).map(h => nodo(h, nivel === "división" ? "grupo" : "subclase"))});
+    const arbol = st.hijos.IPC_TOTAL.map(d => nodo(d, "división"));
+    selCat = selectorVarias("ipc-cat", arbol, ids => { delete rangos["ipc-hist"]; st.cats = ids; historia(); }, {total: "Inflación total", otra: "Comparar categorías (desde 2019)",
+      ayuda: "Van de lo general a lo específico: <strong>división</strong> (por ejemplo, Alimentos) › <strong>grupo</strong> (Pan y cereales) › <strong>subclase</strong> (Arroz). Toca ▸ para ver lo que contiene y el nombre para agregarla."});
   }
 
   // con categorías solo hay datos desde 2019: la gráfica arranca ahí y muestra el total como referencia

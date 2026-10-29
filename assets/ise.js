@@ -35,9 +35,10 @@ registrar("ise", (() => {
     if (!st.mes || st.mes > u) st.mes = u;
     per = periodo("ise-periodo", fs, st.mes, f => { st.mes = f; detalle(); });
     $("ise-ultima").textContent = `Último dato (${st.version} actividades): ${etqMesLargo(u)}`;
-    const grupos = agrupados().map(g => ({g: `${GRUPO[g.k].t} (${GRUPO[g.k].d.split(":")[1].trim()})`,
-      items: [[g.rama, `Todas las ${GRUPO[g.k].t.toLowerCase()}`], ...g.hijos.map(h => [h.id_serie, "· " + h.nombre_corto])]}));
-    selCat = selectorVarias("ise-cat", grupos, ids => { st.cats = ids; historia(); }, {total: "Toda la economía", otra: "Comparar sectores"});
+    const arbol = agrupados().map(g => ({id: g.rama, t: GRUPO[g.k].t, nivel: GRUPO[g.k].d.split(":")[1].trim(),
+      hijos: g.hijos.map(h => ({id: h.id_serie, t: h.nombre_corto}))}));
+    selCat = selectorVarias("ise-cat", arbol, ids => { st.cats = ids; historia(); }, {total: "Toda la economía", otra: "Comparar sectores",
+      ayuda: "Primero están los tres grandes grupos; toca ▸ para ver sus sectores. Puedes agregar un grupo completo o un sector."});
   }
 
   const nombreSel = id => meta(id).nivel === "gran_rama" ? meta(id).nombre_corto : `${meta(id).nombre_corto} (${GRUPO[grupoDe(id)].t.split(" ")[1]})`;
