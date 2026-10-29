@@ -1,22 +1,22 @@
 :root{
-  --bg:#F8FAFC; --panel:#FFFFFF; --ink:#1E293B; --head:#0F172A; --muted:#475569; --line:#E2E8F0;
-  --accent:#006D77; --accent-soft:#E2F2F3; --on-accent:#FFFFFF; --naranja:#EA580C; --up:#DC2626; --down:#16A34A; --warn:#EA580C; --chip:#F1F5F9; --barra:#006D77;
-  --grafica:#006D77; --verde:#16A34A; --rojo:#DC2626;
-  --s1:#006D77; --s2:#EA580C; --s3:#6D28D9; --s4:#2563EB; --s5:#16A34A; --s6:#DB2777; --s7:#CA8A04; --s8:#0891B2; --s9:#9333EA; --s10:#475569;
+  --bg:#FBF8FA; --panel:#FFFFFF; --ink:#2A1D27; --head:#5B2C4F; --muted:#6E5D69; --line:#ECE3E8;
+  --accent:#5B2C4F; --accent-soft:#F3E8EF; --on-accent:#FFFFFF; --naranja:#F07836; --up:#B85A43; --down:#7C8530; --warn:#F07836; --chip:#F5EFF2; --barra:#5B2C4F;
+  --grafica:#D94370; --verde:#A2AD43; --rojo:#B85A43;
+  --s1:#D94370; --s2:#F07836; --s3:#8757A5; --s4:#A2AD43; --s5:#E6C547; --s6:#D66A91; --s7:#B85A43; --s8:#5B2C4F; --s9:#C9A227; --s10:#6E5D69;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0B1120; --panel:#131C2E; --ink:#E2E8F0; --head:#F8FAFC; --muted:#94A3B8; --line:#26334A;
-    --accent:#2BB5BF; --accent-soft:#0F2E33; --on-accent:#0B1120; --naranja:#FB923C; --up:#F87171; --down:#4ADE80; --warn:#FB923C; --chip:#1A2438; --barra:#006D77;
-    --grafica:#2BB5BF; --verde:#4ADE80; --rojo:#F87171;
-    --s1:#2BB5BF; --s2:#FB923C; --s3:#A78BFA; --s4:#60A5FA; --s5:#4ADE80; --s6:#F472B6; --s7:#FACC15; --s8:#22D3EE; --s9:#C084FC; --s10:#94A3B8;
+    --bg:#171117; --panel:#221922; --ink:#F1E9EE; --head:#FFFFFF; --muted:#B7A5B2; --line:#3A2C38;
+    --accent:#E58AAE; --accent-soft:#3A2233; --on-accent:#171117; --naranja:#F59A63; --up:#E08A74; --down:#C3CC6A; --warn:#F59A63; --chip:#2B2029; --barra:#5B2C4F;
+    --grafica:#F06A92; --verde:#B9C35A; --rojo:#E08A74;
+    --s1:#F06A92; --s2:#F59A63; --s3:#B48AD0; --s4:#B9C35A; --s5:#EED36A; --s6:#E991B1; --s7:#D98468; --s8:#C79ABD; --s9:#E6C547; --s10:#B7A5B2;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0B1120; --panel:#131C2E; --ink:#E2E8F0; --head:#F8FAFC; --muted:#94A3B8; --line:#26334A;
-  --accent:#2BB5BF; --accent-soft:#0F2E33; --on-accent:#0B1120; --naranja:#FB923C; --up:#F87171; --down:#4ADE80; --warn:#FB923C; --chip:#1A2438; --barra:#006D77;
-  --grafica:#2BB5BF; --verde:#4ADE80; --rojo:#F87171;
-  --s1:#2BB5BF; --s2:#FB923C; --s3:#A78BFA; --s4:#60A5FA; --s5:#4ADE80; --s6:#F472B6; --s7:#FACC15; --s8:#22D3EE; --s9:#C084FC; --s10:#94A3B8;
+  --bg:#171117; --panel:#221922; --ink:#F1E9EE; --head:#FFFFFF; --muted:#B7A5B2; --line:#3A2C38;
+  --accent:#E58AAE; --accent-soft:#3A2233; --on-accent:#171117; --naranja:#F59A63; --up:#E08A74; --down:#C3CC6A; --warn:#F59A63; --chip:#2B2029; --barra:#5B2C4F;
+  --grafica:#F06A92; --verde:#B9C35A; --rojo:#E08A74;
+  --s1:#F06A92; --s2:#F59A63; --s3:#B48AD0; --s4:#B9C35A; --s5:#EED36A; --s6:#E991B1; --s7:#D98468; --s8:#C79ABD; --s9:#E6C547; --s10:#B7A5B2;
 }
 *{box-sizing:border-box}
 /* lo que se oculta siempre se oculta, aunque otra regla le dé display:flex o grid */
