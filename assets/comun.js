@@ -7,7 +7,7 @@ const GOBIERNOS = [["Pastrana", "1998-08-07"], ["Uribe I", "2002-08-07"], ["Urib
 
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const PALETA = () => ["--s1", "--s2", "--s3", "--s4", "--s5", "--s6", "--s7", "--s8", "--s9", "--s10"].map(css);
-// Para comparar varias categorías: solo colores que no se confunden entre sí (sin índigo ni violeta, parecidos al morado)
+// Para comparar varias categorías: solo colores que no se confunden entre sí (aguamarina, naranja, violeta, fucsia, azul, ocre)
 const DISTINTOS = () => ["--s1", "--s2", "--s4", "--s6", "--s5", "--s9"].map(css);
 const fmt = (v, d = 2) => v == null || isNaN(v) ? "–" : Number(v).toLocaleString("es-CO", {minimumFractionDigits: d, maximumFractionDigits: d});
 const etqMes = f => { if (!f) return ""; if (f.length === 4) return f; const [y, m] = f.split("-"); return `${MESES[+m - 1]} ${y}`; };
@@ -221,7 +221,7 @@ async function tasaVsInflacion(canvasId, txtId) {
   const F = T.fechas.filter(f => f >= desde && tpm[f] != null);
   const t = F.map(f => tpm[f]), p = F.map(f => inf[f] ?? null), real = F.map((f, i) => p[i] == null ? null : +(t[i] - p[i]).toFixed(2));
   const mc = T.mes_en_curso, fx = f => etqMes(f) + (mc && f === mc[0] ? ` (hasta el ${+mc[1].slice(8)})` : "");
-  const pos = css("--s4"), neg = css("--up");
+  const pos = css("--accent"), neg = css("--up");
   serie(canvasId, F, [
     {label: "Tasa del Banco de la República", data: t, color: css("--accent"), ancho: 2.5},
     {label: "Inflación anual", data: p, color: css("--naranja"), ancho: 2.5},
@@ -310,6 +310,16 @@ const pluginReferencias = {id: "referencias", afterDatasetsDraw(chart, a, opts) 
 // Serie de tiempo con barra de rango y franjas de gobiernos.
 // series = [{label, data, color, dash, ancho, tipo: "bar"}]; etiquetas = "AAAA-MM-01" (mensual) o "AAAA" (anual)
 const rangos = {}, ultimosArgs = {};
+// series que la persona ocultó tocando la leyenda: se recuerdan por gráfica para que no reaparezcan al cambiar el periodo
+const ocultas = {};
+// configuración de leyenda que recuerda lo ocultado (para gráficas armadas a mano, fuera de serie())
+function leyendaRecordada(canvasId) {
+  return {labels: {color: css("--ink"), boxWidth: 14}, onClick(e, item, legend) {
+    Chart.defaults.plugins.legend.onClick.call(this, e, item, legend);
+    const set = (ocultas[canvasId] ??= new Set());
+    legend.chart.isDatasetVisible(item.datasetIndex) ? set.delete(item.text) : set.add(item.text);
+  }};
+}
 function serie(canvasId, etiquetas, series, opts = {}) {
   ultimosArgs[canvasId] = [etiquetas, series, opts];
   const anual = etiquetas.length && etiquetas[0].length === 4;
@@ -331,13 +341,18 @@ function serie(canvasId, etiquetas, series, opts = {}) {
     type: "line",
     data: {labels: et, datasets: series.map((s, i) => {
       const c = s.color || pal[i % pal.length];
-      const base = {label: s.label, data: s.data.slice(i0, i1 + 1), borderColor: c, order: s.tipo === "bar" ? 2 : 1};
+      const base = {label: s.label, data: s.data.slice(i0, i1 + 1), borderColor: c, order: s.tipo === "bar" ? 2 : 1, hidden: !!ocultas[canvasId]?.has(s.label)};
       return s.tipo === "bar" ? {...base, type: "bar", backgroundColor: s.colores ? s.colores.slice(i0, i1 + 1) : c, borderWidth: 0, borderRadius: 2, yAxisID: s.eje || "y"}
         : {...base, backgroundColor: "transparent", borderWidth: s.ancho || 2, borderDash: s.dash || [], pointRadius: 0, tension: .2, spanGaps: true, yAxisID: s.eje || "y"};
     })},
     options: {
       responsive: true, maintainAspectRatio: false, animation: {duration: 200}, interaction: {mode: "index", intersect: false},
-      plugins: {legend: {display: series.length > 1, labels: {color: css("--ink"), boxWidth: 14}},
+      plugins: {legend: {display: series.length > 1, labels: {color: css("--ink"), boxWidth: 14},
+                 onClick(e, item, legend) {
+                   Chart.defaults.plugins.legend.onClick.call(this, e, item, legend);
+                   const set = (ocultas[canvasId] ??= new Set());
+                   legend.chart.isDatasetVisible(item.datasetIndex) ? set.delete(item.text) : set.add(item.text);
+                 }},
         tooltip: {callbacks: {title: c => { const e = et[c[0].dataIndex]; const g = gobiernoDe(e); return fx(e) + (g ? ` · ${g}` : ""); },
                               label: c => `${c.dataset.label}: ${(c.dataset.yAxisID === "y2" && opts.fmtValor2 ? opts.fmtValor2 : f)(c.raw)}`}},
         gobiernos: {activo: opts.gobiernos !== false}, referencias: {lineas: opts.referencias || []}},

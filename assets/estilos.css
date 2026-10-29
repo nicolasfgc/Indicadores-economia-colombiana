@@ -1,19 +1,19 @@
 :root{
   --bg:#F8FAFC; --panel:#FFFFFF; --ink:#1E293B; --head:#0F172A; --muted:#64748B; --line:#E2E8F0;
-  --accent:#6D28D9; --accent-soft:#F1EBFD; --naranja:#F97316; --up:#DC2626; --down:#15803D; --warn:#D97706; --chip:#F1F5F9; --barra:#6D28D9;
-  --s1:#6D28D9; --s2:#F97316; --s3:#312E81; --s4:#0D9488; --s5:#0891B2; --s6:#DB2777; --s7:#65A30D; --s8:#7C3AED; --s9:#CA8A04; --s10:#64748B;
+  --accent:#0A8F9A; --accent-soft:#E0F4F5; --naranja:#F97316; --up:#DC2626; --down:#15803D; --warn:#D97706; --chip:#F1F5F9; --barra:#0B7A84;
+  --s1:#0A8F9A; --s2:#F97316; --s3:#312E81; --s4:#7C3AED; --s5:#2563EB; --s6:#DB2777; --s7:#65A30D; --s8:#0F766E; --s9:#CA8A04; --s10:#64748B;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#0B1120; --panel:#131C2E; --ink:#E2E8F0; --head:#F8FAFC; --muted:#94A3B8; --line:#26334A;
-    --accent:#A78BFA; --accent-soft:#2A1F4A; --naranja:#FB923C; --up:#F87171; --down:#4ADE80; --warn:#FBBF24; --chip:#1A2438; --barra:#5B21B6;
-    --s1:#A78BFA; --s2:#FB923C; --s3:#818CF8; --s4:#2DD4BF; --s5:#22D3EE; --s6:#F472B6; --s7:#A3E635; --s8:#C4B5FD; --s9:#FACC15; --s10:#94A3B8;
+    --accent:#2CC5CF; --accent-soft:#0F3138; --naranja:#FB923C; --up:#F87171; --down:#4ADE80; --warn:#FBBF24; --chip:#1A2438; --barra:#0E6E76;
+    --s1:#2CC5CF; --s2:#FB923C; --s3:#818CF8; --s4:#A78BFA; --s5:#60A5FA; --s6:#F472B6; --s7:#A3E635; --s8:#5EEAD4; --s9:#FACC15; --s10:#94A3B8;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0B1120; --panel:#131C2E; --ink:#E2E8F0; --head:#F8FAFC; --muted:#94A3B8; --line:#26334A;
-  --accent:#A78BFA; --accent-soft:#2A1F4A; --naranja:#FB923C; --up:#F87171; --down:#4ADE80; --warn:#FBBF24; --chip:#1A2438; --barra:#5B21B6;
-  --s1:#A78BFA; --s2:#FB923C; --s3:#818CF8; --s4:#2DD4BF; --s5:#22D3EE; --s6:#F472B6; --s7:#A3E635; --s8:#C4B5FD; --s9:#FACC15; --s10:#94A3B8;
+  --accent:#2CC5CF; --accent-soft:#0F3138; --naranja:#FB923C; --up:#F87171; --down:#4ADE80; --warn:#FBBF24; --chip:#1A2438; --barra:#0E6E76;
+  --s1:#2CC5CF; --s2:#FB923C; --s3:#818CF8; --s4:#A78BFA; --s5:#60A5FA; --s6:#F472B6; --s7:#A3E635; --s8:#5EEAD4; --s9:#FACC15; --s10:#94A3B8;
 }
 *{box-sizing:border-box}
 /* lo que se oculta siempre se oculta, aunque otra regla le dé display:flex o grid */

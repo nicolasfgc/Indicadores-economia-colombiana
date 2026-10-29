@@ -133,8 +133,8 @@ registrar("presupuesto", (() => {
     const ca = c(anio), cp = c(ant);
     const ds = [{label: anio, data: ca, color: css("--accent"), ancho: 3}];
     if (cp.some(x => x != null)) ds.unshift({label: ant, data: cp, color: css("--muted"), dash: [4, 3]});
-    dibujar(canvasId, {type: "line", data: {labels: MESES, datasets: ds.map(d => ({label: d.label, data: d.data, borderColor: d.color, backgroundColor: d.color, borderDash: d.dash || [], borderWidth: d.ancho || 2, pointRadius: 3, tension: .2, spanGaps: false}))},
-      options: {responsive: true, maintainAspectRatio: false, interaction: {mode: "index", intersect: false}, plugins: {legend: {labels: {color: css("--ink")}}, gobiernos: {activo: false},
+    dibujar(canvasId, {type: "line", data: {labels: MESES, datasets: ds.map(d => ({label: d.label, data: d.data, borderColor: d.color, backgroundColor: d.color, borderDash: d.dash || [], borderWidth: d.ancho || 2, pointRadius: 3, tension: .2, spanGaps: false, hidden: !!ocultas[canvasId]?.has(d.label)}))},
+      options: {responsive: true, maintainAspectRatio: false, interaction: {mode: "index", intersect: false}, plugins: {legend: leyendaRecordada(canvasId), gobiernos: {activo: false},
         tooltip: {callbacks: {label: c => `${c.dataset.label}: ${c.raw == null ? "sin dato" : fmt(c.raw, 1) + "%"}`}}},
         scales: {x: {grid: {display: false}, ticks: {color: css("--muted")}}, y: {beginAtZero: true, grid: {color: css("--line")}, ticks: {color: css("--muted"), callback: v => v + "%"}}}}});
     let mi = 11; while (mi > 0 && ca[mi] == null) mi--;

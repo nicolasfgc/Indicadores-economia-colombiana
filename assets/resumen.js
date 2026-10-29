@@ -62,6 +62,20 @@ registrar("resumen", (() => {
       (real > 3 ? "es una política restrictiva, que encarece el crédito para frenar el consumo y bajar la inflación." : real > 0 ? "es una política algo restrictiva: el crédito cuesta un poco más de lo que suben los precios." : "es una política expansiva: el crédito sale barato frente a la inflación, lo que impulsa el consumo y la inversión.");
     mini("res-tpm-g", P.fechas, P.v, css("--s4"));
 
+    // --- comercio exterior
+    const C = R.comercio;
+    if (C) {
+      const dol = x => `${x < 0 ? "−" : ""}US$${fmt(Math.abs(x) / 1000, 1)} mil millones`;
+      const ce = C.expo_12 ? (C.expo / C.expo_12 - 1) * 100 : null, ci = C.impo_12 ? (C.impo / C.impo_12 - 1) * 100 : null;
+      $("res-com-num").textContent = dol(C.balanza);
+      $("res-com-cambio").textContent = `${etqMesLargo(C.fecha)} · balanza comercial (${C.balanza < 0 ? "déficit" : "superávit"})`;
+      $("res-com-txt").innerHTML = `En ${MESES_L[+C.fecha.slice(5, 7) - 1]} Colombia exportó ${dol(C.expo)}` + (ce != null ? ` (${ce >= 0 ? "+" : "−"}${fmt(Math.abs(ce), 1)}% en un año)` : "") +
+        ` e importó ${dol(C.impo)}` + (ci != null ? ` (${ci >= 0 ? "+" : "−"}${fmt(Math.abs(ci), 1)}%)` : "") + `: <strong>${C.balanza < 0 ? "compró más de lo que vendió" : "vendió más de lo que compró"}</strong>. ` +
+        `En lo corrido del año la balanza va en ${dol(C.corrido)}; un año antes iba en ${dol(C.corrido_ant)}. ` +
+        `Petróleo y carbón son el ${fmt(C.petroleo_carbon, 0)}% de lo exportado, así que el resultado depende mucho de los precios de la energía.`;
+      mini("res-com-g", C.fechas, C.v, css("--s2"));
+    }
+
     // --- presupuesto
     const B = R.presupuesto;
     $("res-pre-num").textContent = pct(B.pct);

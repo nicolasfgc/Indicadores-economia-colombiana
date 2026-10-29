@@ -220,6 +220,19 @@ def resumen():
                           "pct_anio_anterior": float(g.loc[mismo_mes_ant, "obligaciones"] / g.loc[mismo_mes_ant, "apropiacion_vigente"] * 100) if mismo_mes_ant in g.index else None,
                           "mas_lentos": [[s, round(p, 1)] for s, p in sec.pct.sort_values().head(3).items()],
                           "mas_rapidos": [[s, round(p, 1)] for s, p in sec.pct.sort_values().tail(3).items()]}
+    # comercio exterior: balanza mensual (FOB), exportaciones e importaciones (CIF, la cifra que publica el DANE)
+    c = pd.read_csv(DATOS / "comercio" / "datos.csv")
+    c = c[c.medida == "usd"].pivot(index="fecha", columns="id_serie", values="valor")
+    b = c.BAL_BALANZA.dropna()
+    f = b.index[-1]
+    f12 = f"{int(f[:4]) - 1}{f[4:]}"
+    corr = lambda y: float(b[(b.index >= f"{y}-01-01") & (b.index <= f"{y}{f[4:]}")].sum())
+    vt = lambda col, x: float(c.loc[x, col]) if x in c.index and pd.notna(c.loc[x, col]) else None
+    out["comercio"] = {"fechas": b.index.tolist(), "v": b.round(1).tolist(), "fecha": f,
+                       "expo": vt("BAL_EXPO", f), "expo_12": vt("BAL_EXPO", f12),
+                       "impo": vt("IMP_CUODE_TOTAL", f), "impo_12": vt("IMP_CUODE_TOTAL", f12),
+                       "balanza": vt("BAL_BALANZA", f), "corrido": corr(f[:4]), "corrido_ant": corr(int(f[:4]) - 1),
+                       "petroleo_carbon": float((c.EXP_TIPO_PETROLEO + c.EXP_TIPO_CARBON).iloc[-12:].sum() / c.EXP_TIPO_TOTAL.iloc[-12:].sum() * 100)}
     guardar("resumen.json", out)
 
 

@@ -14,7 +14,7 @@ registrar("comercio", (() => {
   const cambioTxt = c => c == null ? "" : `${c >= 0 ? "▲" : "▼"} ${fmt(Math.abs(c), 1)}%`;
   const hijos = padre => Object.keys(D.series).filter(id => S(id)[3] === padre && S(id)[1] === "impo_cuode");
   const deTema = tema => Object.keys(D.series).filter(id => S(id)[1] === tema);
-  const colPos = () => css("--s4"), colNeg = () => css("--up");
+  const colPos = () => css("--accent"), colNeg = () => css("--up");
   const listaY = a => a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " y " + a.at(-1);
   const deCada100 = (p, que) => `${fmt(p, 0)} ${Math.round(p) === 1 ? "fue" : "fueron"} ${que}`;
 

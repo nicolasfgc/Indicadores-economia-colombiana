@@ -60,7 +60,7 @@ registrar("empleo", (() => {
                        tgp: b < 0 ? "más baja para las mujeres: menos mujeres que hombres trabajan o buscan trabajo; muchas están por fuera del mercado laboral, por ejemplo en oficios del hogar" : "más alta para las mujeres"}[st.indSexo];
       $("emp-sexo-txt").innerHTML = `En <strong>${etqMesLargo(f)}</strong> la ${IND[st.indSexo].toLowerCase()} fue <strong>${fmt(mi, 1)}% para las mujeres</strong> y <strong>${fmt(hi, 1)}% para los hombres</strong>: ` +
         `una diferencia de ${fmt(Math.abs(b), 1)} puntos, ${sentido}. ` +
-        `Las barras muestran esa diferencia mes a mes: hacia arriba (naranja) la tasa de las mujeres es mayor; hacia abajo (morado), la de los hombres. En el periodo elegido la brecha promedió ${fmt(prom, 1)} puntos.`;
+        `Las barras muestran esa diferencia mes a mes: hacia arriba (naranja) la tasa de las mujeres es mayor; hacia abajo (aguamarina), la de los hombres. En el periodo elegido la brecha promedió ${fmt(prom, 1)} puntos.`;
     }});
   }
 
