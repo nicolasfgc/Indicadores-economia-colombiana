@@ -8,16 +8,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/estilos.css?v=12">
+<link rel="stylesheet" href="assets/estilos.css?v=13">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/comun.js?v=12"></script>
-<script src="assets/resumen.js?v=12"></script>
-<script src="assets/ipc.js?v=12"></script>
-<script src="assets/ise.js?v=12"></script>
-<script src="assets/empleo.js?v=12"></script>
-<script src="assets/tasas.js?v=12"></script>
-<script src="assets/presupuesto.js?v=12"></script>
+<script src="assets/comun.js?v=13"></script>
+<script src="assets/resumen.js?v=13"></script>
+<script src="assets/ipc.js?v=13"></script>
+<script src="assets/ise.js?v=13"></script>
+<script src="assets/empleo.js?v=13"></script>
+<script src="assets/tasas.js?v=13"></script>
+<script src="assets/presupuesto.js?v=13"></script>
 </head>
 <body>
 <div class="wrap">
@@ -116,12 +116,17 @@
       <section class="panel" id="ise-paso1b">
         <span class="paso">1 · EL PANORAMA</span>
         <h2 id="ise-hist-t"></h2>
-        <p class="hint">Crecimiento anual de la producción (%). Por debajo de cero, la economía produce menos que un año antes.</p>
+        <p class="hint">Crecimiento anual de la producción (%). Por debajo de cero, la economía produce menos que un año antes. El DANE agrupa los sectores en tres grandes tipos de actividad:</p>
+        <div class="grupos-ise">
+          <div><strong>Primarias</strong><span>Sacan recursos directamente de la naturaleza: agricultura, ganadería, pesca, minería y petróleo.</span></div>
+          <div><strong>Secundarias</strong><span>Transforman materias primas en productos o construyen: industria (fábricas) y construcción.</span></div>
+          <div><strong>Terciarias</strong><span>Prestan servicios: comercio, transporte, restaurantes, bancos, gobierno, educación, salud. El DANE también incluye aquí la electricidad, el gas y el agua.</span></div>
+        </div>
         <div id="ise-cat"></div>
         <div class="chartbox" style="height:320px"><canvas id="ise-hist"></canvas></div>
         <p class="interp" id="ise-hist-txt"></p>
         <h2 style="margin-top:20px" id="ise-nivel-t"></h2>
-        <p class="hint">Índice de volumen (2015 = 100): muestra si se produce más o menos que antes.</p>
+        <p class="hint">Índice de volumen sin estacionalidad (2015 = 100): por encima de 100 se produce más que en 2015; por debajo, menos.</p>
         <div class="chartbox" style="height:260px"><canvas id="ise-nivel"></canvas></div>
       </section>
       <div class="detalle-mes">
@@ -131,6 +136,8 @@
         <h2 id="ise-paso2-t"></h2>
         <div class="seg" id="ise-medida"><button data-v="var_anual_original" class="on">Anual</button><button data-v="var_anual_desest">Anual sin estacionalidad</button><button data-v="var_mensual_desest">Frente al mes anterior</button></div>
         <p class="hint" id="ise-explica" style="margin-top:8px"></p>
+        <div class="row"><label class="lbl">Ordenar:</label><div class="seg" id="ise-orden"><button data-v="grupo" class="on">Por tipo de actividad</button><button data-v="valor">De mayor a menor</button></div></div>
+        <p class="hint" style="margin-top:8px">Las barras en mayúsculas son los tres grandes grupos (primarias, secundarias y terciarias); debajo de cada uno, sus sectores. Verde: creció. Rojo: cayó. Toca una barra para verla en el tiempo.</p>
         <div class="chartbox"><canvas id="ise-bar"></canvas></div>
         <div id="ise-tiempo" hidden></div>
         <div class="tabla" style="margin-top:12px"><table id="ise-tabla"></table></div>
@@ -211,7 +218,7 @@
       <section class="panel">
         <span class="paso">2 · EL DÓLAR</span>
         <h2>El dólar en el tiempo</h2>
-        <p class="hint">Promedio de la TRM en cada mes, desde 1991.</p>
+        <p class="hint">Promedio de la TRM en cada mes, desde 1991. El último mes va hasta hoy, así que su promedio todavía puede cambiar.</p>
         <div class="chartbox" style="height:320px"><canvas id="tas-trm"></canvas></div>
         <p class="interp" id="tas-trm-txt"></p>
         <h2 style="margin-top:20px">El último año, día a día</h2>
@@ -220,7 +227,7 @@
       <section class="panel">
         <span class="paso">3 · LAS TASAS DE INTERÉS</span>
         <h2>Tasas de interés en el tiempo</h2>
-        <p class="hint">Cierre de cada mes. La tasa del Banco de la República guía a las demás: la IBR es la referencia de los créditos y la interbancaria (TIB) es a la que se prestan los bancos entre sí.</p>
+        <p class="hint">Cierre de cada mes; el último mes muestra el valor de hoy. La tasa del Banco de la República guía a las demás: la IBR es la referencia de los créditos y la interbancaria (TIB) es a la que se prestan los bancos entre sí.</p>
         <div class="chartbox" style="height:340px"><canvas id="tas-tasas"></canvas></div>
         <p class="interp" id="tas-tasas-txt"></p>
       </section>

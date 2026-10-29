@@ -1,6 +1,6 @@
 // Pestaña: Actividad económica (ISE) — primero cómo va la economía, luego qué sectores la mueven
 registrar("ise", (() => {
-  const st = {d: null, version: "9", mes: null, medida: "var_anual_original", cat: null};
+  const st = {d: null, version: "9", mes: null, medida: "var_anual_original", cats: [], orden: "grupo"};
   const ETQ = {var_anual_original: "Crecimiento anual (%)", var_anual_desest: "Crecimiento anual sin estacionalidad (%)", var_mensual_desest: "Crecimiento frente al mes anterior (%)"};
   const EXPL = {
     var_anual_original: "Cuánto creció cada actividad frente al mismo mes del año anterior, tal como se midió.",
@@ -12,11 +12,20 @@ registrar("ise", (() => {
   const deVersion = nivel => st.d.series.filter(s => s.version.startsWith(st.version + " ") && s.nivel === nivel);
   const ultimoMes = () => { const t = st.d.valores[T()].var_anual_original; for (let i = t.length - 1; i >= 0; i--) if (t[i] != null) return st.d.fechas[i]; };
   const colorCrec = x => x.v >= 0 ? css("--down") : css("--up");
+  // Explicación en lenguaje sencillo de los tres grandes grupos del DANE
+  const GRUPO = {PRI: {t: "Actividades primarias", d: "sacan recursos directamente de la naturaleza: campo y minería"},
+                 SEC: {t: "Actividades secundarias", d: "transforman materias primas en productos o construyen: industria y construcción"},
+                 TER: {t: "Actividades terciarias", d: "prestan servicios: comercio, transporte, bancos, gobierno, educación, salud y también electricidad, gas y agua"}};
+  const claveGrupo = id => id.split("_")[1];
+  const grupoDe = id => { const s = meta(id); return s.nivel === "gran_rama" ? claveGrupo(id) : claveGrupo(s.padre); };
+  // gran rama seguida de sus sectores, en el orden primarias → secundarias → terciarias
+  const agrupados = () => ["PRI", "SEC", "TER"].map(k => ({k, rama: `ISE${st.version}_${k}`, hijos: deVersion("agrupacion").filter(x => x.padre === `ISE${st.version}_${k}`)}));
   let per = null, selCat = null;
 
   async function iniciar() {
     st.d = await json("web/ise.json");
-    seg("ise-version", x => { st.version = x; st.cat = null; armar(); render(); });
+    seg("ise-version", x => { st.version = x; st.cats = []; armar(); render(); });
+    seg("ise-orden", x => { st.orden = x; detalle(); });
     seg("ise-medida", x => { st.medida = x; detalle(); });
     armar();
   }
@@ -26,33 +35,44 @@ registrar("ise", (() => {
     if (!st.mes || st.mes > u) st.mes = u;
     per = periodo("ise-periodo", fs, st.mes, f => { st.mes = f; detalle(); });
     $("ise-ultima").textContent = `Último dato (${st.version} actividades): ${etqMesLargo(u)}`;
-    const items = [...deVersion("gran_rama"), ...deVersion("agrupacion")].map(s => [s.id_serie, (s.nivel === "gran_rama" ? "" : "  · ") + s.nombre_corto]);
-    selCat = selectorCategoria("ise-cat", [{items}], id => { st.cat = id; historia(); }, {total: "Toda la economía", otra: "Un sector"});
+    const grupos = agrupados().map(g => ({g: `${GRUPO[g.k].t} (${GRUPO[g.k].d.split(":")[1].trim()})`,
+      items: [[g.rama, `Todas las ${GRUPO[g.k].t.toLowerCase()}`], ...g.hijos.map(h => [h.id_serie, "· " + h.nombre_corto])]}));
+    selCat = selectorVarias("ise-cat", grupos, ids => { st.cats = ids; historia(); }, {total: "Toda la economía", otra: "Comparar sectores"});
   }
 
+  const nombreSel = id => meta(id).nivel === "gran_rama" ? meta(id).nombre_corto : `${meta(id).nombre_corto} (${GRUPO[grupoDe(id)].t.split(" ")[1]})`;
   function historia() {
-    const fs = st.d.fechas.filter(f => f <= ultimoMes()), t = T(), c = st.cat;
-    const ds = c ? [{label: "Toda la economía", data: fs.map(f => v(t, "var_anual_original", f)), color: css("--muted"), ancho: 1.6},
-                    {label: meta(c).nombre_corto, data: fs.map(f => v(c, "var_anual_original", f)), color: css("--accent"), ancho: 2.5}]
-                 : [{label: "Crecimiento anual", data: fs.map(f => v(t, "var_anual_original", f)), color: css("--muted"), ancho: 1.6},
-                    {label: "Sin estacionalidad", data: fs.map(f => v(t, "var_anual_desest", f)), color: css("--accent"), ancho: 2.5}];
-    $("ise-hist-t").textContent = c ? `${meta(c).nombre_corto} frente a toda la economía` : "La economía en el tiempo";
-    serie("ise-hist", fs, ds, {unidad: "%", referencias: [{y: 0, t: ""}], despues: (i0, i1) => interpretar(fs, i0, i1)});
-    const id = c || t;
-    $("ise-nivel-t").textContent = `Nivel de actividad: ${meta(id).nombre_corto}`;
-    serie("ise-nivel", fs, [{label: "Original", data: fs.map(f => v(id, "indice_original", f)), color: css("--muted"), ancho: 1.4},
-                            {label: "Sin estacionalidad", data: fs.map(f => v(id, "indice_desest", f)), color: css("--accent"), ancho: 2.5}], {fmtValor: x => fmt(x, 1)});
+    const fs = st.d.fechas.filter(f => f <= ultimoMes()), t = T(), c = st.cats;
+    const ds = c.length ? [{label: "Toda la economía", data: fs.map(f => v(t, "var_anual_original", f)), color: css("--muted"), ancho: 1.6, dash: [4, 3]},
+                           ...c.map((id, k) => ({label: nombreSel(id), data: fs.map(f => v(id, "var_anual_original", f)), color: DISTINTOS()[k], ancho: 2.5}))]
+                        : [{label: "Crecimiento anual", data: fs.map(f => v(t, "var_anual_original", f)), color: css("--muted"), ancho: 1.6},
+                           {label: "Sin estacionalidad", data: fs.map(f => v(t, "var_anual_desest", f)), color: css("--accent"), ancho: 2.5}];
+    $("ise-hist-t").textContent = c.length ? "Los sectores elegidos frente a toda la economía" : "La economía en el tiempo";
+    serie("ise-hist", fs, ds, {unidad: "%", referencias: [{y: 0, t: ""}], despues: (i0, i1) => interpretar(fs, ds, i0, i1)});
+    // nivel de actividad: el total o los sectores elegidos (sin estacionalidad, 2015 = 100)
+    $("ise-nivel-t").textContent = c.length ? "Nivel de actividad de los sectores elegidos" : "Nivel de actividad: toda la economía";
+    const dn = c.length ? c.map((id, k) => ({label: nombreSel(id), data: fs.map(f => v(id, "indice_desest", f)), color: DISTINTOS()[k], ancho: 2.5}))
+      : [{label: "Original", data: fs.map(f => v(t, "indice_original", f)), color: css("--muted"), ancho: 1.4},
+         {label: "Sin estacionalidad", data: fs.map(f => v(t, "indice_desest", f)), color: css("--accent"), ancho: 2.5}];
+    serie("ise-nivel", fs, dn, {fmtValor: x => fmt(x, 1), referencias: c.length ? [{y: 100, t: "Nivel de 2015"}] : []});
   }
-  function interpretar(fs, i0, i1) {
-    const id = st.cat || T(), nom = st.cat ? meta(st.cat).nombre_corto.toLowerCase() : "la economía";
-    const tramo = fs.slice(i0, i1 + 1).map(f => [v(id, "var_anual_original", f), f]).filter(x => x[0] != null);
-    if (!tramo.length) return;
-    const prom = tramo.reduce((a, b) => a + b[0], 0) / tramo.length;
-    const min = tramo.reduce((a, b) => b[0] < a[0] ? b : a), max = tramo.reduce((a, b) => b[0] > a[0] ? b : a);
-    const neg = tramo.filter(x => x[0] < 0).length;
-    $("ise-hist-txt").innerHTML = `Entre <strong>${etqMes(tramo[0][1])}</strong> y <strong>${etqMes(tramo.at(-1)[1])}</strong> ${nom} creció en promedio <strong>${fmt(prom)}%</strong> anual. ` +
-      `El peor mes fue ${etqMes(min[1])} (${fmt(min[0])}%, gobierno ${gobiernoDe(min[1])}) y el mejor ${etqMes(max[1])} (${fmt(max[0])}%). ` +
-      `Hubo ${neg} ${neg === 1 ? "mes" : "meses"} de caída frente al año anterior.`;
+  function interpretar(fs, ds, i0, i1) {
+    const res = d => { const tr = d.data.slice(i0, i1 + 1).map((x, k) => [x, fs[i0 + k]]).filter(x => x[0] != null); if (!tr.length) return null;
+      return {prom: tr.reduce((a, b) => a + b[0], 0) / tr.length, min: tr.reduce((a, b) => b[0] < a[0] ? b : a), max: tr.reduce((a, b) => b[0] > a[0] ? b : a),
+              neg: tr.filter(x => x[0] < 0).length, ult: tr.at(-1)}; };
+    const per = `Entre <strong>${etqMes(fs[i0])}</strong> y <strong>${etqMes(fs[i1])}</strong>`;
+    if (!st.cats.length) {
+      const r = res(ds[0]); if (!r) return;
+      $("ise-hist-txt").innerHTML = `${per} la economía creció en promedio <strong>${fmt(r.prom)}%</strong> anual. ` +
+        `El peor mes fue ${etqMes(r.min[1])} (${fmt(r.min[0])}%, gobierno ${gobiernoDe(r.min[1])}) y el mejor ${etqMes(r.max[1])} (${fmt(r.max[0])}%). ` +
+        `Hubo ${r.neg} ${r.neg === 1 ? "mes" : "meses"} de caída frente al año anterior.`;
+      return;
+    }
+    const t = res(ds[0]);
+    $("ise-hist-txt").innerHTML = `${per} toda la economía creció en promedio <strong>${fmt(t.prom)}%</strong> al año. En los sectores elegidos:<br>` +
+      ds.slice(1).map(d => [d.label, res(d)]).filter(x => x[1]).map(([n, r]) =>
+        `• <strong>${n}</strong>: creció en promedio ${fmt(r.prom)}% ${r.prom > t.prom + 0.05 ? "(más que la economía)" : r.prom < t.prom - 0.05 ? "(menos que la economía)" : "(igual que la economía)"}; ` +
+        `tuvo ${r.neg} ${r.neg === 1 ? "mes" : "meses"} de caída y en ${etqMes(r.ult[1])} creció ${fmt(r.ult[0])}%.`).join("<br>");
   }
 
   // "En el tiempo": el sector frente a toda la economía, dentro de esta misma sección
@@ -83,14 +103,18 @@ registrar("ise", (() => {
     const f = st.mes;
     $("ise-paso2-t").textContent = `¿Qué sectores jalaron y cuáles frenaron en ${etqMesLargo(f)}?`;
     $("ise-explica").textContent = EXPL[st.medida];
-    const items = deVersion("agrupacion").map(s => ({id: s.id_serie, n: s.nombre_corto, v: v(s.id_serie, st.medida, f)})).filter(x => x.v != null).sort((a, b) => b.v - a.v);
-    barras("ise-bar", items, {unidad: "%", etiqueta: ETQ[st.medida], alClic: x => verEnTiempo(x.id), colores: colorCrec});
-    const filas = [...deVersion("gran_rama"), ...deVersion("agrupacion")];
+    let items;
+    if (st.orden === "grupo") items = agrupados().flatMap(g => [{id: g.rama, n: GRUPO[g.k].t.toUpperCase(), v: v(g.rama, st.medida, f), rama: true},
+      ...g.hijos.map(h => ({id: h.id_serie, n: "   " + h.nombre_corto, v: v(h.id_serie, st.medida, f)})).sort((a, b) => (b.v ?? -1e9) - (a.v ?? -1e9))]).filter(x => x.v != null);
+    else items = deVersion("agrupacion").map(s => ({id: s.id_serie, n: `${s.nombre_corto} (${GRUPO[grupoDe(s.id_serie)].t.split(" ")[1]})`, v: v(s.id_serie, st.medida, f)})).filter(x => x.v != null).sort((a, b) => b.v - a.v);
+    barras("ise-bar", items, {unidad: "%", etiqueta: ETQ[st.medida], alClic: x => verEnTiempo(x.id),
+      colores: x => x.rama ? (x.v >= 0 ? css("--s4") : css("--warn")) : colorCrec(x)});
+    const cl = x => x == null ? "" : x < 0 ? "pos" : "";
+    const fila = (s, rama) => { const a = v(s.id_serie, "var_anual_original", f), b = v(s.id_serie, "var_anual_desest", f), c = v(s.id_serie, "var_mensual_desest", f);
+      return `<tr${rama ? ' class="rama"' : ""}><td>${rama ? `<strong>${s.nombre_corto}</strong><span class="sub2">${GRUPO[claveGrupo(s.id_serie)].d.replace(/^./, x => x.toUpperCase())}</span>` : "&nbsp;&nbsp;&nbsp;" + s.nombre_corto}</td>` +
+        `<td class="${cl(a)}">${fmt(a)}</td><td class="${cl(b)}">${fmt(b)}</td><td class="${cl(c)}">${fmt(c)}</td><td class="acciones"><button class="ver sec" data-id="${s.id_serie}">En el tiempo</button></td></tr>`; };
     $("ise-tabla").innerHTML = `<thead><tr><th>Sector</th><th>Anual %</th><th>Anual sin estacionalidad %</th><th>Frente al mes anterior %</th><th></th></tr></thead><tbody>` +
-      filas.map(s => { const a = v(s.id_serie, "var_anual_original", f), b = v(s.id_serie, "var_anual_desest", f), c = v(s.id_serie, "var_mensual_desest", f);
-        const cl = x => x == null ? "" : x < 0 ? "pos" : "";
-        return `<tr><td>${s.nivel === "gran_rama" ? "<strong>" + s.nombre_corto + "</strong>" : s.nombre_corto}</td><td class="${cl(a)}">${fmt(a)}</td><td class="${cl(b)}">${fmt(b)}</td><td class="${cl(c)}">${fmt(c)}</td>
-          <td class="acciones"><button class="ver sec" data-id="${s.id_serie}">En el tiempo</button></td></tr>`; }).join("") + "</tbody>";
+      agrupados().map(g => fila(meta(g.rama), true) + g.hijos.map(h => fila(h, false)).join("")).join("") + "</tbody>";
     $("ise-tabla").querySelectorAll("button.ver").forEach(b => b.onclick = () => verEnTiempo(b.dataset.id));
   }
   return {iniciar, render};

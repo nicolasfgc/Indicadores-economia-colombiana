@@ -76,8 +76,30 @@ def empleo():
 
 
 # ---------------------------------------------------------------- tasas y dólar
+def mes_en_curso():
+    """Promedio y último valor del mes que va corriendo, a partir de los datos diarios.
+    En datos/ solo quedan los meses cerrados; la página sí muestra el mes en curso (marcado como tal)
+    para que las gráficas no se queden atrás cuando, por ejemplo, el Banco cambia su tasa a comienzos de mes."""
+    trm = pd.read_csv(DATOS / "tasas" / "trm_diaria.csv")
+    dd = pd.read_csv(DATOS / "tasas" / "tasas_diarias.csv")
+    ultimo = max(trm.fecha.max(), dd.fecha.max())
+    mes = ultimo[:7] + "-01"
+    filas = []
+    t = trm[trm.fecha >= mes]
+    if len(t):
+        filas += [(mes, "TRM", "trm_promedio", t.trm.mean()), (mes, "TRM", "trm_fin_mes", t.trm.iloc[-1])]
+    for sid, g in dd[dd.fecha >= mes].sort_values("fecha").groupby("id_serie"):
+        filas += [(mes, sid, "promedio", g.valor.mean()), (mes, sid, "fin_mes", g.valor.iloc[-1])]
+    return mes, ultimo, pd.DataFrame(filas, columns=["fecha", "id_serie", "medida", "valor"])
+
+
 def tasas():
     d = pd.read_csv(DATOS / "tasas" / "datos.csv")
+    mes, ultimo, extra = mes_en_curso()
+    en_curso = None
+    if mes > d.fecha.max():
+        d = pd.concat([d, extra], ignore_index=True)
+        en_curso = [mes, ultimo]
     s = pd.read_csv(DATOS / "tasas" / "series.csv", dtype=str).fillna("")
     fechas = sorted(d.fecha.unique())
     medidas = ["trm_promedio", "trm_fin_mes", "var_anual_promedio", "promedio", "fin_mes"]
@@ -89,7 +111,7 @@ def tasas():
         ultimos[sid] = [g.fecha.iloc[-1], float(g.valor.iloc[-1])]
     reciente = trm[trm.fecha >= (pd.Timestamp(trm.fecha.iloc[-1]) - pd.Timedelta(days=400)).strftime("%Y-%m-%d")]
     guardar("tasas.json", {"fechas": fechas, "series": s[["id_serie", "nombre", "unidad"]].to_dict("records"),
-                           "valores": series_alineadas(d, s.id_serie, medidas, fechas, 4), "ultimos": ultimos,
+                           "valores": series_alineadas(d, s.id_serie, medidas, fechas, 4), "ultimos": ultimos, "mes_en_curso": en_curso,
                            "trm_diaria": {"fechas": reciente.fecha.tolist(), "valores": reciente.trm.round(2).tolist()}})
 
 
@@ -174,6 +196,9 @@ def resumen():
     sx = {k: e[(e.id_serie == f"EMP_TOTAL_NACIONAL_{k}_M") & (e.medida == "td")].set_index("fecha").valor for k in ("HOMBRES", "MUJERES")}
     out["empleo"]["hombres"], out["empleo"]["mujeres"] = round(sx["HOMBRES"].iloc[-1], 2), round(sx["MUJERES"].iloc[-1], 2)
     ta = pd.read_csv(DATOS / "tasas" / "datos.csv")
+    mes, _, extra = mes_en_curso()
+    if mes > ta.fecha.max():
+        ta = pd.concat([ta, extra], ignore_index=True)
     trm = ta[(ta.id_serie == "TRM") & (ta.medida == "trm_promedio")].set_index("fecha").valor
     tpm = ta[(ta.id_serie == "TPM") & (ta.medida == "fin_mes")].set_index("fecha").valor
     dia = pd.read_csv(DATOS / "tasas" / "trm_diaria.csv")
