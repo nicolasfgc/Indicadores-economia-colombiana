@@ -166,28 +166,38 @@ function enElTiempo(boxId, titulo, etiquetas, series, opts = {}) {
   irA(boxId, "center");
 }
 
-// Inflación frente a la tasa del Banco de la República (se usa en Inflación y en Tasas)
+// Inflación frente a la tasa del Banco de la República (se usa en Inflación y en Tasas).
+// La tasa llega hasta hoy (mes en curso); la inflación, hasta el último mes que publicó el DANE.
+// La tasa real solo se calcula en los meses que tienen las dos cifras.
 async function tasaVsInflacion(canvasId, txtId) {
   const [T, H] = await Promise.all([json("web/tasas.json"), json("web/ipc_historico.json")]);
   const tpm = {}; T.fechas.forEach((f, i) => { const v = T.valores.TPM.fin_mes?.[i]; if (v != null) tpm[f] = v; });
   const inf = {}; H.fechas.forEach((f, i) => { if (H.var_anual[i] != null) inf[f] = H.var_anual[i]; });
-  const F = H.fechas.filter(f => inf[f] != null && tpm[f] != null);
-  const t = F.map(f => tpm[f]), p = F.map(f => inf[f]), real = F.map((f, i) => +(t[i] - p[i]).toFixed(2));
+  const desde = H.fechas.find(f => inf[f] != null && tpm[f] != null);
+  const F = T.fechas.filter(f => f >= desde && tpm[f] != null);
+  const t = F.map(f => tpm[f]), p = F.map(f => inf[f] ?? null), real = F.map((f, i) => p[i] == null ? null : +(t[i] - p[i]).toFixed(2));
+  const mc = T.mes_en_curso, fx = f => etqMes(f) + (mc && f === mc[0] ? ` (hasta el ${+mc[1].slice(8)})` : "");
   const pos = css("--s4"), neg = css("--up");
   serie(canvasId, F, [
     {label: "Tasa del Banco de la República", data: t, color: css("--accent"), ancho: 2.5},
     {label: "Inflación anual", data: p, color: css("--naranja"), ancho: 2.5},
     {label: "Tasa real (tasa − inflación)", data: real, tipo: "bar", colores: real.map(x => x < 0 ? neg : pos)}],
-    {unidad: "%", fmtValor: x => fmt(x, 1) + "%", eje0: true, referencias: [{y: 3, t: "Meta de inflación 3%"}], despues: (i0, i1) => {
-      const a = i1, r = real.slice(i0, i1 + 1), prom = r.reduce((x, y) => x + y, 0) / r.length, negs = r.filter(x => x < 0).length;
-      const estado = real[a] > 3 ? "muy por encima de la inflación: endeudarse es caro, lo que frena el consumo y el crédito para que los precios bajen"
-                   : real[a] > 0 ? "por encima de la inflación: el crédito cuesta algo más que lo que suben los precios"
+    {unidad: "%", fmtValor: x => x == null ? "sin dato aún" : fmt(x, 1) + "%", fmtX: fx, eje0: true, referencias: [{y: 3, t: "Meta de inflación 3%"}], despues: (i0, i1) => {
+      let a = i1; while (a > i0 && real[a] == null) a--;          // último mes con las dos cifras
+      const r = real.slice(i0, a + 1).filter(x => x != null); if (!r.length) return;
+      const prom = r.reduce((x, y) => x + y, 0) / r.length, negs = r.filter(x => x < 0).length;
+      const estado = x => x > 3 ? "muy por encima de la inflación: endeudarse es caro, lo que frena el consumo y el crédito para que los precios bajen"
+                   : x > 0 ? "por encima de la inflación: el crédito cuesta algo más de lo que suben los precios"
                    : "por debajo de la inflación: endeudarse sale barato, lo que impulsa el crédito y el consumo";
-      const hoy = T.ultimos?.TPM, extra = a === F.length - 1 && hoy && hoy[1] !== t[a] ? ` (hoy está en ${fmt(hoy[1])}%)` : "";
-      $(txtId).innerHTML = `En <strong>${etqMesLargo(F[a])}</strong> la tasa del Banco de la República cerró en <strong>${fmt(t[a])}%</strong>${extra} y la inflación anual fue <strong>${fmt(p[a])}%</strong>. ` +
-        `La diferencia entre las dos, llamada <strong>tasa real</strong>, fue de ${fmt(real[a])} puntos. Eso quiere decir que la tasa está ${estado}. ` +
-        `Entre ${etqMes(F[i0])} y ${etqMes(F[i1])} la tasa real promedió ${fmt(prom, 1)} puntos y fue negativa en ${negs} ${negs === 1 ? "mes" : "meses"}. ` +
+      let txt = `En <strong>${etqMesLargo(F[a])}</strong>, último mes con dato de inflación, la tasa del Banco de la República cerró en <strong>${fmt(t[a])}%</strong> y la inflación anual fue <strong>${fmt(p[a])}%</strong>. ` +
+        `La diferencia entre las dos, llamada <strong>tasa real</strong>, fue de ${fmt(real[a])} puntos: la tasa estaba ${estado(real[a])}. `;
+      if (i1 > a && t[i1] !== t[a]) {   // la tasa cambió después del último dato de inflación
+        const r2 = t[i1] - p[a];
+        txt += `<strong>Hoy la tasa está en ${fmt(t[i1])}%</strong>; con la última inflación conocida, la tasa real sería de ${fmt(r2)} puntos. `;
+      } else if (i1 > a) txt += `Hoy la tasa sigue en ${fmt(t[i1])}%. `;
+      txt += `Entre ${etqMes(F[i0])} y ${etqMes(F[a])} la tasa real promedió ${fmt(prom, 1)} puntos y fue negativa en ${negs} ${negs === 1 ? "mes" : "meses"}. ` +
         `Lo normal es que el Banco suba su tasa cuando la inflación se dispara y la baje cuando cede, casi siempre con algunos meses de retraso.`;
+      $(txtId).innerHTML = txt;
     }});
 }
 
