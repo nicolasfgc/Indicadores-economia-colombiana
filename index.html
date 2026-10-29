@@ -8,28 +8,29 @@
 <meta name="description" content="Explorador abierto de los principales indicadores de la economía colombiana, con todo el detalle y actualización automática.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/estilos.css?v=34">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/estilos.css?v=35">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/comun.js?v=34"></script>
-<script src="assets/resumen.js?v=34"></script>
-<script src="assets/ipc.js?v=34"></script>
-<script src="assets/ise.js?v=34"></script>
-<script src="assets/empleo.js?v=34"></script>
-<script src="assets/tasas.js?v=34"></script>
-<script src="assets/presupuesto.js?v=34"></script>
-<script src="assets/comercio.js?v=34"></script>
+<script src="assets/comun.js?v=35"></script>
+<script src="assets/resumen.js?v=35"></script>
+<script src="assets/ipc.js?v=35"></script>
+<script src="assets/ise.js?v=35"></script>
+<script src="assets/empleo.js?v=35"></script>
+<script src="assets/tasas.js?v=35"></script>
+<script src="assets/presupuesto.js?v=35"></script>
+<script src="assets/comercio.js?v=35"></script>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>Economía colombiana en datos</h1>
-    <p class="sub">Las cifras oficiales, con todo el detalle, para entender qué está pasando y por qué.</p>
-    <p class="autor">Por <strong>Nicolás González</strong> · <a href="mailto:nicolasfgcht@gmail.com">nicolasfgcht@gmail.com</a> · <a href="https://www.linkedin.com/in/nicolas-gonzalezc/" target="_blank" rel="noopener">LinkedIn</a></p>
-  </header>
-
-  <div class="top-controles">
+<header class="appbar">
+  <div class="wrap">
+    <div class="marca">
+      <div>
+        <h1>Economía colombiana en datos</h1>
+        <p class="sub">Las cifras oficiales, con todo el detalle, para entender qué está pasando y por qué.</p>
+      </div>
+      <p class="autor"><span>Por <strong>Nicolás González</strong></span><a href="mailto:nicolasfgcht@gmail.com">nicolasfgcht@gmail.com</a><a href="https://www.linkedin.com/in/nicolas-gonzalezc/" target="_blank" rel="noopener">LinkedIn</a></p>
+    </div>
     <nav class="tabs">
       <a href="#resumen" data-tab="resumen">Resumen</a>
       <a href="#ipc" data-tab="ipc">Inflación</a>
@@ -39,8 +40,10 @@
       <a href="#comercio" data-tab="comercio">Comercio exterior</a>
       <a href="#presupuesto" data-tab="presupuesto">Presupuesto</a>
     </nav>
-    <label class="toggle"><input type="checkbox" id="ver-gobiernos" checked> Marcar gobiernos en las gráficas</label>
   </div>
+</header>
+<div class="wrap">
+  <div class="subbar"><label class="toggle"><input type="checkbox" id="ver-gobiernos" checked> Marcar gobiernos en las gráficas</label></div>
 
   <!-- ===================================================== RESUMEN -->
   <section class="tab" id="tab-resumen" hidden>
@@ -72,7 +75,7 @@
         <div class="kpi"><div class="l">Lo que más empujó</div><div class="v small" id="ipc-k4"></div><div class="d" id="ipc-k4d"></div></div>
       </section>
       <section class="panel" id="ipc-paso1b">
-        <span class="paso">1 · EL PANORAMA</span>
+        <span class="paso"><b>1</b>El panorama</span>
         <h2>La inflación en el tiempo</h2>
         <p class="hint">Variación anual de los precios. Las líneas punteadas marcan la meta del Banco de la República (3%, entre 2% y 4%).</p>
         <div id="ipc-cat"></div>
@@ -80,7 +83,7 @@
         <p class="interp" id="ipc-hist-txt"></p>
       </section>
       <section class="panel">
-        <span class="paso">2 · LA INFLACIÓN Y LA TASA DEL BANCO DE LA REPÚBLICA</span>
+        <span class="paso"><b>2</b>La inflación y la tasa del Banco de la República</span>
         <h2>¿El Banco de la República está frenando la inflación?</h2>
         <p class="hint">Cuando la inflación sube, el Banco sube su tasa para encarecer el crédito y frenar los precios. Las barras muestran la tasa real: cuánto está la tasa por encima (barras hacia arriba) o por debajo (barras rojas, hacia abajo) de la inflación. La tasa llega hasta hoy y la inflación, hasta el último mes publicado por el DANE.</p>
         <div class="chartbox" style="height:340px"><canvas id="ipc-vs"></canvas></div>
@@ -89,7 +92,7 @@
       <div class="detalle-mes">
       <div class="barra-mes"><span class="t">Detalle del mes</span><div id="ipc-periodo"></div><span class="s">Todo lo que sigue corresponde a este mes</span></div>
       <section class="panel" id="ipc-paso2">
-        <span class="paso">3 · QUÉ LA EXPLICA</span>
+        <span class="paso"><b>3</b>Qué la explica</span>
         <h2 id="ipc-paso2-t"></h2>
         <div class="migas" id="ipc-migas"></div>
         <div class="seg" id="ipc-medida"><button data-v="contrib_anual" class="on">Aporte a la inflación anual</button><button data-v="var_anual">Variación anual</button><button data-v="contrib_mensual">Aporte del mes</button><button data-v="var_mensual">Variación del mes</button></div>
@@ -119,7 +122,7 @@
         <div class="kpi"><div class="l">El sector más débil</div><div class="v small" id="ise-k4"></div><div class="d" id="ise-k4d"></div></div>
       </section>
       <section class="panel" id="ise-paso1b">
-        <span class="paso">1 · EL PANORAMA</span>
+        <span class="paso"><b>1</b>El panorama</span>
         <h2 id="ise-hist-t"></h2>
         <p class="hint">Crecimiento anual de la producción (%). Por debajo de cero, la economía produce menos que un año antes. El DANE agrupa los sectores en tres grandes tipos de actividad:</p>
         <div class="grupos-ise">
@@ -137,7 +140,7 @@
       <div class="detalle-mes">
       <div class="barra-mes"><span class="t">Detalle del mes</span><div id="ise-periodo"></div><span class="s">Todo lo que sigue corresponde a este mes</span></div>
       <section class="panel" id="ise-paso2">
-        <span class="paso">2 · QUÉ LA MUEVE</span>
+        <span class="paso"><b>2</b>Qué la mueve</span>
         <h2 id="ise-paso2-t"></h2>
         <div class="seg" id="ise-medida"><button data-v="var_anual_original" class="on">Anual</button><button data-v="var_anual_desest">Anual sin estacionalidad</button><button data-v="var_mensual_desest">Frente al mes anterior</button></div>
         <p class="hint" id="ise-explica" style="margin-top:8px"></p>
@@ -165,7 +168,7 @@
         <div class="kpi"><div class="l">Personas ocupadas</div><div class="v" id="emp-k4"></div><div class="d" id="emp-k4d"></div></div>
       </section>
       <section class="panel" id="emp-paso1b">
-        <span class="paso">1 · EL PANORAMA</span>
+        <span class="paso"><b>1</b>El panorama</span>
         <div class="row spread"><h2 id="emp-hist-t"></h2><div class="seg" id="emp-ind"><button data-v="td" class="on">Desempleo</button><button data-v="to">Ocupación</button><button data-v="tgp">Participación</button></div></div>
         <p class="hint" id="emp-hist-h"></p>
         <div id="emp-cat"></div>
@@ -173,7 +176,7 @@
         <p class="interp" id="emp-hist-txt"></p>
       </section>
       <section class="panel" id="emp-sexo-box">
-        <span class="paso">2 · MUJERES Y HOMBRES</span>
+        <span class="paso"><b>2</b>Mujeres y hombres</span>
         <div class="row spread"><h2 id="emp-sexo-t"></h2><div class="seg" id="emp-indsexo"><button data-v="td" class="on">Desempleo</button><button data-v="to">Ocupación</button><button data-v="tgp">Participación</button></div></div>
         <div class="chartbox" style="height:280px;margin-top:8px"><canvas id="emp-sexo"></canvas></div>
         <h2 style="margin-top:18px">La brecha mes a mes</h2>
@@ -184,7 +187,7 @@
       <div class="detalle-mes">
       <div class="barra-mes"><span class="t">Detalle del mes</span><div id="emp-periodo"></div><span class="s">Todo lo que sigue corresponde a este mes</span></div>
       <section class="panel">
-        <span class="paso">3 · POR SECTOR Y TIPO DE TRABAJO</span>
+        <span class="paso"><b>3</b>Por sector y tipo de trabajo</span>
         <h2 id="emp-paso3-t"></h2>
         <p class="hint">Cambio en el número de personas ocupadas frente al mismo mes del año anterior. Toca una barra para verla en el tiempo.</p>
         <div class="seg" id="emp-desg"><button data-v="ramas" class="on">Por actividad</button><button data-v="posiciones">Por tipo de trabajo</button></div>
@@ -192,7 +195,7 @@
         <div id="emp-rama-box" style="margin-top:18px"><h2 id="emp-rama-t"></h2><p class="hint" id="emp-rama-h"></p><div class="chartbox" style="height:260px"><canvas id="emp-rama"></canvas></div></div>
       </section>
       <section class="panel">
-        <span class="paso">4 · POR CIUDAD</span>
+        <span class="paso"><b>4</b>Por ciudad</span>
         <h2 id="emp-ciud-t"></h2>
         <p class="hint">Trimestre móvil (la muestra no alcanza para cifras mensuales por ciudad). Toca una ciudad para verla en el tiempo.</p>
         <div class="chartbox"><canvas id="emp-ciud"></canvas></div>
@@ -214,14 +217,14 @@
         <div class="kpi"><div class="l">UVR</div><div class="v" id="tas-k4"></div><div class="d" id="tas-k4d"></div></div>
       </section>
       <section class="panel">
-        <span class="paso">1 · LA TASA DEL BANCO DE LA REPÚBLICA Y LA INFLACIÓN</span>
+        <span class="paso"><b>1</b>La tasa del Banco de la República y la inflación</span>
         <h2>¿El Banco de la República está frenando la inflación?</h2>
         <p class="hint">Cuando la inflación sube, el Banco sube su tasa para encarecer el crédito y frenar los precios. Las barras muestran la tasa real: cuánto está la tasa por encima (barras hacia arriba) o por debajo (barras rojas, hacia abajo) de la inflación. Cierre de cada mes; la tasa llega hasta hoy y la inflación, hasta el último mes publicado por el DANE.</p>
         <div class="chartbox" style="height:340px"><canvas id="tas-vs"></canvas></div>
         <p class="interp" id="tas-vs-txt"></p>
       </section>
       <section class="panel">
-        <span class="paso">2 · EL DÓLAR</span>
+        <span class="paso"><b>2</b>El dólar</span>
         <h2>El dólar en el tiempo</h2>
         <p class="hint">Promedio de la TRM en cada mes, desde 1991. El último mes va hasta hoy, así que su promedio todavía puede cambiar.</p>
         <div class="chartbox" style="height:320px"><canvas id="tas-trm"></canvas></div>
@@ -230,14 +233,14 @@
         <div class="chartbox" style="height:240px"><canvas id="tas-trmd"></canvas></div>
       </section>
       <section class="panel">
-        <span class="paso">3 · LAS TASAS DE INTERÉS</span>
+        <span class="paso"><b>3</b>Las tasas de interés</span>
         <h2>Tasas de interés en el tiempo</h2>
         <p class="hint">Cierre de cada mes; el último mes muestra el valor de hoy. La tasa del Banco de la República guía a las demás: la IBR es la referencia de los créditos y la interbancaria (TIB) es a la que se prestan los bancos entre sí.</p>
         <div class="chartbox" style="height:340px"><canvas id="tas-tasas"></canvas></div>
         <p class="interp" id="tas-tasas-txt"></p>
       </section>
       <section class="panel">
-        <span class="paso">4 · LA UVR</span>
+        <span class="paso"><b>4</b>La UVR</span>
         <h2>UVR</h2><p class="hint">Unidad que crece con la inflación; se usa en créditos de vivienda y bonos del Gobierno.</p>
         <div class="chartbox" style="height:240px"><canvas id="tas-uvr"></canvas></div>
       </section>
@@ -257,14 +260,14 @@
         <div class="kpi"><div class="l">Balanza en lo corrido del año</div><div class="v small" id="com-k4"></div><div class="d" id="com-k4d"></div></div>
       </section>
       <section class="panel">
-        <span class="paso">1 · EL PANORAMA</span>
+        <span class="paso"><b>1</b>El panorama</span>
         <h2>Lo que Colombia le vende y le compra al mundo</h2>
         <p class="hint">Millones de dólares por mes. Las barras son la <strong>balanza comercial</strong>: exportaciones menos importaciones. Hacia arriba, el país vendió más de lo que compró; hacia abajo, en rojo, compró más de lo que vendió.</p>
         <div class="chartbox" style="height:340px"><canvas id="com-pan"></canvas></div>
         <p class="interp" id="com-pan-txt"></p>
       </section>
       <section class="panel">
-        <span class="paso">2 · QUÉ VENDEMOS</span>
+        <span class="paso"><b>2</b>Qué vendemos</span>
         <div class="row spread"><h2>Las exportaciones según el producto</h2><div class="seg" id="com-tipo-med"><button data-v="usd" class="on">En dólares</button><button data-v="toneladas">En volumen (toneladas)</button></div></div>
         <div class="grupos-ise">
           <div><strong>Tradicionales</strong><span>Petróleo, carbón, café y ferroníquel: lo que Colombia exporta desde hace décadas. Su valor sube y baja con los precios internacionales.</span></div>
@@ -275,7 +278,7 @@
         <p class="interp" id="com-tipo-txt"></p>
       </section>
       <section class="panel">
-        <span class="paso">3 · QUÉ COMPRAMOS</span>
+        <span class="paso"><b>3</b>Qué compramos</span>
         <h2>Las importaciones según para qué se usan</h2>
         <div class="grupos-ise">
           <div><strong>Bienes de consumo</strong><span>Lo que compran directamente los hogares: carros, celulares, ropa, medicamentos, alimentos.</span></div>
@@ -287,7 +290,7 @@
         <p class="interp" id="com-uso-txt"></p>
       </section>
       <section class="panel" id="com-paises-box">
-        <span class="paso">4 · CON QUIÉN</span>
+        <span class="paso"><b>4</b>Con quién</span>
         <div class="row spread"><h2 id="com-paises-t"></h2><div class="seg" id="com-paises-anio"></div></div>
         <p class="hint">Balanza comercial con cada país o bloque: exportaciones menos importaciones del año. Hacia la derecha, Colombia le vende más de lo que le compra; hacia la izquierda, en rojo, al revés. Toca una barra para verla desde 1995.</p>
         <div class="chartbox"><canvas id="com-paises"></canvas></div>
@@ -297,7 +300,7 @@
       <div class="detalle-mes">
       <div class="barra-mes"><span class="t">Detalle del mes</span><div id="com-periodo"></div><span class="s">Todo lo que sigue corresponde a este mes</span></div>
       <section class="panel" id="com-v">
-        <span class="paso">5 · LO QUE SE VENDIÓ</span>
+        <span class="paso"><b>5</b>Lo que se vendió</span>
         <h2 id="com-v-t"></h2>
         <div class="row"><div class="seg" id="com-v-desg"><button data-v="cap" class="on">Por producto</button><button data-v="dest">Por destino</button></div>
           <div class="seg" id="com-v-med"><button data-v="valor" class="on">Valor</button><button data-v="cambio">Cambio frente a un año antes</button></div></div>
@@ -307,7 +310,7 @@
         <p class="interp" id="com-v-txt"></p>
       </section>
       <section class="panel" id="com-c">
-        <span class="paso">6 · LO QUE SE COMPRÓ</span>
+        <span class="paso"><b>6</b>Lo que se compró</span>
         <h2 id="com-c-t"></h2>
         <div class="row"><div class="seg" id="com-c-desg"><button data-v="uso" class="on">Por uso</button><button data-v="cap">Por producto</button><button data-v="orig">Por origen</button></div>
           <div class="seg" id="com-c-med"><button data-v="valor" class="on">Valor</button><button data-v="cambio">Cambio frente a un año antes</button></div></div>
@@ -333,7 +336,7 @@
         <span class="badge" id="pre-ultima"></span>
       </div>
       <section class="panel" id="pre-paso1">
-        <span class="paso">1 · CÓMO VAMOS</span>
+        <span class="paso"><b>1</b>Cómo vamos</span>
         <h2 id="pre-paso1-t"></h2>
         <p class="hint">Cifras acumuladas en lo corrido del año. <strong>Comprometido</strong>: lo que ya se contrató. <strong>Ejecutado</strong> (obligado): lo que ya se recibió y se debe pagar.</p>
         <section class="kpis" style="margin:8px 0 0">
@@ -349,7 +352,7 @@
         <div class="aviso" id="pre-aviso"></div>
       </section>
       <section class="panel">
-        <span class="paso">2 · LA HISTORIA DESDE 2000</span>
+        <span class="paso"><b>2</b>La historia desde 2000</span>
         <h2 id="preh-t"></h2>
         <div class="row"><div id="preh-cat"></div>
           <div class="seg" id="preh-tipo"><button data-v="Total sin deuda" class="on">Todo (sin deuda)</button><button data-v="Funcionamiento">Funcionamiento</button><button data-v="Inversión">Inversión</button></div>
@@ -361,7 +364,7 @@
         <div class="chartbox" style="height:220px"><canvas id="preh-pct"></canvas></div>
       </section>
       <section class="panel">
-        <span class="paso">3 · MES A MES DESDE 2019</span>
+        <span class="paso"><b>3</b>Mes a mes desde 2019</span>
         <h2>Ejecución y compromisos de cada mes</h2>
         <p class="hint">La línea es el porcentaje ejecutado acumulado del año (vuelve a cero cada enero). Las barras, lo que se comprometió en cada mes. Los huecos son meses que el Ministerio de Hacienda no publicó.</p>
         <div class="chartbox" style="height:320px"><canvas id="pre-evo"></canvas></div>
@@ -369,7 +372,7 @@
       <div class="detalle-mes">
       <div class="barra-mes"><span class="t">Explorar un mes</span><div id="pre-periodo"></div><span class="s">Todo lo que sigue corresponde a este mes</span></div>
       <section class="panel" id="pre-paso4">
-        <span class="paso">4 · DÓNDE ESTÁ LA PLATA</span>
+        <span class="paso"><b>4</b>Dónde está la plata</span>
         <h2 id="pre-bar-t"></h2>
         <div class="migas" id="pre-migas"></div>
         <div id="pre-nodo" hidden>

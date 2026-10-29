@@ -6,6 +6,15 @@ const GOBIERNOS = [["Pastrana", "1998-08-07"], ["Uribe I", "2002-08-07"], ["Urib
                    ["Santos II", "2014-08-07"], ["Duque", "2018-08-07"], ["Petro", "2022-08-07"], ["De la Espriella", "2026-08-07"]];
 
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+// estilo base de las gráficas: tipografía del sitio, leyenda con puntos y globos de información oscuros
+if (window.Chart) {
+  Chart.defaults.font.family = "Manrope, system-ui, sans-serif";
+  Chart.defaults.font.size = 12;
+  Chart.defaults.plugins.legend.labels.usePointStyle = true;
+  Chart.defaults.plugins.legend.labels.pointStyle = "circle";
+  Chart.defaults.plugins.legend.labels.padding = 16;
+  Object.assign(Chart.defaults.plugins.tooltip, {backgroundColor: "rgba(36,20,34,.94)", padding: 11, cornerRadius: 10, titleFont: {weight: "700"}, boxPadding: 4, usePointStyle: true});
+}
 const PALETA = () => ["--s1", "--s2", "--s3", "--s4", "--s5", "--s6", "--s7", "--s8", "--s9", "--s10"].map(css);
 // Para comparar varias categorías: la paleta del proyecto en orden (chicle, naranja, orquídea, lima, limón, rosa)
 const DISTINTOS = () => ["--s1", "--s2", "--s3", "--s4", "--s5", "--s6"].map(css);
@@ -263,7 +272,7 @@ function barras(canvasId, items, {unidad = "", alClic = null, etiqueta = "", fmt
   const col = colores || (x => x.resaltar ? css("--s2") : (x.v >= 0 ? acc : css("--s6")));
   return dibujar(canvasId, {
     type: "bar",
-    data: {labels: items.map(x => x.n), datasets: [{data: items.map(x => x.v), backgroundColor: items.map(col), borderRadius: 4, barThickness: Math.min(18, alto - 8)}]},
+    data: {labels: items.map(x => x.n), datasets: [{data: items.map(x => x.v), backgroundColor: items.map(col), borderRadius: 6, barThickness: Math.min(18, alto - 8)}]},
     options: {
       indexAxis: "y", responsive: true, maintainAspectRatio: false, animation: {duration: 250},
       plugins: {legend: {display: false}, tooltip: {callbacks: {label: c => f(c.raw), footer: () => alClic ? "Toca para ver el detalle" : ""}}},
@@ -285,7 +294,7 @@ const pluginGobiernos = {id: "gobiernos", beforeDatasetsDraw(chart, a, opts) {
   if (!etq.length) return;
   const paso = etq.length > 1 ? x.getPixelForValue(1) - x.getPixelForValue(0) : 20;
   let ini = 0;
-  ctx.save(); ctx.font = "11px Inter, sans-serif"; ctx.textBaseline = "top";
+  ctx.save(); ctx.font = "600 11px Manrope, sans-serif"; ctx.textBaseline = "top";
   for (let i = 1; i <= etq.length; i++) {
     const g = gobiernoDe(etq[ini]);
     if (i < etq.length && gobiernoDe(etq[i]) === g) continue;
@@ -302,7 +311,7 @@ const pluginGobiernos = {id: "gobiernos", beforeDatasetsDraw(chart, a, opts) {
 const pluginReferencias = {id: "referencias", afterDatasetsDraw(chart, a, opts) {
   if (!opts || !opts.lineas || !opts.lineas.length) return;
   const {ctx, chartArea: area, scales: {y}} = chart;
-  ctx.save(); ctx.setLineDash([5, 4]); ctx.strokeStyle = css("--naranja"); ctx.fillStyle = css("--naranja"); ctx.font = "11px Inter, sans-serif";
+  ctx.save(); ctx.setLineDash([5, 4]); ctx.strokeStyle = css("--naranja"); ctx.fillStyle = css("--naranja"); ctx.font = "600 11px Manrope, sans-serif";
   for (const r of opts.lineas) { const py = y.getPixelForValue(r.y); if (py < area.top || py > area.bottom) continue;
     ctx.beginPath(); ctx.moveTo(area.left, py); ctx.lineTo(area.right, py); ctx.stroke(); if (r.t) ctx.fillText(r.t, area.right - ctx.measureText(r.t).width - 4, py - 4); }
   ctx.restore();
