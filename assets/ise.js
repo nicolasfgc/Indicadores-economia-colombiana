@@ -17,13 +17,14 @@ registrar("ise", (() => {
   async function iniciar() {
     st.d = await json("web/ise.json");
     seg("ise-version", x => { st.version = x; st.cat = null; armar(); render(); });
-    seg("ise-medida", x => { st.medida = x; render(); });
+    seg("ise-medida", x => { st.medida = x; detalle(); });
     armar();
   }
   function armar() {
+    if ($("ise-tiempo")) $("ise-tiempo").hidden = true;
     const u = ultimoMes(), fs = st.d.fechas.filter(f => f <= u && v(T(), "var_anual_original", f) != null);
     if (!st.mes || st.mes > u) st.mes = u;
-    per = periodo("ise-periodo", fs, st.mes, f => { st.mes = f; render(); });
+    per = periodo("ise-periodo", fs, st.mes, f => { st.mes = f; detalle(); });
     $("ise-ultima").textContent = `Último dato (${st.version} actividades): ${etqMesLargo(u)}`;
     const items = [...deVersion("gran_rama"), ...deVersion("agrupacion")].map(s => [s.id_serie, (s.nivel === "gran_rama" ? "" : "  · ") + s.nombre_corto]);
     selCat = selectorCategoria("ise-cat", [{items}], id => { st.cat = id; historia(); }, {total: "Toda la economía", otra: "Un sector"});
@@ -54,10 +55,19 @@ registrar("ise", (() => {
       `Hubo ${neg} ${neg === 1 ? "mes" : "meses"} de caída frente al año anterior.`;
   }
 
-  const verEnTiempo = id => { selCat.set(id); irA("ise-paso1b"); };
+  // "En el tiempo": el sector frente a toda la economía, dentro de esta misma sección
+  function verEnTiempo(id) {
+    const F = st.d.fechas.filter(f => f <= ultimoMes()), t = T(), d = F.map(f => v(id, "var_anual_original", f)), tt = F.map(f => v(t, "var_anual_original", f));
+    const nom = meta(id).nombre_corto;
+    enElTiempo("ise-tiempo", `${nom}: crecimiento anual frente a toda la economía`, F,
+      [{label: "Toda la economía", data: tt, color: css("--muted"), ancho: 1.6}, {label: nom, data: d, color: css("--accent"), ancho: 2.5}],
+      {unidad: "%", referencias: [{y: 0, t: ""}], inicio: 60, texto: (i0, i1) => { const tr = d.slice(i0, i1 + 1).filter(x => x != null); if (!tr.length) return "";
+        const prom = tr.reduce((a, b) => a + b, 0) / tr.length, neg = tr.filter(x => x < 0).length;
+        return `Entre ${etqMes(F[i0])} y ${etqMes(F[i1])}, ${nom.toLowerCase()} creció en promedio <strong>${fmt(prom)}%</strong> al año y tuvo ${neg} ${neg === 1 ? "mes" : "meses"} de caída. En ${etqMesLargo(F[i1])} creció ${fmt(d[i1])}%, frente a ${fmt(tt[i1])}% de toda la economía.`; }});
+  }
 
   function render() {
-    const f = st.mes, t = T();
+    const f = ultimoMes(), t = T();   // los datos de arriba son siempre los del último mes publicado
     const va = v(t, "var_anual_original", f), vd = v(t, "var_mensual_desest", f), ac = v(t, "var_ano_corrido_original", f);
     $("ise-k1").textContent = fmt(va) + "%"; $("ise-k1").className = "v " + (va < 0 ? "pos" : "");
     $("ise-k1d").textContent = `frente a ${etqMes(st.d.fechas[st.d.fechas.indexOf(f) - 12] || f)}`;
@@ -67,7 +77,10 @@ registrar("ise", (() => {
     $("ise-k4").textContent = ag.length ? ag[0][0].nombre_corto : "–";
     $("ise-k4d").textContent = ag.length ? `${fmt(ag[0][1])}% anual` : "";
     historia();
-
+    detalle();
+  }
+  function detalle() {
+    const f = st.mes;
     $("ise-paso2-t").textContent = `¿Qué sectores jalaron y cuáles frenaron en ${etqMesLargo(f)}?`;
     $("ise-explica").textContent = EXPL[st.medida];
     const items = deVersion("agrupacion").map(s => ({id: s.id_serie, n: s.nombre_corto, v: v(s.id_serie, st.medida, f)})).filter(x => x.v != null).sort((a, b) => b.v - a.v);

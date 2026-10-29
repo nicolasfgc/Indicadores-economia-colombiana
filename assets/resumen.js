@@ -58,8 +58,8 @@ registrar("resumen", (() => {
     $("res-tpm-num").textContent = pct(vtpm, 2);
     $("res-tpm-cambio").textContent = `vigente al ${fp.split("-").reverse().join("/")} · hace un año: ${pct(p12, 2)}`;
     $("res-tpm-txt").innerHTML = `Es la tasa a la que el Banco de la República le presta a los bancos, y de ella depende el costo de los créditos. ` +
-      `En el último año <strong>${sube(vtpm, p12, ["subió", "bajó", "no cambió"])}</strong>. Descontando la inflación, la tasa real es de ${pct(real, 1)}: ` +
-      (real > 3 ? "una política restrictiva, que busca frenar el consumo y el crédito para bajar la inflación." : real > 0 ? "una política moderadamente restrictiva." : "una política que impulsa el crédito y la actividad.");
+      `En el último año <strong>${sube(vtpm, p12, ["subió", "bajó", "no cambió"])}</strong>. Si se le resta la inflación, la tasa real queda en ${pct(real, 1)}: ` +
+      (real > 3 ? "es una política restrictiva, que encarece el crédito para frenar el consumo y bajar la inflación." : real > 0 ? "es una política algo restrictiva: el crédito cuesta un poco más de lo que suben los precios." : "es una política expansiva: el crédito sale barato frente a la inflación, lo que impulsa el consumo y la inversión.");
     mini("res-tpm-g", P.fechas, P.v, css("--s4"));
 
     // --- presupuesto
@@ -68,7 +68,7 @@ registrar("resumen", (() => {
     $("res-pre-cambio").textContent = `${etqMesLargo(B.fecha)} · ejecutado del presupuesto sin deuda`;
     $("res-pre-txt").innerHTML = `El Gobierno ha ejecutado <strong>${plata(B.obligaciones)}</strong> de ${plata(B.apropiacion)} que tiene para este año (sin contar deuda). ` +
       (B.pct_anio_anterior != null ? `A la misma altura del año pasado iba en ${pct(B.pct_anio_anterior)}: <strong>${B.pct > B.pct_anio_anterior ? "va más rápido" : "va más lento"}</strong>. ` : "") +
-      `Los sectores más rezagados: ${B.mas_lentos.map(x => `${titulo(x[0])} (${pct(x[1])})`).join(", ")}.`;
+      `Los sectores que van más atrasados: ${B.mas_lentos.map(x => `${titulo(x[0])} (${pct(x[1])})`).join(", ")}.`;
     $("res-pre-g").parentElement.hidden = true;
   }
   return {iniciar, render};

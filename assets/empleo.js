@@ -17,11 +17,12 @@ registrar("empleo", (() => {
     const nac = g("Total Nacional").v.td;
     let u = st.d.fechas.length - 1; while (nac[u] == null) u--;
     st.mes = st.d.fechas[u];
-    periodo("emp-periodo", st.d.fechas.slice(0, u + 1).filter((f, i) => nac[i] != null), st.mes, f => { st.mes = f; render(); });
+    st.ult = st.mes;
+    periodo("emp-periodo", st.d.fechas.slice(0, u + 1).filter((f, i) => nac[i] != null), st.mes, f => { st.mes = f; sectores(); ciudades(); });
     $("emp-ultima").textContent = "Último dato: " + etqMesLargo(st.mes);
     seg("emp-ind", x => { st.ind = x; historia(); });
     seg("emp-indsexo", x => { st.indSexo = x; sexo(); });
-    seg("emp-desg", x => { st.desg = x; st.rama = null; render(); });
+    seg("emp-desg", x => { st.desg = x; st.rama = null; sectores(); });
     const zonas = [["EMP_TOTAL_13_CIUDADES_Y_AREAS_METROPOLITANAS_M", "13 ciudades y áreas metropolitanas"], ["EMP_TOTAL_CABECERAS_M", "Cabeceras (zonas urbanas)"]].filter(z => serieDe(z[0]));
     const ciudades = st.d.ciudades.filter(c => !/^total/i.test(c.nombre)).sort((a, b) => a.nombre.localeCompare(b.nombre)).map(c => [c.id, c.nombre + " (trimestre móvil)"]);
     selCat = selectorCategoria("emp-cat", [{g: "Zonas", items: zonas}, {g: "Ciudades", items: ciudades}], id => { st.cat = id; historia(); }, {total: "Total nacional", otra: "Una zona o ciudad"});
@@ -51,7 +52,8 @@ registrar("empleo", (() => {
     const pos = css("--s2"), neg = css("--s1");
     serie("emp-brecha", F, [{label: "Brecha: mujeres − hombres (puntos)", data: brecha, tipo: "bar", colores: brecha.map(b => b == null ? null : b >= 0 ? pos : neg)}],
           {fmtValor: x => (x > 0 ? "+" : "") + fmt(x, 1) + " pts", eje0: true, despues: (i0, i1) => {
-      const f = st.mes, hi = at(h, f), mi = at(m, f), b = mi - hi;
+      let k = i1; while (k > i0 && (h[k] == null || m[k] == null)) k--;
+      const f = F[k], hi = h[k], mi = m[k], b = mi - hi;
       const tramo = brecha.slice(i0, i1 + 1).filter(x => x != null), prom = tramo.reduce((a, c) => a + c, 0) / (tramo.length || 1);
       const sentido = {td: b > 0 ? "más alta para las mujeres: proporcionalmente, más mujeres que hombres buscan trabajo y no lo encuentran" : "más alta para los hombres",
                        to: b < 0 ? "más baja para las mujeres: proporcionalmente, menos mujeres que hombres tienen trabajo" : "más alta para las mujeres",
@@ -68,7 +70,7 @@ registrar("empleo", (() => {
     const items = lista.map(x => ({id: x.id, n: x.nombre, v: at(x.v, f) != null && at(x.v, f12) != null ? at(x.v, f) - at(x.v, f12) : null})).filter(x => x.v != null).sort((a, b) => b.v - a.v);
     $("emp-paso3-t").textContent = `¿Dónde se ganó o se perdió empleo? ${etqMes(f12)} a ${etqMes(f)}`;
     barras("emp-bar", items, {etiqueta: "Cambio en personas ocupadas (miles)", fmtValor: x => `${x >= 0 ? "+" : ""}${fmt(x, 0)} mil personas`,
-      colores: x => x.v >= 0 ? css("--down") : css("--up"), alClic: x => { st.rama = x.id; ramaTiempo(); irA("emp-rama-box"); }});
+      colores: x => x.v >= 0 ? css("--down") : css("--up"), alClic: x => { st.rama = x.id; ramaTiempo(); irA("emp-rama-box", "center"); }});
     ramaTiempo();
   }
   function ramaTiempo() {
@@ -84,11 +86,22 @@ registrar("empleo", (() => {
     const cs = st.d.ciudades.map(c => ({id: c.id, n: c.nombre, v: at(c.v.td, f), resaltar: /^total/i.test(c.nombre)})).filter(x => x.v != null).sort((a, b) => b.v - a.v);
     $("emp-ciud-t").textContent = `Desempleo por ciudad, trimestre ${etqMes(hace(f, 2) || f)} a ${etqMes(f)}`;
     barras("emp-ciud", cs, {etiqueta: "Tasa de desempleo (%)", alto: 22, fmtValor: x => fmt(x, 1) + "%", colores: x => x.resaltar ? css("--muted") : css("--up"),
-      alClic: x => { if (!x.resaltar) { marcarSeg("emp-ind", "td"); st.ind = "td"; selCat.set(x.id); irA("emp-paso1b"); } }});
+      alClic: x => { if (!x.resaltar) ciudadTiempo(x.id); }});
+  }
+  // la ciudad en el tiempo, dentro de esta misma sección
+  function ciudadTiempo(id) {
+    const F = st.d.fechas, c = st.d.ciudades.find(x => x.id === id), tot = st.d.ciudades.find(x => /^total/i.test(x.nombre));
+    const series = [{label: c.nombre, data: c.v.td, color: css("--accent"), ancho: 2.5}];
+    if (tot) series.unshift({label: tot.nombre, data: tot.v.td, color: css("--muted"), ancho: 1.6});
+    enElTiempo("emp-ciud-tiempo", `Desempleo en ${c.nombre}`, F, series, {unidad: "%", fmtValor: x => fmt(x, 1) + "%",
+      nota: "Trimestre móvil terminado en cada mes. Toca otra ciudad para cambiarla.",
+      texto: (i0, i1) => { const tr = c.v.td.slice(i0, i1 + 1).map((x, k) => [x, F[i0 + k]]).filter(x => x[0] != null); if (!tr.length) return "";
+        const mn = tr.reduce((a, b) => b[0] < a[0] ? b : a), mx = tr.reduce((a, b) => b[0] > a[0] ? b : a), ul = tr.at(-1);
+        return `En el trimestre terminado en <strong>${etqMesLargo(ul[1])}</strong> el desempleo en ${c.nombre} fue <strong>${fmt(ul[0], 1)}%</strong>. En el periodo elegido, lo más alto fue ${fmt(mx[0], 1)}% (${etqMes(mx[1])}) y lo más bajo ${fmt(mn[0], 1)}% (${etqMes(mn[1])}).`; }});
   }
 
   function render() {
-    const f = st.mes, f12 = hace(f, 12);
+    const f = st.ult, f12 = hace(f, 12);   // los datos de arriba son siempre los del último mes publicado
     const nac = g("Total Nacional"), c13 = g("Total 13 ciudades y áreas metropolitanas"), des = g("Total Nacional", "desestacionalizada");
     const td = at(nac.v.td, f), td12 = at(nac.v.td, f12);
     $("emp-k1").textContent = fmt(td, 1) + "%";

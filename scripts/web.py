@@ -116,7 +116,10 @@ def presupuesto():
             continue
         filas.append([fechas.index(x.fecha), idx_ent[x.codigo_entidad], idx_tipo[x.tipo_gasto]] +
                      [int(round(getattr(x, v) / 1e6)) for v in VAL])  # millones de pesos
-    guardar("presupuesto/entidades.json", {"fechas": fechas, "tipos": ["Funcionamiento", "Inversión", "Deuda"],
+    # meses que MinHacienda no publicó (huecos entre el primero y el último): la página avisa de ellos
+    todos = pd.date_range(fechas[0], fechas[-1], freq="MS").strftime("%Y-%m-%d").tolist()
+    faltantes = [f for f in todos if f not in fechas]
+    guardar("presupuesto/entidades.json", {"fechas": fechas, "faltantes": faltantes, "tipos": ["Funcionamiento", "Inversión", "Deuda"],
                                            "entidades": lista_ent[["codigo_entidad", "entidad", "sector"]].values.tolist(),
                                            "campos": VAL, "filas": filas})
     # detalle por rubro, un archivo por año (solo vigencia actual, sumando fuentes y recursos)

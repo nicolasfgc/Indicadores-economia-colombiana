@@ -14,6 +14,8 @@ registrar("tasas", (() => {
     $("tas-k3").textContent = fmt(u.IBR_ON[1], 2) + "%"; $("tas-k3d").textContent = fechaLarga(u.IBR_ON[0]);
     $("tas-k4").textContent = "$" + fmt(u.UVR[1], 2); $("tas-k4d").textContent = fechaLarga(u.UVR[0]);
 
+    tasaVsInflacion("tas-vs", "tas-vs-txt");
+
     // dólar
     const ft = F.filter((f, i) => V.TRM.trm_promedio[i] != null), it = ft.map(f => F.indexOf(f));
     const trm = it.map(i => V.TRM.trm_promedio[i]);
@@ -36,8 +38,8 @@ registrar("tasas", (() => {
       const mx = tramo.reduce((a, b) => b[0] > a[0] ? b : a), mn = tramo.reduce((a, b) => b[0] < a[0] ? b : a);
       let cambios = 0; for (let k = 1; k < tramo.length; k++) if (tramo[k][0] !== tramo[k - 1][0]) cambios++;
       $("tas-tasas-txt").innerHTML = `Entre <strong>${etqMes(tramo[0][1])}</strong> y <strong>${etqMes(tramo.at(-1)[1])}</strong> la tasa del Banco de la República pasó de ${fmt(tramo[0][0])}% a <strong>${fmt(tramo.at(-1)[0])}%</strong>, ` +
-        `con ${cambios} meses en que cambió. Llegó a un máximo de ${fmt(mx[0])}% (${etqMes(mx[1])}) y a un mínimo de ${fmt(mn[0])}% (${etqMes(mn[1])}). ` +
-        `Cuando el Banco la sube, las demás tasas la siguen y los créditos se encarecen; así busca frenar la inflación.`;
+        `y el Banco la cambió en ${cambios} de esos meses. Llegó a un máximo de ${fmt(mx[0])}% (${etqMes(mx[1])}) y a un mínimo de ${fmt(mn[0])}% (${etqMes(mn[1])}). ` +
+        `Cuando el Banco la sube, las demás tasas la siguen y los créditos se encarecen: así busca frenar la inflación.`;
     }});
     const fu = F.filter((f, i) => V.UVR.fin_mes[i] != null);
     serie("tas-uvr", fu, [{label: "UVR fin de mes", data: fu.map(f => V.UVR.fin_mes[F.indexOf(f)]), color: css("--s2"), ancho: 2.5}], {fmtValor: x => "$" + fmt(x, 2)});

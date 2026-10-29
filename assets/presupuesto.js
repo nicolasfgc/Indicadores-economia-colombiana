@@ -21,15 +21,29 @@ registrar("presupuesto", (() => {
   async function iniciar() {
     [st.d, st.h] = await Promise.all([json("web/presupuesto/entidades.json"), json("web/presupuesto/historico.json")]);
     for (const f of st.d.filas) (st.porFecha[st.d.fechas[f[0]]] ??= []).push(f);
-    st.mes = st.d.fechas.at(-1);
-    periodo("pre-periodo", st.d.fechas, st.mes, f => { st.mes = f; render(); });
+    st.ult = st.mes = st.d.fechas.at(-1);
+    periodo("pre-periodo", st.d.fechas, st.mes, f => { st.mes = f; detalle(); });
     seg("pre-tipo", x => { st.tipo = x; render(); });
     seg("pre-medida", x => { st.medida = x; detalle(); });
-    $("pre-ultima").textContent = "Último dato: " + etqMesLargo(st.d.fechas.at(-1));
+    $("pre-ultima").textContent = "Último dato: " + etqMesLargo(st.ult);
     const secs = Object.keys(st.h.sectores).filter(s => s !== "TOTAL").sort();
     selectorCategoria("preh-cat", [{items: secs.map(s => [s, titulo(s)])}], id => { st.hSector = id; historico(); }, {total: "Todo el PGN", otra: "Un sector"});
     seg("preh-tipo", x => { st.hTipo = x; historico(); });
     seg("preh-precios", x => { st.hPrecios = x; historico(); });
+    aviso();
+  }
+
+  // aviso sobre el rezago y los meses que el Ministerio no publicó
+  function aviso() {
+    const falt = st.d.faltantes || [];
+    let t = `<strong>Sobre estos datos:</strong> el Ministerio de Hacienda publica la ejecución de cada mes a comienzos del mes siguiente, así que el último dato disponible es ${etqMesLargo(st.ult)}.`;
+    if (falt.length) {
+      // meses publicados justo después de un hueco, dentro del mismo año: su "comprometido en el mes" acumula los meses faltantes
+      const fs = st.d.fechas, despues = fs.filter((f, k) => k > 0 && fs[k - 1].slice(0, 4) === f.slice(0, 4) && mesesCompletos([fs[k - 1], f]).length > 2);
+      t += ` Además, <strong>el Ministerio no ha publicado ${listaMeses(falt)}</strong>. En las gráficas esos meses aparecen vacíos` +
+        (despues.length ? `, y lo comprometido en ${listaMeses(despues)} incluye también lo de los meses que faltan.` : ".");
+    }
+    $("pre-aviso").innerHTML = t;
   }
 
   // ---------------------------------------------------------- agregaciones
@@ -93,26 +107,49 @@ registrar("presupuesto", (() => {
     else if (n.nivel === "sector") st.nodo = {nivel: "entidad", sector: n.sector, ent: g.id};
     else if (n.nivel === "entidad") st.nodo = {nivel: "programa", sector: n.sector, ent: n.ent, prog: g.id};
     else return;
-    render(); irA("pre-paso1");
+    detalle().then(() => irA("pre-paso4"));
   }
 
   // ---------------------------------------------------------- secciones
+  function kpis(p, s, f) {
+    const fs = st.d.fechas, mesAnt = fs[fs.indexOf(f) - 1];
+    $(p + "1").textContent = plata(s[A]);
+    $(p + "1d").innerHTML = s[DA] ? `${s[DA] > 0 ? "+" : ""}${plata(s[DA])} frente al mes anterior` : "sin cambios frente al mes anterior";
+    $(p + "2").textContent = s[A] ? fmt(s[C] / s[A] * 100, 1) + "%" : "–";
+    $(p + "2d").textContent = `${plata(s[C])} comprometidos`;
+    $(p + "3").textContent = s[A] ? fmt(s[O] / s[A] * 100, 1) + "%" : "–";
+    $(p + "3d").textContent = `${plata(s[O])} obligados · ${plata(s[P])} pagados`;
+    $(p + "4").textContent = plata(s[DC]);
+    $(p + "4d").textContent = !mesAnt || mesAnt.slice(0, 4) !== f.slice(0, 4) ? `comprometido en ${etqMes(f)}`
+      : mesesCompletos([mesAnt, f]).length > 2 ? `comprometido entre ${etqMes(mesAnt)} y ${etqMes(f)} (faltan meses en la fuente)` : `comprometido en ${etqMes(f)}`;
+  }
+  // curva del % ejecutado de un año frente al anterior
+  function curva(canvasId, txtId, tot, anio, nombre) {
+    const ant = String(+anio - 1);
+    const c = a => MESES.map((m, i) => { const f = `${a}-${String(i + 1).padStart(2, "0")}-01`; return tot[f] && tot[f][A] ? tot[f][O] / tot[f][A] * 100 : null; });
+    const ca = c(anio), cp = c(ant);
+    const ds = [{label: anio, data: ca, color: css("--accent"), ancho: 3}];
+    if (cp.some(x => x != null)) ds.unshift({label: ant, data: cp, color: css("--muted"), dash: [4, 3]});
+    dibujar(canvasId, {type: "line", data: {labels: MESES, datasets: ds.map(d => ({label: d.label, data: d.data, borderColor: d.color, backgroundColor: d.color, borderDash: d.dash || [], borderWidth: d.ancho || 2, pointRadius: 3, tension: .2, spanGaps: false}))},
+      options: {responsive: true, maintainAspectRatio: false, interaction: {mode: "index", intersect: false}, plugins: {legend: {labels: {color: css("--ink")}}, gobiernos: {activo: false},
+        tooltip: {callbacks: {label: c => `${c.dataset.label}: ${c.raw == null ? "sin dato" : fmt(c.raw, 1) + "%"}`}}},
+        scales: {x: {grid: {display: false}, ticks: {color: css("--muted")}}, y: {beginAtZero: true, grid: {color: css("--line")}, ticks: {color: css("--muted"), callback: v => v + "%"}}}}});
+    let mi = 11; while (mi > 0 && ca[mi] == null) mi--;
+    const a1 = ca[mi], a0 = cp[mi];
+    $(txtId).innerHTML = a1 == null ? "" : `A ${MESES_L[mi]} de ${anio}, ${nombre} lleva <strong>${fmt(a1, 1)}% ejecutado</strong>` +
+      (a0 != null ? `. A la misma altura de ${ant} llevaba ${fmt(a0, 1)}%: <strong>${Math.abs(a1 - a0) < 0.5 ? "va al mismo ritmo" : a1 > a0 ? "va más rápido" : "va más lento"}</strong> que el año pasado (${fmt(Math.abs(a1 - a0), 1)} puntos de diferencia).` : ".");
+  }
+
   async function render() {
-    const f = st.mes, s = total(await hijos(f));
-    migas("pre-migas", pasosNodo(), p => { st.nodo = p.nodo; render(); });
-    migas("pre-migas2", pasosNodo(), p => { st.nodo = p.nodo; render(); });
-    $("pre-paso1-t").textContent = `Cómo va ${nombreNodo()} a ${etqMesLargo(f)}`;
-    const mesAnt = st.d.fechas[st.d.fechas.indexOf(f) - 1];
-    $("pre-k1").textContent = plata(s[A]);
-    $("pre-k1d").innerHTML = s[DA] ? `${s[DA] > 0 ? "+" : ""}${plata(s[DA])} frente al mes anterior` : "sin cambios en el mes";
-    $("pre-k2").textContent = s[A] ? fmt(s[C] / s[A] * 100, 1) + "%" : "–";
-    $("pre-k2d").textContent = `${plata(s[C])} comprometidos`;
-    $("pre-k3").textContent = s[A] ? fmt(s[O] / s[A] * 100, 1) + "%" : "–";
-    $("pre-k3d").textContent = `${plata(s[O])} obligados · ${plata(s[P])} pagados`;
-    $("pre-k4").textContent = plata(s[DC]);
-    $("pre-k4d").textContent = !mesAnt || mesAnt.slice(0, 4) !== f.slice(0, 4) ? "comprometido en enero" : `comprometido entre ${etqMes(mesAnt)} y ${etqMes(f)}`;
+    // 1 · cómo vamos: siempre el último mes publicado, todo el PGN
+    const tot = await totalesNodo({nivel: "total"}), f = st.ult, anio = f.slice(0, 4);
+    const quien = st.tipo === "todos" ? "el presupuesto" : `el gasto de ${st.d.tipos[+st.tipo].toLowerCase()}`;
+    $("pre-paso1-t").textContent = `Así va ${quien} a ${etqMesLargo(f)}`;
+    kpis("pre-k", tot[f], f);
+    $("pre-curva-t").textContent = `¿Cómo ha ido ${anio} frente a ${+anio - 1}?`;
+    curva("pre-curva", "pre-curva-txt", tot, anio, quien);
     historico();
-    await evolucion();
+    evolucion(tot);
     await detalle();
   }
 
@@ -133,46 +170,43 @@ registrar("presupuesto", (() => {
         const tramo = pct.slice(i0, i1 + 1), prom = tramo.filter(x => x != null).reduce((a, b) => a + b, 0) / tramo.filter(x => x != null).length;
         const peor = an[i0 + tramo.indexOf(Math.min(...tramo.filter(x => x != null)))];
         $("preh-txt").innerHTML = `Entre <strong>${an[i0]}</strong> y <strong>${an[i1]}</strong> la apropiación de ${nom} pasó de ${plata(a0)} a <strong>${plata(a1)}</strong>` +
-          ` (${st.hPrecios === "constantes" ? "sin inflación, " : ""}${fmt(cr, 1)}% promedio al año). En promedio se ejecutó el <strong>${fmt(prom, 1)}%</strong> de lo apropiado; el año más bajo fue ${peor} (gobierno ${gobiernoDe(peor)}).` +
-          ` El año en curso no aparece porque todavía no termina: está abajo, mes a mes.`;
+          `, creciendo en promedio ${fmt(cr, 1)}% al año${st.hPrecios === "constantes" ? ", ya descontada la inflación" : ""}. En promedio se ejecutó el <strong>${fmt(prom, 1)}%</strong> de lo apropiado; el año con menor ejecución fue ${peor} (gobierno ${gobiernoDe(peor)}).` +
+          ` El año en curso no aparece porque todavía no termina: está arriba, en “Cómo vamos”.`;
       }});
     serie("preh-pct", an, [{label: "% ejecutado (obligaciones / apropiación)", data: pct, color: css("--accent"), ancho: 2.5}], {fmtValor: x => fmt(x, 1) + "%"});
   }
 
-  async function evolucion() {
-    const tot = await totalesNodo(), F = st.d.fechas;
+  function evolucion(tot) {
+    const F = mesesCompletos(st.d.fechas);
     const pctE = F.map(f => tot[f] && tot[f][A] ? tot[f][O] / tot[f][A] * 100 : null);
     const comp = F.map(f => tot[f] ? tot[f][DC] : null);
-    $("pre-evo-t").textContent = `Mes a mes: ${nombreNodo()}`;
     serie("pre-evo", F, [{label: "% ejecutado acumulado del año", data: pctE, color: css("--accent"), ancho: 2.5},
-                         {label: "Comprometido en el mes", data: comp, tipo: "bar", eje: "y2", color: css("--s3"), colores: comp.map(x => x < 0 ? css("--up") : css("--s3"))}],
-      {fmtValor: x => fmt(x, 1) + "%", fmtValor2: x => plata(x), inicio: F.length, eje0: true, atajos: [["1 año", 12], ["3 años", 36], ["Todo", 0]]});
-    // curva del año frente al anterior
-    const anio = st.mes.slice(0, 4), ant = String(+anio - 1);
-    const curva = a => MESES.map((m, i) => { const f = `${a}-${String(i + 1).padStart(2, "0")}-01`; return tot[f] && tot[f][A] ? tot[f][O] / tot[f][A] * 100 : null; });
-    const ds = [{label: anio, data: curva(anio), color: css("--accent"), ancho: 2.5}];
-    if (F.some(x => x.startsWith(ant))) ds.unshift({label: ant, data: curva(ant), color: css("--muted"), dash: [4, 3]});
-    dibujar("pre-curva", {type: "line", data: {labels: MESES, datasets: ds.map(d => ({label: d.label, data: d.data, borderColor: d.color, borderDash: d.dash || [], borderWidth: d.ancho || 2, pointRadius: 2, tension: .2, spanGaps: true}))},
-      options: {responsive: true, maintainAspectRatio: false, interaction: {mode: "index", intersect: false}, plugins: {legend: {labels: {color: css("--ink")}}, gobiernos: {activo: false},
-        tooltip: {callbacks: {label: c => `${c.dataset.label}: ${fmt(c.raw, 1)}%`}}},
-        scales: {x: {grid: {display: false}, ticks: {color: css("--muted")}}, y: {beginAtZero: true, grid: {color: css("--line")}, ticks: {color: css("--muted"), callback: v => v + "%"}}}}});
-    const mi = +st.mes.slice(5, 7) - 1, a1 = curva(anio)[mi], a0 = curva(ant)[mi];
-    $("pre-curva-txt").innerHTML = a1 == null ? "" : `A ${MESES_L[mi]} de ${anio}, ${nombreNodo()} lleva <strong>${fmt(a1, 1)}%</strong> ejecutado` +
-      (a0 != null ? `; a la misma altura de ${ant} llevaba ${fmt(a0, 1)}%: <strong>${a1 >= a0 ? "va más rápido" : "va más lento"}</strong> (${fmt(Math.abs(a1 - a0), 1)} puntos de diferencia).` : ".");
+                         {label: "Comprometido en el mes", data: comp, tipo: "bar", eje: "y2", color: css("--s4"), colores: comp.map(x => x < 0 ? css("--up") : css("--s4"))}],
+      {fmtValor: x => x == null ? "sin dato" : fmt(x, 1) + "%", fmtValor2: x => x == null ? "sin dato" : plata(x), inicio: 24, eje0: true, atajos: [["1 año", 12], ["2 años", 24], ["Todo", 0]]});
   }
 
   async function detalle() {
     const f = st.mes, n = st.nodo, lista = await hijos(f);
     const nivelSig = {total: "sector", sector: "entidad", entidad: "programa o cuenta", programa: "rubro"}[n.nivel];
     const M = MED[st.medida];
-    $("pre-bar-t").textContent = `${M.t} por ${nivelSig} · ${etqMesLargo(f)}`;
+    migas("pre-migas", pasosNodo(), p => { st.nodo = p.nodo; detalle().then(() => irA("pre-paso4")); });
+    $("pre-bar-t").textContent = n.nivel === "total" ? `Por sector, ${etqMesLargo(f)}` : `${titulo(nombreNodo())}, ${etqMesLargo(f)}`;
+    // resumen del nivel elegido (sector, entidad o programa)
+    $("pre-nodo").hidden = n.nivel === "total";
+    if (n.nivel !== "total") {
+      const tot = await totalesNodo();
+      kpis("pre-n", tot[f] || total(lista), f);
+      $("pre-ncurva-t").textContent = `${titulo(nombreNodo())}: ejecución de ${f.slice(0, 4)} frente a ${+f.slice(0, 4) - 1}`;
+      curva("pre-ncurva", "pre-ncurva-txt", tot, f.slice(0, 4), nombreNodo());
+    }
+    $("pre-bar-h").textContent = `${M.t} de cada ${nivelSig}.` + (n.nivel === "programa" ? "" : ` Toca una barra o “Ver detalle” para entrar.`);
     const items = lista.map(g => ({id: g.id, n: g.n, v: M.f(g.s)})).filter(x => x.v != null && (st.medida.startsWith("pct") || x.v !== 0)).sort((a, b) => b.v - a.v);
     barras("pre-bar", items.slice(0, 60), {etiqueta: M.t, alClic: n.nivel === "programa" ? null : bajar, fmtValor: M.plata ? (x => plata(x)) : (x => fmt(x, 1) + "%"),
       colores: x => x.v < 0 ? css("--up") : css("--accent")});
     $("pre-bar-nota").textContent = items.length > 60 ? `Se muestran los 60 más grandes de ${items.length}. La tabla tiene todos.` : "";
     const filas = lista.slice().sort((a, b) => b.s[A] - a.s[A]);
     const pct = (x, y) => y ? fmt(x / y * 100, 1) + "%" : "–";
-    $("pre-tabla").innerHTML = `<thead><tr><th>${titulo(nivelSig)}</th><th>Apropiación</th><th>Comprometido</th><th>%</th><th>Obligado</th><th>%</th><th>Pagado</th><th>Comprometido en el mes</th><th></th></tr></thead><tbody>` +
+    $("pre-tabla").innerHTML = `<thead><tr><th>${titulo(nivelSig)}</th><th>Presupuesto</th><th>Comprometido</th><th>%</th><th>Obligado</th><th>%</th><th>Pagado</th><th>Comprometido en el mes</th><th></th></tr></thead><tbody>` +
       filas.map((g, i) => `<tr><td>${g.n}</td><td>${plata(g.s[A])}</td><td>${plata(g.s[C])}</td><td>${pct(g.s[C], g.s[A])}</td><td>${plata(g.s[O])}</td><td>${pct(g.s[O], g.s[A])}</td><td>${plata(g.s[P])}</td>
         <td class="${g.s[DC] < 0 ? "pos" : ""}">${plata(g.s[DC])}</td><td class="acciones">${n.nivel === "programa" ? "" : `<button class="ver" data-i="${i}">Ver detalle ›</button>`}</td></tr>`).join("") + "</tbody>";
     $("pre-tabla").querySelectorAll("button.ver").forEach(b => b.onclick = () => bajar(filas[+b.dataset.i]));

@@ -93,7 +93,66 @@ function migas(contId, pasos, ir) {
   c.querySelectorAll("a").forEach(a => a.onclick = () => ir(pasos[+a.dataset.k]));
 }
 
-const irA = id => $(id)?.scrollIntoView({behavior: "smooth", block: "start"});
+// Lleva la vista a un elemento solo si no se está viendo (así tocar algo nunca manda al usuario lejos de donde estaba)
+function irA(id, bloque = "start") {
+  const el = $(id); if (!el) return;
+  const r = el.getBoundingClientRect(), alto = window.innerHeight;
+  if (r.top >= 70 && r.top < alto * 0.6) return;
+  const barra = document.querySelector("section.tab:not([hidden]) .barra-mes");
+  const margen = barra ? barra.offsetHeight + 12 : 12;
+  if (bloque === "center") el.scrollIntoView({behavior: "smooth", block: "center"});
+  else window.scrollTo({top: window.scrollY + r.top - margen, behavior: "smooth"});
+}
+
+// Todos los meses entre la primera y la última fecha (para que los meses sin dato se vean como hueco)
+function mesesCompletos(fechas) {
+  const out = []; let [y, m] = fechas[0].split("-").map(Number); const [y1, m1] = fechas.at(-1).split("-").map(Number);
+  while (y < y1 || (y === y1 && m <= m1)) { out.push(`${y}-${String(m).padStart(2, "0")}-01`); if (++m > 12) { m = 1; y++; } }
+  return out;
+}
+const listaMeses = fs => { const t = fs.map(etqMesLargo); return t.length < 2 ? t.join("") : t.slice(0, -1).join(", ") + " y " + t.at(-1); };
+
+// Gráfica "en el tiempo" que aparece dentro de la misma sección, debajo de lo que se tocó
+function enElTiempo(boxId, titulo, etiquetas, series, opts = {}) {
+  const box = $(boxId);
+  if (!box.dataset.listo) {
+    box.classList.add("tiempo-box");
+    box.innerHTML = `<div class="row spread"><h3></h3><button class="cerrar">Cerrar ✕</button></div><p class="hint"></p><div class="chartbox" style="height:260px"><canvas id="${boxId}-g"></canvas></div><p class="interp" hidden></p>`;
+    box.querySelector(".cerrar").onclick = () => { box.hidden = true; };
+    box.dataset.listo = 1;
+  }
+  box.hidden = false;
+  box.querySelector("h3").textContent = titulo;
+  box.querySelector(".hint").textContent = opts.nota || "Toca otra barra o fila para cambiar lo que ves aquí.";
+  const txt = box.querySelector(".interp");
+  serie(boxId + "-g", etiquetas, series, {...opts, despues: opts.texto ? (i0, i1) => { const t = opts.texto(i0, i1); txt.hidden = !t; txt.innerHTML = t || ""; } : null});
+  if (!opts.texto) txt.hidden = true;
+  irA(boxId, "center");
+}
+
+// Inflación frente a la tasa del Banco de la República (se usa en Inflación y en Tasas)
+async function tasaVsInflacion(canvasId, txtId) {
+  const [T, H] = await Promise.all([json("web/tasas.json"), json("web/ipc_historico.json")]);
+  const tpm = {}; T.fechas.forEach((f, i) => { const v = T.valores.TPM.fin_mes?.[i]; if (v != null) tpm[f] = v; });
+  const inf = {}; H.fechas.forEach((f, i) => { if (H.var_anual[i] != null) inf[f] = H.var_anual[i]; });
+  const F = H.fechas.filter(f => inf[f] != null && tpm[f] != null);
+  const t = F.map(f => tpm[f]), p = F.map(f => inf[f]), real = F.map((f, i) => +(t[i] - p[i]).toFixed(2));
+  const pos = css("--s4"), neg = css("--up");
+  serie(canvasId, F, [
+    {label: "Tasa del Banco de la República", data: t, color: css("--accent"), ancho: 2.5},
+    {label: "Inflación anual", data: p, color: css("--naranja"), ancho: 2.5},
+    {label: "Tasa real (tasa − inflación)", data: real, tipo: "bar", colores: real.map(x => x < 0 ? neg : pos)}],
+    {unidad: "%", eje0: true, referencias: [{y: 3, t: "Meta de inflación 3%"}], despues: (i0, i1) => {
+      const a = i1, r = real.slice(i0, i1 + 1), prom = r.reduce((x, y) => x + y, 0) / r.length, negs = r.filter(x => x < 0).length;
+      const estado = real[a] > 3 ? "muy por encima de la inflación: endeudarse es caro, lo que frena el consumo y el crédito para que los precios bajen"
+                   : real[a] > 0 ? "por encima de la inflación: el crédito cuesta algo más que lo que suben los precios"
+                   : "por debajo de la inflación: endeudarse sale barato, lo que impulsa el crédito y el consumo";
+      $(txtId).innerHTML = `En <strong>${etqMesLargo(F[a])}</strong> la tasa del Banco de la República cerró en <strong>${fmt(t[a])}%</strong> y la inflación anual fue <strong>${fmt(p[a])}%</strong>. ` +
+        `La diferencia, llamada <strong>tasa real</strong>, es de ${fmt(real[a])} puntos: la tasa está ${estado}. ` +
+        `Entre ${etqMes(F[i0])} y ${etqMes(F[i1])} la tasa real promedió ${fmt(prom, 1)} puntos y fue negativa en ${negs} ${negs === 1 ? "mes" : "meses"}. ` +
+        `Lo normal es que el Banco suba su tasa cuando la inflación se dispara y la baje cuando cede, casi siempre con algunos meses de retraso.`;
+    }});
+}
 
 // ------------------------------------------------------------ gráficos
 const graficos = {};
