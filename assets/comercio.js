@@ -15,6 +15,8 @@ registrar("comercio", (() => {
   const hijos = padre => Object.keys(D.series).filter(id => S(id)[3] === padre && S(id)[1] === "impo_cuode");
   const deTema = tema => Object.keys(D.series).filter(id => S(id)[1] === tema);
   const colPos = () => css("--s4"), colNeg = () => css("--up");
+  const listaY = a => a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " y " + a.at(-1);
+  const deCada100 = (p, que) => `${fmt(p, 0)} ${Math.round(p) === 1 ? "fue" : "fueron"} ${que}`;
 
   async function iniciar() {
     D = await json("web/comercio.json");
@@ -89,12 +91,12 @@ registrar("comercio", (() => {
       const f1 = F[i1], f0 = hace(f1, 12);
       const cambios = TIPOS.map(id => [id, pct(V(id, f1), V(id, f0)), ton ? null : null]).filter(x => x[1] != null);
       let txt = `Entre <strong>${etqMes(F[i0])}</strong> y <strong>${etqMes(F[i1])}</strong>, de cada 100 dólares exportados ` +
-        part.map(([id, p]) => `${fmt(p, 0)} fueron ${nom(id)}`).join(", ").replace(/, ([^,]*)$/, " y $1") + ". " +
+        listaY(part.map(([id, p]) => deCada100(p, nom(id)))) + ". " +
         `Petróleo y carbón juntos pesaron <strong>${fmt(minero, 0)}%</strong>: por eso las exportaciones dependen tanto de los precios internacionales de la energía. `;
-      if (f0) txt += `En ${etqMes(f1)}, frente a ${etqMes(f0)}: ` + cambios.map(([id, c]) => `${nom(id)} ${c >= 0 ? "subió" : "bajó"} ${fmt(Math.abs(c), 1)}%`).join(", ") + ` (en dólares).`;
+      if (f0) txt += `En ${etqMes(f1)}, frente a ${etqMes(f0)}: ` + listaY(cambios.map(([id, c]) => `${nom(id)} ${c >= 0 ? "subió" : "bajó"} ${fmt(Math.abs(c), 1)}%`)) + ` (en dólares).`;
       if (ton) {
         const tc = TIPOS.slice(0, 4).map(id => [id, pct((D.toneladas[id] || [])[D.fechas.indexOf(f1)], (D.toneladas[id] || [])[D.fechas.indexOf(f0)])]).filter(x => x[1] != null);
-        txt += ` En volumen: ` + tc.map(([id, c]) => `${nom(id)} ${c >= 0 ? "subió" : "bajó"} ${fmt(Math.abs(c), 1)}%`).join(", ") + `.`;
+        txt += ` En volumen: ` + listaY(tc.map(([id, c]) => `${nom(id)} ${c >= 0 ? "subió" : "bajó"} ${fmt(Math.abs(c), 1)}%`)) + `.`;
       }
       $("com-tipo-txt").innerHTML = txt;
     }});
@@ -109,7 +111,7 @@ registrar("comercio", (() => {
         const sum = id => F.slice(i0, i1 + 1).reduce((s, f) => s + (V(id, f) || 0), 0), tot = sum("IMP_CUODE_TOTAL");
         const f1 = F[i1], f0 = hace(f1, 12);
         let txt = `Entre <strong>${etqMes(F[i0])}</strong> y <strong>${etqMes(f1)}</strong>, de cada 100 dólares importados ` +
-          USOS.map(id => `${fmt(sum(id) / tot * 100, 0)} fueron ${nombre(id).toLowerCase()}`).join(", ").replace(/, ([^,]*)$/, " y $1") + ". ";
+          listaY(USOS.map(id => deCada100(sum(id) / tot * 100, nombre(id).toLowerCase()))) + ". ";
         if (V("IMP_CUODE_TOTAL", f0) != null) {
           const ck = pct(V("IMP_CUODE_K", f1), V("IMP_CUODE_K", f0)), cc = pct(V("IMP_CUODE_C", f1), V("IMP_CUODE_C", f0)), cm = pct(V("IMP_CUODE_M", f1), V("IMP_CUODE_M", f0));
           txt += `En ${etqMes(f1)}, frente a un año antes, los bienes de consumo ${cc >= 0 ? "subieron" : "bajaron"} ${fmt(Math.abs(cc), 1)}%, las materias primas ${cm >= 0 ? "subieron" : "bajaron"} ${fmt(Math.abs(cm), 1)}% ` +
@@ -167,9 +169,13 @@ registrar("comercio", (() => {
     if (!items.length) return "";
     const top3 = items.slice(0, 3).map(x => `${nm(x)} (${dol(x.val, 1)}, ${fmt(x.val / tot * 100, 0)}% del total)`);
     const conAnt = items.filter(x => x.ant != null && x.ant > 0 && x.val > tot * 0.01);   // solo los que pesan algo, para no destacar ruido
-    const sube = conAnt.slice().sort((a, b) => (b.val - b.ant) - (a.val - a.ant))[0], baja = conAnt.slice().sort((a, b) => (a.val - a.ant) - (b.val - b.ant))[0];
-    let t = `En <strong>${etqMesLargo(f)}</strong> ${verbo} sobre todo ${top3.join(", ").replace(/, ([^,]*)$/, " y $1")}. `;
-    if (f0 && sube && baja) t += `Frente a ${etqMes(f0)}, lo que más aumentó en dólares fue ${nm(sube)} (${dol(sube.val - sube.ant, 1)} más) y lo que más cayó fue ${nm(baja)} (${dol(Math.abs(baja.val - baja.ant), 1)} menos).`;
+    // solo se nombra "lo que más subió" si algo subió y "lo que más cayó" si algo cayó
+    const sube = conAnt.filter(x => x.val > x.ant).sort((a, b) => (b.val - b.ant) - (a.val - a.ant))[0];
+    const baja = conAnt.filter(x => x.val < x.ant).sort((a, b) => (a.val - a.ant) - (b.val - b.ant))[0];
+    let t = `En <strong>${etqMesLargo(f)}</strong> ${verbo} sobre todo ${listaY(top3)}. `;
+    if (f0 && (sube || baja)) t += `Frente a ${etqMes(f0)}, ` +
+      (sube ? `lo que más aumentó en dólares fue ${nm(sube)} (${dol(sube.val - sube.ant, 1)} más)` : "nada de lo principal aumentó") +
+      (baja ? ` y lo que más cayó fue ${nm(baja)} (${dol(baja.ant - baja.val, 1)} menos).` : `; ninguno de los principales cayó.`);
     return t;
   }
   function tiempoDe(boxId, id, titulo) {
