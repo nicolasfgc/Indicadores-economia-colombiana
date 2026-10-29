@@ -221,7 +221,7 @@ async function tasaVsInflacion(canvasId, txtId) {
   const F = T.fechas.filter(f => f >= desde && tpm[f] != null);
   const t = F.map(f => tpm[f]), p = F.map(f => inf[f] ?? null), real = F.map((f, i) => p[i] == null ? null : +(t[i] - p[i]).toFixed(2));
   const mc = T.mes_en_curso, fx = f => etqMes(f) + (mc && f === mc[0] ? ` (hasta el ${+mc[1].slice(8)})` : "");
-  const pos = css("--grafica"), neg = css("--up");
+  const pos = css("--s6"), neg = css("--up");   // barras distintas de la línea principal
   serie(canvasId, F, [
     {label: "Tasa del Banco de la República", data: t, color: css("--grafica"), ancho: 2.5},
     {label: "Inflación anual", data: p, color: css("--naranja"), ancho: 2.5},
