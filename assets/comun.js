@@ -27,10 +27,10 @@ function plata(millones, d = 1) {
 }
 
 const cache = {};
-// los datos cambian cuando el robot los actualiza: se piden con una marca por hora para no quedarse con una copia vieja del navegador
+// los datos cambian cuando el robot los actualiza: los JSON se piden confirmando con el servidor (no-cache) y los CSV con una marca por hora
 const fresco = url => url + (url.includes("?") ? "&" : "?") + "h=" + new Date().toISOString().slice(0, 13);
 function json(url) {
-  if (!cache[url]) cache[url] = fetch(fresco(url)).then(r => { if (!r.ok) throw new Error(url + ": " + r.status); return r.json(); });
+  if (!cache[url]) cache[url] = fetch(url, {cache: "no-cache"}).then(r => { if (!r.ok) throw new Error(url + ": " + r.status); return r.json(); });
   return cache[url];
 }
 function csv(url) {
