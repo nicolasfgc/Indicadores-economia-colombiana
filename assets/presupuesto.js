@@ -184,7 +184,7 @@ registrar("presupuesto", (() => {
     const pctE = F.map(f => tot[f] && tot[f][A] ? tot[f][O] / tot[f][A] * 100 : null);
     const comp = F.map(f => tot[f] ? tot[f][DC] : null);
     serie("pre-evo", F, [{label: "% ejecutado acumulado del año", data: pctE, color: css("--grafica"), ancho: 2.5},
-                         {label: "Comprometido en el mes", data: comp, tipo: "bar", eje: "y2", color: css("--s4"), colores: comp.map(x => x < 0 ? css("--up") : css("--s4"))}],
+                         {label: "Comprometido en el mes", data: comp, tipo: "bar", eje: "y2", color: css("--s4"), colores: comp.map(x => x < 0 ? css("--rojo") : css("--s4"))}],
       {fmtValor: x => x == null ? "sin dato" : fmt(x, 1) + "%", fmtValor2: x => x == null ? "sin dato" : plata(x), eje0: true, atajos: [["Año en curso", "ytd"], ["1 año", 12], ["3 años", 36], ["Todo", 0]]});
   }
 
@@ -205,7 +205,7 @@ registrar("presupuesto", (() => {
     $("pre-bar-h").textContent = `${M.t} de cada ${nivelSig}.` + (n.nivel === "programa" ? "" : ` Toca una barra o “Ver detalle” para entrar.`);
     const items = lista.map(g => ({id: g.id, n: g.n, v: M.f(g.s)})).filter(x => x.v != null && (st.medida.startsWith("pct") || x.v !== 0)).sort((a, b) => b.v - a.v);
     barras("pre-bar", items.slice(0, 60), {etiqueta: M.t, alClic: n.nivel === "programa" ? null : bajar, fmtValor: M.plata ? (x => plata(x)) : (x => fmt(x, 1) + "%"),
-      colores: x => x.v < 0 ? css("--up") : css("--grafica")});
+      colores: x => x.v < 0 ? css("--rojo") : css("--grafica")});
     $("pre-bar-nota").textContent = items.length > 60 ? `Se muestran los 60 más grandes de ${items.length}. La tabla tiene todos.` : "";
     const filas = lista.slice().sort((a, b) => b.s[A] - a.s[A]);
     const pct = (x, y) => y ? fmt(x / y * 100, 1) + "%" : "–";

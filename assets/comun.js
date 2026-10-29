@@ -221,7 +221,7 @@ async function tasaVsInflacion(canvasId, txtId) {
   const F = T.fechas.filter(f => f >= desde && tpm[f] != null);
   const t = F.map(f => tpm[f]), p = F.map(f => inf[f] ?? null), real = F.map((f, i) => p[i] == null ? null : +(t[i] - p[i]).toFixed(2));
   const mc = T.mes_en_curso, fx = f => etqMes(f) + (mc && f === mc[0] ? ` (hasta el ${+mc[1].slice(8)})` : "");
-  const pos = css("--s6"), neg = css("--up");   // barras distintas de la línea principal
+  const pos = css("--verde"), neg = css("--rojo");
   serie(canvasId, F, [
     {label: "Tasa del Banco de la República", data: t, color: css("--grafica"), ancho: 2.5},
     {label: "Inflación anual", data: p, color: css("--naranja"), ancho: 2.5},
@@ -257,9 +257,10 @@ function dibujar(canvasId, config) {
 function barras(canvasId, items, {unidad = "", alClic = null, etiqueta = "", fmtValor = null, alto = 26, colores = null} = {}) {
   const box = $(canvasId).parentElement;
   box.style.height = Math.max(160, items.length * alto + 50) + "px";
-  const up = css("--up"), down = css("--down"), acc = css("--grafica");
+  const up = css("--rojo"), down = css("--verde"), acc = css("--grafica");
   const f = fmtValor || (v => `${fmt(v)}${unidad}`);
-  const col = colores || (x => x.resaltar ? acc : (x.v >= 0 ? up : down));
+  // por defecto sin semáforo: el color principal (y uno secundario para valores negativos); el semáforo se pide con `colores`
+  const col = colores || (x => x.resaltar ? css("--s2") : (x.v >= 0 ? acc : css("--s6")));
   return dibujar(canvasId, {
     type: "bar",
     data: {labels: items.map(x => x.n), datasets: [{data: items.map(x => x.v), backgroundColor: items.map(col), borderRadius: 4, barThickness: Math.min(18, alto - 8)}]},

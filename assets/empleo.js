@@ -70,7 +70,7 @@ registrar("empleo", (() => {
     const items = lista.map(x => ({id: x.id, n: x.nombre, v: at(x.v, f) != null && at(x.v, f12) != null ? at(x.v, f) - at(x.v, f12) : null})).filter(x => x.v != null).sort((a, b) => b.v - a.v);
     $("emp-paso3-t").textContent = `¿Dónde se ganó o se perdió empleo? ${etqMes(f12)} a ${etqMes(f)}`;
     barras("emp-bar", items, {etiqueta: "Cambio en personas ocupadas (miles)", fmtValor: x => `${x >= 0 ? "+" : ""}${fmt(x, 0)} mil personas`,
-      colores: x => x.v >= 0 ? css("--down") : css("--up"), alClic: x => { st.rama = x.id; ramaTiempo(); irA("emp-rama-box", "center"); }});
+      colores: x => x.v >= 0 ? css("--verde") : css("--rojo"), alClic: x => { st.rama = x.id; ramaTiempo(); irA("emp-rama-box", "center"); }});
     ramaTiempo();
   }
   function ramaTiempo() {
@@ -85,7 +85,7 @@ registrar("empleo", (() => {
     const f = st.mes;
     const cs = st.d.ciudades.map(c => ({id: c.id, n: c.nombre, v: at(c.v.td, f), resaltar: /^total/i.test(c.nombre)})).filter(x => x.v != null).sort((a, b) => b.v - a.v);
     $("emp-ciud-t").textContent = `Desempleo por ciudad, trimestre ${etqMes(hace(f, 2) || f)} a ${etqMes(f)}`;
-    barras("emp-ciud", cs, {etiqueta: "Tasa de desempleo (%)", alto: 22, fmtValor: x => fmt(x, 1) + "%", colores: x => x.resaltar ? css("--muted") : css("--up"),
+    barras("emp-ciud", cs, {etiqueta: "Tasa de desempleo (%)", alto: 22, fmtValor: x => fmt(x, 1) + "%", colores: x => x.resaltar ? css("--muted") : css("--grafica"),
       alClic: x => { if (!x.resaltar) ciudadTiempo(x.id); }});
   }
   // la ciudad en el tiempo, dentro de esta misma sección
