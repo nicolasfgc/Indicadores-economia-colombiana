@@ -151,3 +151,7 @@ details.sobre td,details.sobre th{white-space:normal;text-align:left}
 .grupos-ise span{color:var(--muted)}
 tr.rama td{background:var(--accent-soft)}
 @media (max-width:820px){.grupos-ise{grid-template-columns:1fr}}
+.autor{margin:6px 0 0;font-size:14px;color:var(--muted)}
+.autor strong{color:var(--ink)}
+.autor a{color:var(--accent);text-decoration:none}
+.autor a:hover{text-decoration:underline}
