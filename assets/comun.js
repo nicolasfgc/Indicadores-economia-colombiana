@@ -15,7 +15,9 @@ if (window.Chart) {
   Chart.defaults.plugins.legend.labels.padding = 16;
   const quieto = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   Chart.defaults.animation = quieto ? false : {duration: 650, easing: "easeOutQuart"};
-  Chart.defaults.transitions.active = {animation: {duration: 250}};
+  // solo se animan posiciones y tamaños; animar colores o estilos de línea rompe Chart.js al actualizar en su sitio
+  Chart.defaults.animations.colors = false;
+  Chart.defaults.animations.numbers = {type: "number", properties: ["x", "y", "base", "width", "height"]};
   Chart.defaults.elements.line.tension = 0.35;
   Chart.defaults.scale.border = {display: false};   // sin línea de eje: más limpio
   Chart.defaults.elements.line.borderCapStyle = "round";
