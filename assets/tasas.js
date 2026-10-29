@@ -28,7 +28,7 @@ registrar("tasas", (() => {
         `El promedio mensual más alto fue $${fmt(mx, 0)} (${etqMes(ft[i0 + tr.indexOf(mx)])}, gobierno ${gobiernoDe(ft[i0 + tr.indexOf(mx)])}) y el más bajo $${fmt(mn, 0)} (${etqMes(ft[i0 + tr.indexOf(mn)])}).`;
     }});
     const dd = D.trm_diaria;
-    serie("tas-trmd", dd.fechas, [{label: "TRM diaria", data: dd.valores, color: css("--accent")}], {fmtX: fDia, fmtValor: x => "$" + fmt(x, 0), inicio: dd.fechas.length, atajos: [["1 mes", 31], ["3 meses", 92], ["6 meses", 183], ["Todo", 0]]});
+    serie("tas-trmd", dd.fechas, [{label: "TRM diaria", data: dd.valores, color: css("--accent")}], {fmtX: fDia, fmtValor: x => "$" + fmt(x, 0), inicio: 365, atajos: [["1 mes", 31], ["3 meses", 92], ["6 meses", 183], ["Año en curso", "ytd"], ["1 año", 365], ["Todo", 0]]});
 
     // tasas de interés (cierre de cada mes)
     const ids = ["TPM", "IBR_ON", "IBR_3M", "TIB", "DTF_90"];

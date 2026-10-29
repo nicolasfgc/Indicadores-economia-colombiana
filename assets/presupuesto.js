@@ -185,7 +185,7 @@ registrar("presupuesto", (() => {
     const comp = F.map(f => tot[f] ? tot[f][DC] : null);
     serie("pre-evo", F, [{label: "% ejecutado acumulado del año", data: pctE, color: css("--accent"), ancho: 2.5},
                          {label: "Comprometido en el mes", data: comp, tipo: "bar", eje: "y2", color: css("--s4"), colores: comp.map(x => x < 0 ? css("--up") : css("--s4"))}],
-      {fmtValor: x => x == null ? "sin dato" : fmt(x, 1) + "%", fmtValor2: x => x == null ? "sin dato" : plata(x), inicio: 24, eje0: true, atajos: [["1 año", 12], ["2 años", 24], ["Todo", 0]]});
+      {fmtValor: x => x == null ? "sin dato" : fmt(x, 1) + "%", fmtValor2: x => x == null ? "sin dato" : plata(x), eje0: true, atajos: [["Año en curso", "ytd"], ["1 año", 12], ["3 años", 36], ["Todo", 0]]});
   }
 
   async function detalle() {

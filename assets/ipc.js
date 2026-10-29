@@ -44,7 +44,7 @@ registrar("ipc", (() => {
     const total = F.map(f => H.var_anual[H.fechas.indexOf(f)]);
     const ds = [{label: "Inflación total (anual)", data: total, color: c.length ? css("--muted") : css("--accent"), ancho: c.length ? 1.6 : 2.5, dash: c.length ? [4, 3] : []}];
     c.forEach((id, k) => ds.push({label: nombre(id), data: F.map(f => val(id, "var_anual", f) ?? null), color: DISTINTOS()[k], ancho: 2.5}));
-    serie("ipc-hist", F, ds, {unidad: "%", referencias: [{y: 3, t: "Meta 3%"}, {y: 4, t: "4%"}, {y: 2, t: "2%"}], inicio: c.length ? F.length : 12 * 23,
+    serie("ipc-hist", F, ds, {unidad: "%", referencias: [{y: 3, t: "Meta 3%"}, {y: 4, t: "4%"}, {y: 2, t: "2%"}],
       despues: (i0, i1) => interpretar(F, ds, i0, i1)});
   }
   function interpretar(F, ds, i0, i1) {
@@ -77,7 +77,7 @@ registrar("ipc", (() => {
     const H = st.H, F = H.fechas.filter(f => f >= "2019-01-01"), d = F.map(f => val(id, "var_anual", f) ?? null), t = F.map(f => H.var_anual[H.fechas.indexOf(f)]);
     enElTiempo("ipc-tiempo", `${nombre(id)}: inflación anual frente al total`, F,
       [{label: "Inflación total", data: t, color: css("--muted"), ancho: 1.6}, {label: nombre(id), data: d, color: css("--accent"), ancho: 2.5}],
-      {unidad: "%", inicio: F.length, nota: "Variación anual de los precios de esta categoría desde 2019 (antes el DANE no publica este detalle). Toca otra barra o fila para cambiarla.",
+      {unidad: "%", nota: "Variación anual de los precios de esta categoría desde 2019 (antes el DANE no publica este detalle). Toca otra barra o fila para cambiarla.",
        texto: (i0, i1) => { const a = d[i1], b = t[i1]; if (a == null) return "";
          return `En <strong>${etqMesLargo(F[i1])}</strong> los precios de ${nombre(id).toLowerCase()} subieron <strong>${fmt(a)}%</strong> en un año, ` +
            `${Math.abs(a - b) < 0.1 ? "lo mismo que" : a > b ? `${fmt(a - b)} puntos más que` : `${fmt(b - a)} puntos menos que`} la inflación total (${fmt(b)}%).`; }});

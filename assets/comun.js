@@ -316,11 +316,12 @@ function serie(canvasId, etiquetas, series, opts = {}) {
   const n = etiquetas.length;
   let r = rangos[canvasId];
   if (!r || etiquetas.indexOf(r.d) < 0 || etiquetas.indexOf(r.h) < 0) {
-    const hasta = n - 1, pasos = opts.inicio != null ? opts.inicio : (anual ? n : 120);
-    r = rangos[canvasId] = {d: etiquetas[Math.max(0, hasta - pasos + 1)], h: etiquetas[hasta]};
+    // por defecto: el último año (las series anuales, completas)
+    const k = opts.inicio != null ? opts.inicio : anual ? 0 : 12;
+    r = rangos[canvasId] = {d: etiquetas[desdeAtajo(etiquetas, k)], h: etiquetas[n - 1], k: String(k)};
   }
   const i0 = etiquetas.indexOf(r.d), i1 = etiquetas.indexOf(r.h);
-  controlRango(canvasId, etiquetas, i0, i1, anual, opts.atajos);
+  controlRango(canvasId, etiquetas, i0, i1, anual, opts.atajos, r.k);
   const et = etiquetas.slice(i0, i1 + 1);
   const pal = PALETA();
   const f = opts.fmtValor || (v => `${fmt(v)}${opts.unidad || ""}`);
@@ -349,32 +350,40 @@ function serie(canvasId, etiquetas, series, opts = {}) {
 }
 function redibujar(canvasId) { const a = ultimosArgs[canvasId]; if (a) serie(canvasId, ...a); }
 
+// Desde qué posición arranca un atajo: k = cuántos periodos hacia atrás, 0 = todo, "ytd" = desde enero del último año
+function desdeAtajo(et, k) {
+  const h = et.length - 1;
+  if (k === "ytd") { const y = et[h].slice(0, 4), i = et.findIndex(f => f.slice(0, 4) === y); return i < 0 ? 0 : i; }
+  k = +k; return k ? Math.max(0, h - k + 1) : 0;
+}
+
 // Barra para escoger desde qué mes hasta qué mes (dos manijas) y atajos
-function controlRango(canvasId, etiquetas, i0, i1, anual, atajosPropios) {
+function controlRango(canvasId, etiquetas, i0, i1, anual, atajosPropios, activo) {
   let c = $(canvasId + "-rango");
   const n = etiquetas.length;
   if (!c) {
     c = document.createElement("div"); c.className = "rango"; c.id = canvasId + "-rango";
     $(canvasId).parentElement.after(c);
-    const atajos = atajosPropios || (anual ? [["10 años", 10], ["20 años", 20], ["Todo", 0]] : [["1 año", 12], ["5 años", 60], ["10 años", 120], ["Todo", 0]]);
+    const atajos = atajosPropios || (anual ? [["10 años", 10], ["20 años", 20], ["Todo", 0]] : [["Año en curso", "ytd"], ["1 año", 12], ["5 años", 60], ["10 años", 120], ["Todo", 0]]);
     c.innerHTML = `<div class="rango-top"><span class="rango-txt"></span><span class="rango-atajos">${atajos.map(([t, k]) => `<button data-k="${k}">${t}</button>`).join("")}</span></div>
       <div class="dual"><div class="pista"><div class="relleno"></div></div><input type="range" class="r0" min="0" step="1"><input type="range" class="r1" min="0" step="1"></div>`;
     const a = c.querySelector(".r0"), b = c.querySelector(".r1");
     const aplicar = () => {
       const et = ultimosArgs[canvasId][0];
       let x = +a.value, y = +b.value; if (x > y) [x, y] = [y, x];
-      rangos[canvasId] = {d: et[x], h: et[y]}; redibujar(canvasId);
+      rangos[canvasId] = {d: et[x], h: et[y], k: null}; redibujar(canvasId);
     };
     let pendiente = null;
     const alMover = () => { pintar(c, ultimosArgs[canvasId][0], +a.value, +b.value); if (!pendiente) pendiente = requestAnimationFrame(() => { pendiente = null; aplicar(); }); };
     a.oninput = alMover; b.oninput = alMover;
     c.querySelectorAll(".rango-atajos button").forEach(btn => btn.onclick = () => {
-      const et = ultimosArgs[canvasId][0], k = +btn.dataset.k, h = et.length - 1;
-      rangos[canvasId] = {d: et[k ? Math.max(0, h - k + 1) : 0], h: et[h]}; redibujar(canvasId);
+      const et = ultimosArgs[canvasId][0], k = btn.dataset.k;
+      rangos[canvasId] = {d: et[desdeAtajo(et, k)], h: et.at(-1), k}; redibujar(canvasId);
     });
   }
   const a = c.querySelector(".r0"), b = c.querySelector(".r1");
   a.max = b.max = n - 1; a.value = i0; b.value = i1;
+  c.querySelectorAll(".rango-atajos button").forEach(btn => btn.classList.toggle("on", btn.dataset.k === activo));
   pintar(c, etiquetas, i0, i1);
 }
 function pintar(c, et, x, y) {

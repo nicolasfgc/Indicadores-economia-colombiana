@@ -82,7 +82,7 @@ registrar("ise", (() => {
     const nom = meta(id).nombre_corto;
     enElTiempo("ise-tiempo", `${nom}: crecimiento anual frente a toda la economía`, F,
       [{label: "Toda la economía", data: tt, color: css("--muted"), ancho: 1.6}, {label: nom, data: d, color: css("--accent"), ancho: 2.5}],
-      {unidad: "%", referencias: [{y: 0, t: ""}], inicio: 60, texto: (i0, i1) => { const tr = d.slice(i0, i1 + 1).filter(x => x != null); if (!tr.length) return "";
+      {unidad: "%", referencias: [{y: 0, t: ""}], texto: (i0, i1) => { const tr = d.slice(i0, i1 + 1).filter(x => x != null); if (!tr.length) return "";
         const prom = tr.reduce((a, b) => a + b, 0) / tr.length, neg = tr.filter(x => x < 0).length;
         return `Entre ${etqMes(F[i0])} y ${etqMes(F[i1])}, ${nom.toLowerCase()} creció en promedio <strong>${fmt(prom)}%</strong> al año y tuvo ${neg} ${neg === 1 ? "mes" : "meses"} de caída. En ${etqMesLargo(F[i1])} ${d[i1] >= 0 ? "creció" : "cayó"} ${fmt(Math.abs(d[i1]))}%, frente a ${fmt(tt[i1])}% de toda la economía.`; }});
   }
