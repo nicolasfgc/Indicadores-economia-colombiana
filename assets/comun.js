@@ -266,9 +266,9 @@ async function tasaVsInflacion(canvasId, txtId) {
 // (cambiar de periodo, de categoría o de medida se ve como una transición suave, no como un redibujo de golpe).
 const graficos = {};
 let arrastrando = false;   // mientras se mueven las manijas del periodo, sin animación para que responda al instante
-function dibujar(canvasId, config) {
+function dibujar(canvasId, config, {nueva = false} = {}) {
   const g = graficos[canvasId];
-  if (g && g.config.type === config.type && g.canvas === $(canvasId)) {
+  if (!nueva && g && g.config.type === config.type && g.canvas === $(canvasId)) {
     g.stop();   // Chart.js falla si se cambian las opciones con una animación en curso
     g.data.labels = config.data.labels;
     // conserva los objetos de cada serie cuando coinciden por nombre, para que la animación los interpole
@@ -303,7 +303,7 @@ function barras(canvasId, items, {unidad = "", alClic = null, etiqueta = "", fmt
       onClick: (e, el) => { if (el.length && alClic) alClic(items[el[0].index]); },
       onHover: (e, el) => { e.native.target.style.cursor = el.length && alClic ? "pointer" : "default"; }
     }
-  });
+  }, {nueva: true});
 }
 
 // Franjas de gobiernos detrás de las series
