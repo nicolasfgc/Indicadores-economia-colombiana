@@ -113,10 +113,11 @@ def banrep():
         if periodicidad == "Mensual":
             m = s.set_index("mes")[["valor"]].rename(columns={"valor": "promedio"})
         else:
-            s = s[s.mes < mes_actual]  # el mes en curso solo cuenta cuando termina
-            g = s.groupby("mes").valor
+            # el dato diario llega hasta hoy (así el último valor vigente siempre está al día);
+            # el promedio y el cierre mensual solo cuentan cuando el mes termina
+            diarias.append(s[s.fecha <= hoy].assign(id_serie=sid)[["fecha", "id_serie", "valor"]])
+            g = s[s.mes < mes_actual].groupby("mes").valor
             m = pd.DataFrame({"promedio": g.mean(), "fin_mes": g.last()})
-            diarias.append(s.assign(id_serie=sid)[["fecha", "id_serie", "valor"]])
         largo = m.reset_index().rename(columns={"mes": "fecha"}).melt(id_vars="fecha", var_name="medida", value_name="valor").dropna()
         largo["id_serie"] = sid
         largos.append(largo)
