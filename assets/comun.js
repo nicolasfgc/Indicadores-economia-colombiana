@@ -342,7 +342,9 @@ function serie(canvasId, etiquetas, series, opts = {}) {
                               label: c => `${c.dataset.label}: ${(c.dataset.yAxisID === "y2" && opts.fmtValor2 ? opts.fmtValor2 : f)(c.raw)}`}},
         gobiernos: {activo: opts.gobiernos !== false}, referencias: {lineas: opts.referencias || []}},
       scales: {x: {grid: {display: false}, ticks: {color: css("--muted"), maxTicksLimit: 10, callback: (v, i) => fx(et[i])}},
-               y: {beginAtZero: !!opts.eje0, grid: {color: css("--line")}, ticks: {color: css("--muted"), callback: v => f(v)}},
+               // el eje siempre incluye las líneas de referencia (meta de inflación, el cero…) aunque el periodo sea corto
+               y: {beginAtZero: !!opts.eje0, grid: {color: css("--line")}, ticks: {color: css("--muted"), callback: v => f(v)},
+                   ...(opts.referencias?.length ? {suggestedMin: Math.min(...opts.referencias.map(x => x.y)), suggestedMax: Math.max(...opts.referencias.map(x => x.y))} : {})},
                ...(series.some(s => s.eje === "y2") ? {y2: {position: "right", grid: {display: false}, ticks: {color: css("--muted"), callback: v => (opts.fmtValor2 || f)(v)}}} : {})}
     },
     plugins: [pluginGobiernos, pluginReferencias]
