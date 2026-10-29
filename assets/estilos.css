@@ -134,3 +134,11 @@ details.sobre{background:var(--panel);border:1px solid var(--line);border-radius
 details.sobre summary{cursor:pointer;font-weight:600;color:var(--head)}
 details.sobre table{margin-top:10px}
 details.sobre td,details.sobre th{white-space:normal;text-align:left}
+/* selector de varias categorías */
+.varias{display:flex;flex-direction:column;gap:8px;width:100%}
+.varias select{max-width:420px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:999px;padding:3px 6px 3px 10px;font-size:13px;background:var(--panel)}
+.chip i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.chip button{border:0;background:transparent;color:var(--muted);cursor:pointer;font:inherit;padding:0 4px}
+.chip button:hover{color:var(--up)}

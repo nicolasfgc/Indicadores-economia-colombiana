@@ -1,6 +1,6 @@
 // Pestaña: Inflación (IPC) — primero el panorama, luego qué la explica
 registrar("ipc", (() => {
-  const st = {serie: {}, meta: {}, hijos: {}, fechas: [], mes: null, medida: "contrib_anual", nodo: "IPC_TOTAL", cat: null, H: null};
+  const st = {serie: {}, meta: {}, hijos: {}, fechas: [], mes: null, medida: "contrib_anual", nodo: "IPC_TOTAL", cats: [], H: null};
   const ETQ = {contrib_anual: "Aporte a la inflación anual (pp)", var_anual: "Variación anual (%)", contrib_mensual: "Aporte del mes (pp)", var_mensual: "Variación del mes (%)"};
   const EXPL = {
     contrib_anual: "Puntos porcentuales de la inflación anual que explica cada categoría. Suman el total.",
@@ -32,28 +32,40 @@ registrar("ipc", (() => {
     $("ipc-ultima").textContent = "Último dato: " + etqMesLargo(st.fechas.at(-1));
     // categorías para ver en el tiempo: divisiones, y dentro de cada una sus grupos y subclases
     const grupos = st.hijos.IPC_TOTAL.map(d => ({g: nombre(d), items: [[d, nombre(d) + " (división)"], ...(st.hijos[d] || []).flatMap(g => [[g, "  " + nombre(g)], ...(st.hijos[g] || []).map(s => [s, "      · " + nombre(s)])])]}));
-    selCat = selectorCategoria("ipc-cat", grupos, id => { st.cat = id; historia(); }, {total: "Inflación total", otra: "Una categoría (desde 2019)"});
+    selCat = selectorVarias("ipc-cat", grupos, ids => { delete rangos["ipc-hist"]; st.cats = ids; historia(); }, {total: "Inflación total", otra: "Comparar categorías (desde 2019)"});
   }
 
+  // con categorías solo hay datos desde 2019: la gráfica arranca ahí y muestra el total como referencia
   function historia() {
-    const H = st.H;
-    const ds = [{label: "Inflación total (anual)", data: H.var_anual, color: st.cat ? css("--muted") : css("--accent"), ancho: st.cat ? 1.6 : 2.5}];
-    if (st.cat) ds.push({label: nombre(st.cat), data: H.fechas.map(f => val(st.cat, "var_anual", f) ?? null), color: css("--accent"), ancho: 2.5});
-    serie("ipc-hist", H.fechas, ds, {unidad: "%", referencias: [{y: 3, t: "Meta 3%"}, {y: 4, t: "4%"}, {y: 2, t: "2%"}], inicio: 12 * 23, despues: interpretar});
+    const H = st.H, c = st.cats, F = c.length ? H.fechas.filter(f => f >= "2019-01-01") : H.fechas;
+    const total = F.map(f => H.var_anual[H.fechas.indexOf(f)]);
+    const ds = [{label: "Inflación total (anual)", data: total, color: c.length ? css("--muted") : css("--accent"), ancho: c.length ? 1.6 : 2.5, dash: c.length ? [4, 3] : []}];
+    c.forEach((id, k) => ds.push({label: nombre(id), data: F.map(f => val(id, "var_anual", f) ?? null), color: PALETA()[k], ancho: 2.5}));
+    serie("ipc-hist", F, ds, {unidad: "%", referencias: [{y: 3, t: "Meta 3%"}, {y: 4, t: "4%"}, {y: 2, t: "2%"}], inicio: c.length ? F.length : 12 * 23,
+      despues: (i0, i1) => interpretar(F, ds, i0, i1)});
   }
-  function interpretar(i0, i1) {
-    const H = st.H;
-    const datos = st.cat ? H.fechas.map(f => val(st.cat, "var_anual", f) ?? null) : H.var_anual;
-    const quien = st.cat ? `la inflación de ${nombre(st.cat).toLowerCase()}` : "la inflación";
-    const tramo = datos.slice(i0, i1 + 1).map((v, k) => [v, H.fechas[i0 + k]]).filter(x => x[0] != null);
-    if (tramo.length) {
+  function interpretar(F, ds, i0, i1) {
+    const resumen = d => {
+      const tramo = d.data.slice(i0, i1 + 1).map((v, k) => [v, F[i0 + k]]).filter(x => x[0] != null);
+      if (!tramo.length) return null;
       const prom = tramo.reduce((a, b) => a + b[0], 0) / tramo.length;
       const max = tramo.reduce((a, b) => b[0] > a[0] ? b : a), min = tramo.reduce((a, b) => b[0] < a[0] ? b : a);
       const dentro = tramo.filter(x => x[0] >= 2 && x[0] <= 4).length / tramo.length * 100;
-      $("ipc-hist-txt").innerHTML = `Entre <strong>${etqMes(tramo[0][1])}</strong> y <strong>${etqMes(tramo.at(-1)[1])}</strong> ${quien} promedió <strong>${fmt(prom)}%</strong>. ` +
-        `Lo más alto fue ${fmt(max[0])}% (${etqMes(max[1])}, gobierno ${gobiernoDe(max[1])}) y lo más bajo ${fmt(min[0])}% (${etqMes(min[1])}). ` +
-        `Estuvo dentro del rango que busca el Banco de la República (entre 2% y 4%) en el ${fmt(dentro, 0)}% de los meses.`;
+      return {prom, max, min, dentro, ult: tramo.at(-1)};
+    };
+    const periodo = `Entre <strong>${etqMes(F[i0])}</strong> y <strong>${etqMes(F[i1])}</strong>`;
+    if (!st.cats.length) {
+      const r = resumen(ds[0]); if (!r) return;
+      $("ipc-hist-txt").innerHTML = `${periodo} la inflación promedió <strong>${fmt(r.prom)}%</strong>. ` +
+        `Lo más alto fue ${fmt(r.max[0])}% (${etqMes(r.max[1])}, gobierno ${gobiernoDe(r.max[1])}) y lo más bajo ${fmt(r.min[0])}% (${etqMes(r.min[1])}). ` +
+        `Estuvo dentro del rango que busca el Banco de la República (entre 2% y 4%) en el ${fmt(r.dentro, 0)}% de los meses.`;
+      return;
     }
+    const t = resumen(ds[0]);
+    const filas = ds.slice(1).map(d => [d.label, resumen(d)]).filter(x => x[1]);
+    $("ipc-hist-txt").innerHTML = `${periodo} la inflación total promedió <strong>${fmt(t.prom)}%</strong>. En las categorías elegidas:<br>` +
+      filas.map(([n, r]) => `• <strong>${n}</strong>: promedió ${fmt(r.prom)}% ${r.prom > t.prom + 0.05 ? "(por encima del total)" : r.prom < t.prom - 0.05 ? "(por debajo del total)" : "(igual que el total)"}; ` +
+        `lo más alto fue ${fmt(r.max[0])}% (${etqMes(r.max[1])}) y en ${etqMes(r.ult[1])} va en ${fmt(r.ult[0])}%.`).join("<br>");
   }
 
   const ir = id => { st.nodo = id; detalle(); irA("ipc-paso2"); };
