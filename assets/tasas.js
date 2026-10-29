@@ -21,14 +21,14 @@ registrar("tasas", (() => {
     // dólar
     const ft = F.filter((f, i) => V.TRM.trm_promedio[i] != null), it = ft.map(f => F.indexOf(f));
     const trm = it.map(i => V.TRM.trm_promedio[i]);
-    serie("tas-trm", ft, [{label: "TRM promedio del mes", data: trm, color: css("--accent"), ancho: 2.5}], {fmtValor: x => "$" + fmt(x, 0), fmtX: fx, despues: (i0, i1) => {
+    serie("tas-trm", ft, [{label: "TRM promedio del mes", data: trm, color: css("--grafica"), ancho: 2.5}], {fmtValor: x => "$" + fmt(x, 0), fmtX: fx, despues: (i0, i1) => {
       const a = trm[i0], b = trm[i1], tr = trm.slice(i0, i1 + 1), mx = Math.max(...tr), mn = Math.min(...tr);
       const c = (b / a - 1) * 100;
       $("tas-trm-txt").innerHTML = `Entre <strong>${etqMes(ft[i0])}</strong> y <strong>${fx(ft[i1])}</strong> el dólar pasó de $${fmt(a, 0)} a $${fmt(b, 0)}: <strong>${c >= 0 ? "subió" : "bajó"} ${fmt(Math.abs(c), 1)}%</strong>. ` +
         `El promedio mensual más alto fue $${fmt(mx, 0)} (${etqMes(ft[i0 + tr.indexOf(mx)])}, gobierno ${gobiernoDe(ft[i0 + tr.indexOf(mx)])}) y el más bajo $${fmt(mn, 0)} (${etqMes(ft[i0 + tr.indexOf(mn)])}).`;
     }});
     const dd = D.trm_diaria;
-    serie("tas-trmd", dd.fechas, [{label: "TRM diaria", data: dd.valores, color: css("--accent")}], {fmtX: fDia, fmtValor: x => "$" + fmt(x, 0), inicio: 365, atajos: [["1 mes", 31], ["3 meses", 92], ["6 meses", 183], ["Año en curso", "ytd"], ["1 año", 365], ["Todo", 0]]});
+    serie("tas-trmd", dd.fechas, [{label: "TRM diaria", data: dd.valores, color: css("--grafica")}], {fmtX: fDia, fmtValor: x => "$" + fmt(x, 0), inicio: 365, atajos: [["1 mes", 31], ["3 meses", 92], ["6 meses", 183], ["Año en curso", "ytd"], ["1 año", 365], ["Todo", 0]]});
 
     // tasas de interés (cierre de cada mes)
     const ids = ["TPM", "IBR_ON", "IBR_3M", "TIB", "DTF_90"];

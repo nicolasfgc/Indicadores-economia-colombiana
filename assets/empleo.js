@@ -30,8 +30,8 @@ registrar("empleo", (() => {
 
   function historia() {
     const F = st.d.fechas, nac = g("Total Nacional"), des = g("Total Nacional", "desestacionalizada");
-    const ds = st.cat ? [{label: "Total nacional", data: nac.v[st.ind], color: css("--muted"), ancho: 1.6}, {label: nombreDe(st.cat), data: serieDe(st.cat).v[st.ind] || [], color: css("--accent"), ancho: 2.5}]
-                      : [{label: "Total nacional", data: nac.v[st.ind], color: css("--muted"), ancho: 1.6}, {label: "Sin estacionalidad", data: des.v[st.ind], color: css("--accent"), ancho: 2.5}];
+    const ds = st.cat ? [{label: "Total nacional", data: nac.v[st.ind], color: css("--muted"), ancho: 1.6}, {label: nombreDe(st.cat), data: serieDe(st.cat).v[st.ind] || [], color: css("--grafica"), ancho: 2.5}]
+                      : [{label: "Total nacional", data: nac.v[st.ind], color: css("--muted"), ancho: 1.6}, {label: "Sin estacionalidad", data: des.v[st.ind], color: css("--grafica"), ancho: 2.5}];
     $("emp-hist-t").textContent = `${IND[st.ind]} en el tiempo`;
     $("emp-hist-h").textContent = IND_EXPL[st.ind];
     serie("emp-hist", F, ds, {unidad: "%", fmtValor: x => fmt(x, 1) + "%", despues: (i0, i1) => {
@@ -79,7 +79,7 @@ registrar("empleo", (() => {
     const sel = st.rama ? lista.find(x => x.id === st.rama) : null;
     $("emp-rama-t").textContent = sel ? `Personas ocupadas en ${sel.nombre.toLowerCase()}` : "Personas ocupadas en total";
     $("emp-rama-h").textContent = sel ? "Toca otra barra para cambiar de actividad. Miles de personas." : "Toca una barra de arriba para ver una actividad en el tiempo. Miles de personas.";
-    serie("emp-rama", F, [{label: sel ? sel.nombre : "Total de ocupados", data: (sel || total).v, color: css("--accent"), ancho: 2.5}], {fmtValor: x => fmt(x, 0) + " mil"});
+    serie("emp-rama", F, [{label: sel ? sel.nombre : "Total de ocupados", data: (sel || total).v, color: css("--grafica"), ancho: 2.5}], {fmtValor: x => fmt(x, 0) + " mil"});
   }
   function ciudades() {
     const f = st.mes;
@@ -91,7 +91,7 @@ registrar("empleo", (() => {
   // la ciudad en el tiempo, dentro de esta misma sección
   function ciudadTiempo(id) {
     const F = st.d.fechas, c = st.d.ciudades.find(x => x.id === id), tot = st.d.ciudades.find(x => /^total/i.test(x.nombre));
-    const series = [{label: c.nombre, data: c.v.td, color: css("--accent"), ancho: 2.5}];
+    const series = [{label: c.nombre, data: c.v.td, color: css("--grafica"), ancho: 2.5}];
     if (tot) series.unshift({label: tot.nombre, data: tot.v.td, color: css("--muted"), ancho: 1.6});
     enElTiempo("emp-ciud-tiempo", `Desempleo en ${c.nombre}`, F, series, {unidad: "%", fmtValor: x => fmt(x, 1) + "%",
       nota: "Trimestre móvil terminado en cada mes. Toca otra ciudad para cambiarla.",

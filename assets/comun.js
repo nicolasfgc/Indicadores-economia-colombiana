@@ -221,9 +221,9 @@ async function tasaVsInflacion(canvasId, txtId) {
   const F = T.fechas.filter(f => f >= desde && tpm[f] != null);
   const t = F.map(f => tpm[f]), p = F.map(f => inf[f] ?? null), real = F.map((f, i) => p[i] == null ? null : +(t[i] - p[i]).toFixed(2));
   const mc = T.mes_en_curso, fx = f => etqMes(f) + (mc && f === mc[0] ? ` (hasta el ${+mc[1].slice(8)})` : "");
-  const pos = css("--accent"), neg = css("--up");
+  const pos = css("--grafica"), neg = css("--up");
   serie(canvasId, F, [
-    {label: "Tasa del Banco de la República", data: t, color: css("--accent"), ancho: 2.5},
+    {label: "Tasa del Banco de la República", data: t, color: css("--grafica"), ancho: 2.5},
     {label: "Inflación anual", data: p, color: css("--naranja"), ancho: 2.5},
     {label: "Tasa real (tasa − inflación)", data: real, tipo: "bar", colores: real.map(x => x < 0 ? neg : pos)}],
     {unidad: "%", fmtValor: x => x == null ? "sin dato aún" : fmt(x, 1) + "%", fmtX: fx, eje0: true, referencias: [{y: 3, t: "Meta de inflación 3%"}], despues: (i0, i1) => {
@@ -257,7 +257,7 @@ function dibujar(canvasId, config) {
 function barras(canvasId, items, {unidad = "", alClic = null, etiqueta = "", fmtValor = null, alto = 26, colores = null} = {}) {
   const box = $(canvasId).parentElement;
   box.style.height = Math.max(160, items.length * alto + 50) + "px";
-  const up = css("--up"), down = css("--down"), acc = css("--accent");
+  const up = css("--up"), down = css("--down"), acc = css("--grafica");
   const f = fmtValor || (v => `${fmt(v)}${unidad}`);
   const col = colores || (x => x.resaltar ? acc : (x.v >= 0 ? up : down));
   return dibujar(canvasId, {

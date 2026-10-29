@@ -7,7 +7,7 @@ registrar("resumen", (() => {
 
   function mini(id, fechas, valores, color, desde = 120) {
     const i0 = Math.max(0, fechas.length - desde);
-    dibujar(id, {type: "line", data: {labels: fechas.slice(i0), datasets: [{data: valores.slice(i0), borderColor: color || css("--accent"), borderWidth: 2, pointRadius: 0, tension: .2, fill: false}]},
+    dibujar(id, {type: "line", data: {labels: fechas.slice(i0), datasets: [{data: valores.slice(i0), borderColor: color || css("--grafica"), borderWidth: 2, pointRadius: 0, tension: .2, fill: false}]},
       options: {responsive: true, maintainAspectRatio: false, animation: false, plugins: {legend: {display: false}, tooltip: {enabled: false}, gobiernos: {activo: false}},
         scales: {x: {display: false}, y: {display: true, grid: {color: css("--line")}, ticks: {color: css("--muted"), maxTicksLimit: 3, font: {size: 10}}}}}});
   }

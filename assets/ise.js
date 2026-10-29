@@ -47,14 +47,14 @@ registrar("ise", (() => {
     const ds = c.length ? [{label: "Toda la economía", data: fs.map(f => v(t, "var_anual_original", f)), color: css("--muted"), ancho: 1.6, dash: [4, 3]},
                            ...c.map((id, k) => ({label: nombreSel(id), data: fs.map(f => v(id, "var_anual_original", f)), color: DISTINTOS()[k], ancho: 2.5}))]
                         : [{label: "Crecimiento anual", data: fs.map(f => v(t, "var_anual_original", f)), color: css("--muted"), ancho: 1.6},
-                           {label: "Sin estacionalidad", data: fs.map(f => v(t, "var_anual_desest", f)), color: css("--accent"), ancho: 2.5}];
+                           {label: "Sin estacionalidad", data: fs.map(f => v(t, "var_anual_desest", f)), color: css("--grafica"), ancho: 2.5}];
     $("ise-hist-t").textContent = c.length ? "Los sectores elegidos frente a toda la economía" : "La economía en el tiempo";
     serie("ise-hist", fs, ds, {unidad: "%", referencias: [{y: 0, t: ""}], despues: (i0, i1) => interpretar(fs, ds, i0, i1)});
     // nivel de actividad: el total o los sectores elegidos (sin estacionalidad, 2015 = 100)
     $("ise-nivel-t").textContent = c.length ? "Nivel de actividad de los sectores elegidos" : "Nivel de actividad: toda la economía";
     const dn = c.length ? c.map((id, k) => ({label: nombreSel(id), data: fs.map(f => v(id, "indice_desest", f)), color: DISTINTOS()[k], ancho: 2.5}))
       : [{label: "Original", data: fs.map(f => v(t, "indice_original", f)), color: css("--muted"), ancho: 1.4},
-         {label: "Sin estacionalidad", data: fs.map(f => v(t, "indice_desest", f)), color: css("--accent"), ancho: 2.5}];
+         {label: "Sin estacionalidad", data: fs.map(f => v(t, "indice_desest", f)), color: css("--grafica"), ancho: 2.5}];
     serie("ise-nivel", fs, dn, {fmtValor: x => fmt(x, 1), referencias: c.length ? [{y: 100, t: "Nivel de 2015"}] : []});
   }
   function interpretar(fs, ds, i0, i1) {
@@ -81,7 +81,7 @@ registrar("ise", (() => {
     const F = st.d.fechas.filter(f => f <= ultimoMes()), t = T(), d = F.map(f => v(id, "var_anual_original", f)), tt = F.map(f => v(t, "var_anual_original", f));
     const nom = meta(id).nombre_corto;
     enElTiempo("ise-tiempo", `${nom}: crecimiento anual frente a toda la economía`, F,
-      [{label: "Toda la economía", data: tt, color: css("--muted"), ancho: 1.6}, {label: nom, data: d, color: css("--accent"), ancho: 2.5}],
+      [{label: "Toda la economía", data: tt, color: css("--muted"), ancho: 1.6}, {label: nom, data: d, color: css("--grafica"), ancho: 2.5}],
       {unidad: "%", referencias: [{y: 0, t: ""}], texto: (i0, i1) => { const tr = d.slice(i0, i1 + 1).filter(x => x != null); if (!tr.length) return "";
         const prom = tr.reduce((a, b) => a + b, 0) / tr.length, neg = tr.filter(x => x < 0).length;
         return `Entre ${etqMes(F[i0])} y ${etqMes(F[i1])}, ${nom.toLowerCase()} creció en promedio <strong>${fmt(prom)}%</strong> al año y tuvo ${neg} ${neg === 1 ? "mes" : "meses"} de caída. En ${etqMesLargo(F[i1])} ${d[i1] >= 0 ? "creció" : "cayó"} ${fmt(Math.abs(d[i1]))}%, frente a ${fmt(tt[i1])}% de toda la economía.`; }});

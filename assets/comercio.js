@@ -14,7 +14,7 @@ registrar("comercio", (() => {
   const cambioTxt = c => c == null ? "" : `${c >= 0 ? "▲" : "▼"} ${fmt(Math.abs(c), 1)}%`;
   const hijos = padre => Object.keys(D.series).filter(id => S(id)[3] === padre && S(id)[1] === "impo_cuode");
   const deTema = tema => Object.keys(D.series).filter(id => S(id)[1] === tema);
-  const colPos = () => css("--accent"), colNeg = () => css("--up");
+  const colPos = () => css("--grafica"), colNeg = () => css("--up");
   const listaY = a => a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " y " + a.at(-1);
   const deCada100 = (p, que) => `${fmt(p, 0)} ${Math.round(p) === 1 ? "fue" : "fueron"} ${que}`;
 
@@ -61,7 +61,7 @@ registrar("comercio", (() => {
     const F = D.fechas.filter(f => f >= "2007-01-01" && f <= st.ult);
     const e = F.map(f => V("BAL_EXPO", f)), im = F.map(f => V("BAL_IMPO", f)), b = F.map(f => V("BAL_BALANZA", f));
     serie("com-pan", F, [
-      {label: "Exportaciones", data: e, color: css("--accent"), ancho: 2.5},
+      {label: "Exportaciones", data: e, color: css("--grafica"), ancho: 2.5},
       {label: "Importaciones", data: im, color: css("--naranja"), ancho: 2.5},
       {label: "Balanza comercial", data: b, tipo: "bar", colores: b.map(x => x < 0 ? colNeg() : colPos())}],
       {fmtValor: x => dolCorto(x) + " M", eje0: true, referencias: [{y: 0, t: ""}], despues: (i0, i1) => {
@@ -160,7 +160,7 @@ registrar("comercio", (() => {
     else lista = top.map(x => ({...x, v: pct(x.val, x.ant)})).filter(x => x.v != null).sort((a, b) => b.v - a.v);
     barras(`${pref}-bar`, lista, {etiqueta: med === "valor" ? "Millones de dólares" : "Cambio frente al mismo mes del año anterior (%)",
       fmtValor: med === "valor" ? (x => dol(x, 1)) : (x => `${x >= 0 ? "+" : ""}${fmt(x, 1)}%`),
-      colores: med === "valor" ? (() => css("--accent")) : (x => x.v < 0 ? colNeg() : colPos()), alClic});
+      colores: med === "valor" ? (() => css("--grafica")) : (x => x.v < 0 ? colNeg() : colPos()), alClic});
     return {items, tot, top, f, f0, nota: items.length > 25 ? ` Se muestran los 25 más grandes de ${items.length}.` : ""};
   }
   function textoMes(r, verbo, minus = true) {
@@ -180,7 +180,7 @@ registrar("comercio", (() => {
   }
   function tiempoDe(boxId, id, titulo) {
     const F = D.fechas.filter(f => f <= st.ult && V(id, f) != null), d = F.map(f => V(id, f));
-    enElTiempo(boxId, titulo, F, [{label: nombre(id), data: d, color: css("--accent"), ancho: 2.5}],
+    enElTiempo(boxId, titulo, F, [{label: nombre(id), data: d, color: css("--grafica"), ancho: 2.5}],
       {fmtValor: x => dol(x, 1), texto: (i0, i1) => {
         const f1 = F[i1], f0 = hace(f1, 12), a = V(id, f1), b = f0 ? V(id, f0) : null, c = pct(a, b);
         const prom = d.slice(i0, i1 + 1).reduce((s, x) => s + (x || 0), 0) / (i1 - i0 + 1);

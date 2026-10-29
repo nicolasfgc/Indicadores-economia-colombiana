@@ -131,7 +131,7 @@ registrar("presupuesto", (() => {
     const ant = String(+anio - 1);
     const c = a => MESES.map((m, i) => { const f = `${a}-${String(i + 1).padStart(2, "0")}-01`; return tot[f] && tot[f][A] ? tot[f][O] / tot[f][A] * 100 : null; });
     const ca = c(anio), cp = c(ant);
-    const ds = [{label: anio, data: ca, color: css("--accent"), ancho: 3}];
+    const ds = [{label: anio, data: ca, color: css("--grafica"), ancho: 3}];
     if (cp.some(x => x != null)) ds.unshift({label: ant, data: cp, color: css("--muted"), dash: [4, 3]});
     dibujar(canvasId, {type: "line", data: {labels: MESES, datasets: ds.map(d => ({label: d.label, data: d.data, borderColor: d.color, backgroundColor: d.color, borderDash: d.dash || [], borderWidth: d.ancho || 2, pointRadius: 3, tension: .2, spanGaps: false, hidden: !!ocultas[canvasId]?.has(d.label)}))},
       options: {responsive: true, maintainAspectRatio: false, interaction: {mode: "index", intersect: false}, plugins: {legend: leyendaRecordada(canvasId), gobiernos: {activo: false},
@@ -167,7 +167,7 @@ registrar("presupuesto", (() => {
     const pct = ap.map((a, i) => a && ob[i] != null ? ob[i] / a * 100 : null);
     const nom = st.hSector ? titulo(st.hSector) : "todo el PGN (sin deuda)";
     $("preh-t").textContent = `El presupuesto de ${nom} desde el año 2000`;
-    serie("preh-montos", an, [{label: "Apropiación", data: ap, color: css("--muted")}, {label: "Compromisos", data: co, color: css("--s3")}, {label: "Obligaciones (ejecutado)", data: ob, color: css("--accent"), ancho: 2.5}],
+    serie("preh-montos", an, [{label: "Apropiación", data: ap, color: css("--muted")}, {label: "Compromisos", data: co, color: css("--s3")}, {label: "Obligaciones (ejecutado)", data: ob, color: css("--grafica"), ancho: 2.5}],
       {fmtValor: x => plata(x, 1), despues: (i0, i1) => {
         const a0 = ap[i0], a1 = ap[i1], cr = (Math.pow(a1 / a0, 1 / Math.max(1, i1 - i0)) - 1) * 100;
         const tramo = pct.slice(i0, i1 + 1), prom = tramo.filter(x => x != null).reduce((a, b) => a + b, 0) / tramo.filter(x => x != null).length;
@@ -176,14 +176,14 @@ registrar("presupuesto", (() => {
           `, creciendo en promedio ${fmt(cr, 1)}% al año${st.hPrecios === "constantes" ? ", ya descontada la inflación" : ""}. En promedio se ejecutó el <strong>${fmt(prom, 1)}%</strong> de lo apropiado; el año con menor ejecución fue ${peor} (gobierno ${gobiernoDe(peor)}).` +
           ` El año en curso no aparece porque todavía no termina: está arriba, en “Cómo vamos”.`;
       }});
-    serie("preh-pct", an, [{label: "% ejecutado (obligaciones / apropiación)", data: pct, color: css("--accent"), ancho: 2.5}], {fmtValor: x => fmt(x, 1) + "%"});
+    serie("preh-pct", an, [{label: "% ejecutado (obligaciones / apropiación)", data: pct, color: css("--grafica"), ancho: 2.5}], {fmtValor: x => fmt(x, 1) + "%"});
   }
 
   function evolucion(tot) {
     const F = mesesCompletos(st.d.fechas);
     const pctE = F.map(f => tot[f] && tot[f][A] ? tot[f][O] / tot[f][A] * 100 : null);
     const comp = F.map(f => tot[f] ? tot[f][DC] : null);
-    serie("pre-evo", F, [{label: "% ejecutado acumulado del año", data: pctE, color: css("--accent"), ancho: 2.5},
+    serie("pre-evo", F, [{label: "% ejecutado acumulado del año", data: pctE, color: css("--grafica"), ancho: 2.5},
                          {label: "Comprometido en el mes", data: comp, tipo: "bar", eje: "y2", color: css("--s4"), colores: comp.map(x => x < 0 ? css("--up") : css("--s4"))}],
       {fmtValor: x => x == null ? "sin dato" : fmt(x, 1) + "%", fmtValor2: x => x == null ? "sin dato" : plata(x), eje0: true, atajos: [["Año en curso", "ytd"], ["1 año", 12], ["3 años", 36], ["Todo", 0]]});
   }
@@ -205,7 +205,7 @@ registrar("presupuesto", (() => {
     $("pre-bar-h").textContent = `${M.t} de cada ${nivelSig}.` + (n.nivel === "programa" ? "" : ` Toca una barra o “Ver detalle” para entrar.`);
     const items = lista.map(g => ({id: g.id, n: g.n, v: M.f(g.s)})).filter(x => x.v != null && (st.medida.startsWith("pct") || x.v !== 0)).sort((a, b) => b.v - a.v);
     barras("pre-bar", items.slice(0, 60), {etiqueta: M.t, alClic: n.nivel === "programa" ? null : bajar, fmtValor: M.plata ? (x => plata(x)) : (x => fmt(x, 1) + "%"),
-      colores: x => x.v < 0 ? css("--up") : css("--accent")});
+      colores: x => x.v < 0 ? css("--up") : css("--grafica")});
     $("pre-bar-nota").textContent = items.length > 60 ? `Se muestran los 60 más grandes de ${items.length}. La tabla tiene todos.` : "";
     const filas = lista.slice().sort((a, b) => b.s[A] - a.s[A]);
     const pct = (x, y) => y ? fmt(x / y * 100, 1) + "%" : "–";
