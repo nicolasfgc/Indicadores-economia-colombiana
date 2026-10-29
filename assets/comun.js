@@ -353,7 +353,7 @@ function serie(canvasId, etiquetas, series, opts = {}) {
       const c = s.color || pal[i % pal.length];
       const base = {label: s.label, data: s.data.slice(i0, i1 + 1), borderColor: c, order: s.tipo === "bar" ? 2 : 1, hidden: !!ocultas[canvasId]?.has(s.label)};
       return s.tipo === "bar" ? {...base, type: "bar", backgroundColor: s.colores ? s.colores.slice(i0, i1 + 1) : c, borderWidth: 0, borderRadius: 2, yAxisID: s.eje || "y"}
-        : {...base, backgroundColor: "transparent", borderWidth: s.ancho || 2, borderDash: s.dash || [], pointRadius: 0, tension: .2, spanGaps: true, yAxisID: s.eje || "y"};
+        : {...base, backgroundColor: c, fill: false, borderWidth: s.ancho || 2, borderDash: s.dash || [], pointRadius: 0, tension: .2, spanGaps: true, yAxisID: s.eje || "y"};
     })},
     options: {
       responsive: true, maintainAspectRatio: false, animation: {duration: 200}, interaction: {mode: "index", intersect: false},

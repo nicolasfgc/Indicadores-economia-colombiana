@@ -196,7 +196,7 @@ body{font-size:15px;line-height:1.55}
 .appbar{background:var(--barra);background-image:radial-gradient(1200px 300px at 85% -60%,rgba(255,255,255,.14),transparent 60%);color:#fff;padding:28px 0 0;margin-bottom:6px}
 .appbar header,.appbar{border:0}
 .appbar h1{color:#fff;font-size:32px;font-weight:800;letter-spacing:-.03em;margin:0 0 6px}
-.appbar .sub{color:rgba(255,255,255,.78);margin:0;max-width:60ch}
+.appbar .sub{color:rgba(255,255,255,.78);margin:0;max-width:72ch}
 .marca{display:flex;justify-content:space-between;align-items:flex-start;gap:16px 24px;flex-wrap:wrap}
 .appbar .autor{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:4px 0 0;color:rgba(255,255,255,.85);font-size:13px}
 .appbar .autor strong{color:#fff}
