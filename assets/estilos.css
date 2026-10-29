@@ -1,19 +1,22 @@
 :root{
-  --bg:#F8FAFC; --panel:#FFFFFF; --ink:#1E293B; --head:#24445C; --muted:#5B6B78; --line:#DDE3E8;
-  --accent:#006D77; --accent-soft:#E3F1F2; --on-accent:#FFFFFF; --naranja:#F47721; --up:#D64545; --down:#2E7D5B; --warn:#E6A23C; --chip:#E8ECEF; --barra:#006D77; --grafica:#006D77; --verde:#5E9F6E; --rojo:#D86A5E;
-  --s1:#006D77; --s2:#F47721; --s3:#24445C; --s4:#E6A23C; --s5:#E58B80; --s6:#7FB5A6; --s7:#65A30D; --s8:#7C3AED; --s9:#CA8A04; --s10:#64748B;
+  --bg:#F8FAFC; --panel:#FFFFFF; --ink:#1E293B; --head:#0F172A; --muted:#475569; --line:#E2E8F0;
+  --accent:#006D77; --accent-soft:#E2F2F3; --on-accent:#FFFFFF; --naranja:#EA580C; --up:#DC2626; --down:#16A34A; --warn:#EA580C; --chip:#F1F5F9; --barra:#006D77;
+  --grafica:#006D77; --verde:#16A34A; --rojo:#DC2626;
+  --s1:#006D77; --s2:#EA580C; --s3:#6D28D9; --s4:#2563EB; --s5:#16A34A; --s6:#DB2777; --s7:#CA8A04; --s8:#0891B2; --s9:#9333EA; --s10:#475569;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#0B1120; --panel:#131C2E; --ink:#E2E8F0; --head:#F8FAFC; --muted:#94A3B8; --line:#26334A;
-    --accent:#7FFFD4; --accent-soft:#12302E; --on-accent:#0B1120; --naranja:#F47721; --up:#F08A80; --down:#7FD9A8; --warn:#E6A23C; --chip:#1A2438; --barra:#006D77; --grafica:#7FFFD4; --verde:#93C98A; --rojo:#EE8F84;
-    --s1:#7FFFD4; --s2:#F47721; --s3:#A8CFC3; --s4:#E6A23C; --s5:#E58B80; --s6:#8FB3D1; --s7:#A3E635; --s8:#C4B5FD; --s9:#FACC15; --s10:#94A3B8;
+    --accent:#2BB5BF; --accent-soft:#0F2E33; --on-accent:#0B1120; --naranja:#FB923C; --up:#F87171; --down:#4ADE80; --warn:#FB923C; --chip:#1A2438; --barra:#006D77;
+    --grafica:#2BB5BF; --verde:#4ADE80; --rojo:#F87171;
+    --s1:#2BB5BF; --s2:#FB923C; --s3:#A78BFA; --s4:#60A5FA; --s5:#4ADE80; --s6:#F472B6; --s7:#FACC15; --s8:#22D3EE; --s9:#C084FC; --s10:#94A3B8;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0B1120; --panel:#131C2E; --ink:#E2E8F0; --head:#F8FAFC; --muted:#94A3B8; --line:#26334A;
-  --accent:#7FFFD4; --accent-soft:#12302E; --on-accent:#0B1120; --naranja:#F47721; --up:#F08A80; --down:#7FD9A8; --warn:#E6A23C; --chip:#1A2438; --barra:#006D77; --grafica:#7FFFD4; --verde:#93C98A; --rojo:#EE8F84;
-  --s1:#7FFFD4; --s2:#F47721; --s3:#A8CFC3; --s4:#E6A23C; --s5:#E58B80; --s6:#8FB3D1; --s7:#A3E635; --s8:#C4B5FD; --s9:#FACC15; --s10:#94A3B8;
+  --accent:#2BB5BF; --accent-soft:#0F2E33; --on-accent:#0B1120; --naranja:#FB923C; --up:#F87171; --down:#4ADE80; --warn:#FB923C; --chip:#1A2438; --barra:#006D77;
+  --grafica:#2BB5BF; --verde:#4ADE80; --rojo:#F87171;
+  --s1:#2BB5BF; --s2:#FB923C; --s3:#A78BFA; --s4:#60A5FA; --s5:#4ADE80; --s6:#F472B6; --s7:#FACC15; --s8:#22D3EE; --s9:#C084FC; --s10:#94A3B8;
 }
 *{box-sizing:border-box}
 /* lo que se oculta siempre se oculta, aunque otra regla le dé display:flex o grid */

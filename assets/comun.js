@@ -7,7 +7,7 @@ const GOBIERNOS = [["Pastrana", "1998-08-07"], ["Uribe I", "2002-08-07"], ["Urib
 
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const PALETA = () => ["--s1", "--s2", "--s3", "--s4", "--s5", "--s6", "--s7", "--s8", "--s9", "--s10"].map(css);
-// Para comparar varias categorías: la paleta del proyecto en orden (principal, naranja, azul petróleo / salvia, ocre, salmón, verde grisáceo)
+// Para comparar varias categorías: la paleta del proyecto en orden (verde azulado, naranja, violeta, azul, verde, fucsia)
 const DISTINTOS = () => ["--s1", "--s2", "--s3", "--s4", "--s5", "--s6"].map(css);
 const fmt = (v, d = 2) => v == null || isNaN(v) ? "–" : Number(v).toLocaleString("es-CO", {minimumFractionDigits: d, maximumFractionDigits: d});
 const etqMes = f => { if (!f) return ""; if (f.length === 4) return f; const [y, m] = f.split("-"); return `${MESES[+m - 1]} ${y}`; };
