@@ -16,6 +16,8 @@
   --s1:#A78BFA; --s2:#FB923C; --s3:#818CF8; --s4:#2DD4BF; --s5:#22D3EE; --s6:#F472B6; --s7:#A3E635; --s8:#C4B5FD; --s9:#FACC15; --s10:#94A3B8;
 }
 *{box-sizing:border-box}
+/* lo que se oculta siempre se oculta, aunque otra regla le dé display:flex o grid */
+[hidden]{display:none !important}
 body{margin:0;-webkit-font-smoothing:antialiased;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.5}
 .wrap{max-width:1120px;margin:0 auto;padding:0 16px}
 header{padding:28px 0 8px}

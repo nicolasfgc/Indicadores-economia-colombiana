@@ -114,7 +114,13 @@ function selectorVarias(contId, grupos, alCambiar, {total = "Total", otra = "Com
     if (avisar) alCambiar(ids);
   }
   botones.forEach(b => b.onclick = () => modo(b.dataset.v, true));
-  sel.onchange = () => { const v = sel.value; sel.value = ""; if (v && !ids.includes(v) && ids.length < max) { ids.push(v); pintar(); alCambiar(ids); } };
+  sel.onchange = () => {
+    const v = sel.value; sel.value = "";
+    if (!v || ids.includes(v) || ids.length >= max) return;
+    if (caja.hidden) modo("cat");          // por si acaso: agregar siempre pasa al modo de comparar
+    if (!ids.includes(v)) ids = [...ids, v];
+    pintar(); alCambiar(ids);
+  };
   return {agregar(id) { if (caja.hidden) modo("cat"); if (!ids.includes(id)) { if (ids.length >= max) ids.shift(); ids.push(id); } pintar(); alCambiar(ids); }};
 }
 
