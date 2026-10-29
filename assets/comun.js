@@ -269,6 +269,7 @@ let arrastrando = false;   // mientras se mueven las manijas del periodo, sin an
 function dibujar(canvasId, config) {
   const g = graficos[canvasId];
   if (g && g.config.type === config.type && g.canvas === $(canvasId)) {
+    g.stop();   // Chart.js falla si se cambian las opciones con una animación en curso
     g.data.labels = config.data.labels;
     // conserva los objetos de cada serie cuando coinciden por nombre, para que la animación los interpole
     g.data.datasets = config.data.datasets.map(d => { const v = g.data.datasets.find(x => x.label === d.label && x.type === d.type); return v ? Object.assign(v, d) : d; });
