@@ -13,6 +13,13 @@ if (window.Chart) {
   Chart.defaults.plugins.legend.labels.usePointStyle = true;
   Chart.defaults.plugins.legend.labels.pointStyle = "circle";
   Chart.defaults.plugins.legend.labels.padding = 16;
+  const quieto = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  Chart.defaults.animation = quieto ? false : {duration: 650, easing: "easeOutQuart"};
+  Chart.defaults.transitions.active = {animation: {duration: 250}};
+  Chart.defaults.elements.line.tension = 0.35;
+  Chart.defaults.scale.border = {display: false};   // sin línea de eje: más limpio
+  Chart.defaults.elements.line.borderCapStyle = "round";
+  Chart.defaults.elements.line.borderJoinStyle = "round";
   Object.assign(Chart.defaults.plugins.tooltip, {backgroundColor: "rgba(36,20,34,.94)", padding: 11, cornerRadius: 10, titleFont: {weight: "700"}, boxPadding: 4, usePointStyle: true});
 }
 const PALETA = () => ["--s1", "--s2", "--s3", "--s4", "--s5", "--s6", "--s7", "--s8", "--s9", "--s10"].map(css);
@@ -255,9 +262,21 @@ async function tasaVsInflacion(canvasId, txtId) {
 }
 
 // ------------------------------------------------------------ gráficos
+// Si la gráfica ya existe y es del mismo tipo, se actualiza en su sitio: Chart.js anima el paso de un estado al otro
+// (cambiar de periodo, de categoría o de medida se ve como una transición suave, no como un redibujo de golpe).
 const graficos = {};
+let arrastrando = false;   // mientras se mueven las manijas del periodo, sin animación para que responda al instante
 function dibujar(canvasId, config) {
-  if (graficos[canvasId]) graficos[canvasId].destroy();
+  const g = graficos[canvasId];
+  if (g && g.config.type === config.type && g.canvas === $(canvasId)) {
+    g.data.labels = config.data.labels;
+    // conserva los objetos de cada serie cuando coinciden por nombre, para que la animación los interpole
+    g.data.datasets = config.data.datasets.map(d => { const v = g.data.datasets.find(x => x.label === d.label && x.type === d.type); return v ? Object.assign(v, d) : d; });
+    g.options = config.options;
+    g.update(arrastrando ? "none" : undefined);
+    return g;
+  }
+  if (g) g.destroy();
   graficos[canvasId] = new Chart($(canvasId), config);
   return graficos[canvasId];
 }
@@ -274,7 +293,7 @@ function barras(canvasId, items, {unidad = "", alClic = null, etiqueta = "", fmt
     type: "bar",
     data: {labels: items.map(x => x.n), datasets: [{data: items.map(x => x.v), backgroundColor: items.map(col), borderRadius: 6, barThickness: Math.min(18, alto - 8)}]},
     options: {
-      indexAxis: "y", responsive: true, maintainAspectRatio: false, animation: {duration: 250},
+      indexAxis: "y", responsive: true, maintainAspectRatio: false,
       plugins: {legend: {display: false}, tooltip: {callbacks: {label: c => f(c.raw), footer: () => alClic ? "Toca para ver el detalle" : ""}}},
       scales: {
         x: {grid: {color: css("--line")}, ticks: {color: css("--muted")}, title: {display: !!etiqueta, text: etiqueta, color: css("--muted")}},
@@ -353,10 +372,10 @@ function serie(canvasId, etiquetas, series, opts = {}) {
       const c = s.color || pal[i % pal.length];
       const base = {label: s.label, data: s.data.slice(i0, i1 + 1), borderColor: c, order: s.tipo === "bar" ? 2 : 1, hidden: !!ocultas[canvasId]?.has(s.label)};
       return s.tipo === "bar" ? {...base, type: "bar", backgroundColor: s.colores ? s.colores.slice(i0, i1 + 1) : c, borderWidth: 0, borderRadius: 2, yAxisID: s.eje || "y"}
-        : {...base, backgroundColor: c, fill: false, borderWidth: s.ancho || 2, borderDash: s.dash || [], pointRadius: 0, tension: .2, spanGaps: true, yAxisID: s.eje || "y"};
+        : {...base, backgroundColor: c, fill: false, borderWidth: s.ancho || 2, borderDash: s.dash || [], pointRadius: 0, pointHoverRadius: 5, tension: .3, spanGaps: true, yAxisID: s.eje || "y"};
     })},
     options: {
-      responsive: true, maintainAspectRatio: false, animation: {duration: 200}, interaction: {mode: "index", intersect: false},
+      responsive: true, maintainAspectRatio: false, interaction: {mode: "index", intersect: false},
       plugins: {legend: {display: series.length > 1, labels: {color: css("--ink"), boxWidth: 14},
                  onClick(e, item, legend) {
                    Chart.defaults.plugins.legend.onClick.call(this, e, item, legend);
@@ -401,7 +420,7 @@ function controlRango(canvasId, etiquetas, i0, i1, anual, atajosPropios, activo)
       rangos[canvasId] = {d: et[x], h: et[y], k: null}; redibujar(canvasId);
     };
     let pendiente = null;
-    const alMover = () => { pintar(c, ultimosArgs[canvasId][0], +a.value, +b.value); if (!pendiente) pendiente = requestAnimationFrame(() => { pendiente = null; aplicar(); }); };
+    const alMover = () => { arrastrando = true; pintar(c, ultimosArgs[canvasId][0], +a.value, +b.value); if (!pendiente) pendiente = requestAnimationFrame(() => { pendiente = null; aplicar(); arrastrando = false; }); };
     a.oninput = alMover; b.oninput = alMover;
     c.querySelectorAll(".rango-atajos button").forEach(btn => btn.onclick = () => {
       const et = ultimosArgs[canvasId][0], k = btn.dataset.k;
