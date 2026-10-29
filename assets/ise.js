@@ -38,7 +38,7 @@ registrar("ise", (() => {
     const arbol = agrupados().map(g => ({id: g.rama, t: GRUPO[g.k].t, nivel: GRUPO[g.k].d.split(":")[1].trim(),
       hijos: g.hijos.map(h => ({id: h.id_serie, t: h.nombre_corto}))}));
     selCat = selectorVarias("ise-cat", arbol, ids => { st.cats = ids; historia(); }, {total: "Toda la economía", otra: "Comparar sectores",
-      ayuda: "Primero están los tres grandes grupos; toca ▸ para ver sus sectores. Puedes agregar un grupo completo o un sector."});
+      ayuda: "Primero están los tres grandes grupos; toca ▸ para ver sus sectores. Puedes agregar un grupo completo o un sector.", boton: "Agregar un sector", ejemplos: "construcción, comercio, minería"});
   }
 
   const nombreSel = id => meta(id).nivel === "gran_rama" ? meta(id).nombre_corto : `${meta(id).nombre_corto} (${GRUPO[grupoDe(id)].t.split(" ")[1]})`;

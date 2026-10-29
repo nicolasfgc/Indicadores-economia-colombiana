@@ -89,7 +89,7 @@ function selectorCategoria(contId, grupos, alCambiar, {total = "Total", otra = "
 // Selector "Total / varias categorías" con un árbol que se va abriendo por niveles y un buscador.
 // arbol = [{id, t, nivel, hijos: [...]}] (un nodo sin id es solo un encabezado que agrupa).
 // alCambiar(ids) recibe [] cuando se vuelve al total. colorDe(k) da el color de la k-ésima categoría elegida.
-function selectorVarias(contId, arbol, alCambiar, {total = "Total", otra = "Comparar categorías", max = 6, ayuda = "", colorDe = k => DISTINTOS()[k]} = {}) {
+function selectorVarias(contId, arbol, alCambiar, {total = "Total", otra = "Comparar categorías", max = 6, ayuda = "", boton = "Agregar una categoría", ejemplos = "arroz, arriendo, gasolina", colorDe = k => DISTINTOS()[k]} = {}) {
   const c = $(contId);
   c.classList.add("selcat");
   const info = {};   // id -> {t, ruta}
@@ -97,10 +97,10 @@ function selectorVarias(contId, arbol, alCambiar, {total = "Total", otra = "Comp
   const primero = (function buscar(ns) { for (const n of ns) { if (n.id) return n.id; const x = n.hijos && buscar(n.hijos); if (x) return x; } })(arbol);
   c.innerHTML = `<div class="seg"><button data-v="total" class="on">${total}</button><button data-v="cat">${otra}</button></div>
     <div class="varias" hidden>
-      <div class="agregar"><button class="abrir" type="button">+ Agregar una categoría <span>▾</span></button>
+      <div class="agregar"><button class="abrir" type="button">+ ${boton} <span>▾</span></button>
         <div class="panel" hidden>
           ${ayuda ? `<p class="hint">${ayuda}</p>` : ""}
-          <input type="search" placeholder="Buscar por nombre (por ejemplo: arroz, arriendo, gasolina)…">
+          <input type="search" placeholder="Buscar por nombre (por ejemplo: ${ejemplos})…">
           <div class="arbol"></div>
           <div class="pie"><button class="cerrar" type="button">Cerrar</button></div>
         </div></div>
@@ -124,7 +124,7 @@ function selectorVarias(contId, arbol, alCambiar, {total = "Total", otra = "Comp
     if (q.length >= 2) {
       const res = Object.entries(info).filter(([, v]) => v.t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").includes(q)).slice(0, 40);
       cont.innerHTML = res.length ? `<ul>${res.map(([id, v]) => `<li style="--p:0"><div class="fila res"><span class="flecha"></span><button class="nombre${ids.includes(id) ? " ya" : ""}" data-id="${id}" ${ids.includes(id) ? "disabled" : ""}>${ids.includes(id) ? "✓ " : ""}${esc(v.t)}</button>` +
-        `${v.ruta.length ? `<span class="ruta">en ${esc(v.ruta.join(" › "))}</span>` : ""}</div></li>`).join("")}</ul>` : `<p class="hint">No hay categorías con ese nombre.</p>`;
+        `${v.ruta.length ? `<span class="ruta">en ${esc(v.ruta.join(" › "))}</span>` : ""}</div></li>`).join("")}</ul>` : `<p class="hint">No hay nada con ese nombre.</p>`;
     } else cont.innerHTML = `<ul>${arbol.map(n => nodoHTML(n, 0)).join("")}</ul>`;
     cont.querySelectorAll("[data-k]").forEach(b => b.onclick = () => { const k = b.dataset.k; abiertos.has(k) ? abiertos.delete(k) : abiertos.add(k); dibujarArbol(); });
     cont.querySelectorAll(".nombre[data-id]").forEach(b => b.onclick = () => agregar(b.dataset.id, true));
