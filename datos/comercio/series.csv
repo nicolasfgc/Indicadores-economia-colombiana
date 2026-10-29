@@ -1,0 +1,318 @@
+id_serie,tema,nombre,nivel,padre,unidad,codigo
+BAL_EXPO,balanza,Exportaciones,total,,Millones de dólares FOB,
+BAL_IMPO,balanza,Importaciones,total,,Millones de dólares FOB,
+BAL_BALANZA,balanza,Balanza comercial (exportaciones − importaciones),total,,Millones de dólares FOB,
+EXP_TIPO_CAFE,expo_tipo,Café,producto,EXP_TIPO_TRADICIONALES,Millones de dólares FOB,
+EXP_TIPO_CARBON,expo_tipo,Carbón,producto,EXP_TIPO_TRADICIONALES,Millones de dólares FOB,
+EXP_TIPO_PETROLEO,expo_tipo,Petróleo y sus derivados,producto,EXP_TIPO_TRADICIONALES,Millones de dólares FOB,
+EXP_TIPO_FERRONIQUEL,expo_tipo,Ferroníquel,producto,EXP_TIPO_TRADICIONALES,Millones de dólares FOB,
+EXP_TIPO_TRADICIONALES,expo_tipo,"Tradicionales (café, carbón, petróleo y ferroníquel)",grupo,EXP_TIPO_TOTAL,Millones de dólares FOB,
+EXP_TIPO_NOTRADICIONALES,expo_tipo,"No tradicionales (industria, flores, banano, otros)",grupo,EXP_TIPO_TOTAL,Millones de dólares FOB,
+EXP_TIPO_TOTAL,expo_tipo,Total exportaciones,total,,Millones de dólares FOB,
+EXP_CAP_01,expo_capitulo,Animales vivos,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,01
+EXP_CAP_02,expo_capitulo,Carnes y despojos comestibles,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,02
+EXP_CAP_03,expo_capitulo,"Pescados y crustáceos, moluscos e invertebrados acuáticos",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,03
+EXP_CAP_04,expo_capitulo,"Leche y productos lácteos, huevos, miel",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,04
+EXP_CAP_05,expo_capitulo,Demás productos de origen animal,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,05
+EXP_CAP_06,expo_capitulo,Plantas vivas y productos de la floricultura,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,06
+EXP_CAP_07,expo_capitulo,"Legumbres y hortalizas, plantas, raíces y tubérculos",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,07
+EXP_CAP_08,expo_capitulo,"Frutos comestibles, cortezas de agrios o melones",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,08
+EXP_CAP_09,expo_capitulo,"Café, té, yerba mate y especias",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,09
+EXP_CAP_10,expo_capitulo,Cereales,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,10
+EXP_CAP_11,expo_capitulo,"Productos de molinería, malta, almidón y fécula",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,11
+EXP_CAP_12,expo_capitulo,"Semillas y frutos oleaginosos, forrajes",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,12
+EXP_CAP_13,expo_capitulo,"Gomas, resinas, y demás jugos y extractos vegetales",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,13
+EXP_CAP_14,expo_capitulo,Materias trenzables y demás productos vegetales,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,14
+EXP_CAP_15,expo_capitulo,Grasas y aceites animales o vegetales,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,15
+EXP_CAP_16,expo_capitulo,"Preparaciones de carne, pescado, crustáceos, moluscos",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,16
+EXP_CAP_17,expo_capitulo,Azúcares y artículos confitería,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,17
+EXP_CAP_18,expo_capitulo,Cacao y sus preparaciones,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,18
+EXP_CAP_19,expo_capitulo,"Preparaciones a base de cereal, harina, leche; pastelería",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,19
+EXP_CAP_20,expo_capitulo,"Preparaciones de legumbres u hortalizas, frutos, otras",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,20
+EXP_CAP_21,expo_capitulo,Preparaciones alimenticias diversas,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,21
+EXP_CAP_22,expo_capitulo,"Bebidas, líquidos alcohólicos y vinagre",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,22
+EXP_CAP_23,expo_capitulo,Residuos industrias alimentarias. Alimentos para animales,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,23
+EXP_CAP_24,expo_capitulo,"Tabaco, sucedáneos del tabaco elaborados",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,24
+EXP_CAP_25,expo_capitulo,"Sal; azufre; tierras y piedras; yesos, cales y cementos",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,25
+EXP_CAP_26,expo_capitulo,"Minerales, escorias y cenizas",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,26
+EXP_CAP_27,expo_capitulo,Combustibles y aceites minerales y sus productos,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,27
+EXP_CAP_28,expo_capitulo,Productos químicos inorgánicos,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,28
+EXP_CAP_29,expo_capitulo,Productos químicos orgánicos,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,29
+EXP_CAP_30,expo_capitulo,Productos farmacéuticos,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,30
+EXP_CAP_31,expo_capitulo,Abonos,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,31
+EXP_CAP_32,expo_capitulo,"Extractos curtientes, pinturas, tintas",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,32
+EXP_CAP_33,expo_capitulo,"Aceites esenciales, perfumería, cosméticos",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,33
+EXP_CAP_34,expo_capitulo,"Jabones, ceras artificiales, pastas",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,34
+EXP_CAP_35,expo_capitulo,"Materias albuminoideas, colas",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,35
+EXP_CAP_36,expo_capitulo,"Pólvoras, explosivos, fósforos",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,36
+EXP_CAP_37,expo_capitulo,"Productos fotográficos, cinematográficos",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,37
+EXP_CAP_38,expo_capitulo,Productos diversos de las industrias químicas,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,38
+EXP_CAP_39,expo_capitulo,Materias plásticas y manufacturas,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,39
+EXP_CAP_40,expo_capitulo,Caucho y manufacturas,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,40
+EXP_CAP_41,expo_capitulo,Pieles y cueros,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,41
+EXP_CAP_42,expo_capitulo,"Manufacturas de cuero, artículos de viaje, bolsos",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,42
+EXP_CAP_43,expo_capitulo,Peletería y confecciones,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,43
+EXP_CAP_44,expo_capitulo,"Madera, carbón vegetal y manufacturas de madera",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,44
+EXP_CAP_45,expo_capitulo,Corcho y sus manufacturas,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,45
+EXP_CAP_46,expo_capitulo,Manufactura de espartería y cestería,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,46
+EXP_CAP_47,expo_capitulo,"Pastas de madera, desperdicios de papel o cartón",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,47
+EXP_CAP_48,expo_capitulo,"Papel, cartón y sus manufacturas",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,48
+EXP_CAP_49,expo_capitulo,"Productos editoriales, prensa, textos",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,49
+EXP_CAP_50,expo_capitulo,Seda,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,50
+EXP_CAP_51,expo_capitulo,Lana y pelo fino u ordinario; hilados y tejidos de crin,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,51
+EXP_CAP_52,expo_capitulo,Algodón,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,52
+EXP_CAP_53,expo_capitulo,"Demás fibras vegetales, hilados de papel",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,53
+EXP_CAP_54,expo_capitulo,Filamentos sintéticos o artificiales,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,54
+EXP_CAP_55,expo_capitulo,Fibras sintéticas o artificiales discontinuas,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,55
+EXP_CAP_56,expo_capitulo,"Guata, fieltro y telas sin tejer; cordeles ,cuerdas, cordajes",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,56
+EXP_CAP_57,expo_capitulo,Alfombras y materias textiles,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,57
+EXP_CAP_58,expo_capitulo,"Tejidos especiales, superficies textiles con pelo",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,58
+EXP_CAP_59,expo_capitulo,"Tejidos impregnados, recubiertos",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,59
+EXP_CAP_60,expo_capitulo,Tejidos de punto,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,60
+EXP_CAP_61,expo_capitulo,"Prendas y complementos de vestir, de punto",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,61
+EXP_CAP_62,expo_capitulo,"Prendas y complementos de vestir, excepto de punto",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,62
+EXP_CAP_63,expo_capitulo,Demás artículos textiles confeccionados,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,63
+EXP_CAP_64,expo_capitulo,"Calzado, botines, artículos análogos y partes",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,64
+EXP_CAP_65,expo_capitulo,Artículos de sombrerería y partes,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,65
+EXP_CAP_66,expo_capitulo,"Paraguas, bastones, látigos y sus partes",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,66
+EXP_CAP_67,expo_capitulo,"Plumas, flores artificiales; manufactura de cabellos",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,67
+EXP_CAP_68,expo_capitulo,"Manufacturas de piedra, yeso, cemento, mica y análogas",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,68
+EXP_CAP_69,expo_capitulo,Productos cerámicos,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,69
+EXP_CAP_70,expo_capitulo,Vidrio y manufacturas,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,70
+EXP_CAP_71,expo_capitulo,"Perlas finas, piedras y metales preciosos",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,71
+EXP_CAP_72,expo_capitulo,"Fundición, hierro y acero",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,72
+EXP_CAP_73,expo_capitulo,"Manufactura de fundición, de hierro o acero",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,73
+EXP_CAP_74,expo_capitulo,Cobre y sus manufacturas,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,74
+EXP_CAP_75,expo_capitulo,Níquel y sus manufacturas,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,75
+EXP_CAP_76,expo_capitulo,Aluminio y sus manufacturas,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,76
+EXP_CAP_78,expo_capitulo,Plomo y manufacturas,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,78
+EXP_CAP_79,expo_capitulo,Zinc y manufacturas,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,79
+EXP_CAP_80,expo_capitulo,Estaño y manufacturas,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,80
+EXP_CAP_81,expo_capitulo,"Demás metales comunes, ""cermets"" y manufacturas",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,81
+EXP_CAP_82,expo_capitulo,"Herramientas y útiles, cuchillería y cubiertos",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,82
+EXP_CAP_83,expo_capitulo,Manufacturas diversas de metales comunes,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,83
+EXP_CAP_84,expo_capitulo,"Reactores nucleares, calderas, máquinas y partes",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,84
+EXP_CAP_85,expo_capitulo,"Aparatos y material eléctrico, de grabación o imagen",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,85
+EXP_CAP_86,expo_capitulo,"Vehículos y material para vía férrea, aparatos de señalización",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,86
+EXP_CAP_87,expo_capitulo,"Vehículos automóviles, tractores, ciclos, partes y accesorios",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,87
+EXP_CAP_88,expo_capitulo,Navegación aérea o espacial,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,88
+EXP_CAP_89,expo_capitulo,Navegación marítima o fluvial,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,89
+EXP_CAP_90,expo_capitulo,"Instrumentos y aparatos de óptica, fotografía, cinematografía",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,90
+EXP_CAP_91,expo_capitulo,Relojería,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,91
+EXP_CAP_92,expo_capitulo,"Instrumentos de música, partes y accesorios",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,92
+EXP_CAP_93,expo_capitulo,"Armas y municiones, sus partes y accesorios",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,93
+EXP_CAP_94,expo_capitulo,Muebles,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,94
+EXP_CAP_95,expo_capitulo,"Juguetes, artículos para recreo, deporte; partes y accesorios",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,95
+EXP_CAP_96,expo_capitulo,Manufacturas diversas,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,96
+EXP_CAP_97,expo_capitulo,"Objetos de arte, de colección o de antigüedad",capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,97
+EXP_CAP_98,expo_capitulo,Disposiciones de tratamiento especial,capitulo,EXP_TIPO_TOTAL,Millones de dólares FOB,98
+EXP_DEST_UNION_EUROPEA,expo_destino,Unión Europea,pais,,Millones de dólares FOB,
+EXP_DEST_CANADA,expo_destino,Canadá,pais,NAFTA,Millones de dólares FOB,
+EXP_DEST_ESTADOS_UNIDOS,expo_destino,Estados Unidos,pais,NAFTA,Millones de dólares FOB,
+EXP_DEST_MEXICO,expo_destino,México,pais,NAFTA,Millones de dólares FOB,
+EXP_DEST_BOLIVIA,expo_destino,Bolivia,pais,CAN,Millones de dólares FOB,
+EXP_DEST_ECUADOR,expo_destino,Ecuador,pais,CAN,Millones de dólares FOB,
+EXP_DEST_PERU,expo_destino,Perú,pais,CAN,Millones de dólares FOB,
+EXP_DEST_ARGENTINA,expo_destino,Argentina,pais,Mercosur,Millones de dólares FOB,
+EXP_DEST_BRASIL,expo_destino,Brasil,pais,Mercosur,Millones de dólares FOB,
+EXP_DEST_PARAGUAY,expo_destino,Paraguay,pais,Mercosur,Millones de dólares FOB,
+EXP_DEST_URUGUAY,expo_destino,Uruguay,pais,Mercosur,Millones de dólares FOB,
+EXP_DEST_VENEZUELA,expo_destino,Venezuela,pais,Mercosur,Millones de dólares FOB,
+EXP_DEST_CHINA,expo_destino,China,pais,,Millones de dólares FOB,
+EXP_DEST_JAPON,expo_destino,Japón,pais,,Millones de dólares FOB,
+EXP_DEST_INDIA,expo_destino,India,pais,,Millones de dólares FOB,
+EXP_DEST_PANAMA,expo_destino,Panamá,pais,,Millones de dólares FOB,
+EXP_DEST_RESTO_DE_PAISES,expo_destino,Resto de países,pais,Resto de países,Millones de dólares FOB,
+IMP_CAP_REACTORES_NUCLEARES_CALDERAS_MAQUINAS_Y_PARTES,impo_capitulo,"Reactores nucleares, calderas, máquinas y partes",capitulo,,Millones de dólares CIF,
+IMP_CAP_COMBUSTIBLES_Y_ACEITES_MINERALES_Y_SUS_PRODUCTOS,impo_capitulo,Combustibles y aceites minerales y sus productos,capitulo,,Millones de dólares CIF,
+IMP_CAP_APARATOS_Y_MATERIAL_ELECTRICO_DE_GRABACION_O_IMAGEN,impo_capitulo,"Aparatos y material eléctrico, de grabación o imagen",capitulo,,Millones de dólares CIF,
+IMP_CAP_VEHICULOS_PARTES_Y_ACCESORIOS,impo_capitulo,"Vehículos, partes y accesorios",capitulo,,Millones de dólares CIF,
+IMP_CAP_MATERIAS_PLASTICAS_Y_MANUFACTURAS,impo_capitulo,Materias plásticas y manufacturas,capitulo,,Millones de dólares CIF,
+IMP_CAP_PRODUCTOS_QUIMICOS_ORGANICOS,impo_capitulo,Productos químicos orgánicos,capitulo,,Millones de dólares CIF,
+IMP_CAP_PRODUCTOS_FARMACEUTICOS,impo_capitulo,Productos farmacéuticos,capitulo,,Millones de dólares CIF,
+IMP_CAP_CEREALES,impo_capitulo,Cereales,capitulo,,Millones de dólares CIF,
+IMP_CAP_FUNDICION_HIERRO_Y_ACERO,impo_capitulo,"Fundición, hierro y acero",capitulo,,Millones de dólares CIF,
+IMP_CAP_INSTRUMENTOS_Y_APARATOS_DE_OPTICA_FOTOGRAFIA_CINEMATOGRAFIA,impo_capitulo,"Instrumentos y Aparatos de óptica, fotografía, cinematografía",capitulo,,Millones de dólares CIF,
+IMP_CAP_MANUFACTURA_DE_FUNDICION_DE_HIERRO_O_ACERO,impo_capitulo,"Manufactura de fundición, de hierro o acero",capitulo,,Millones de dólares CIF,
+IMP_CAP_NAVEGACION_AEREA_O_ESPACIAL,impo_capitulo,Navegación aérea o espacial,capitulo,,Millones de dólares CIF,
+IMP_CAP_CAUCHO_Y_MANUFACTURAS,impo_capitulo,Caucho y manufacturas,capitulo,,Millones de dólares CIF,
+IMP_CAP_PRODUCTOS_DIVERSOS_DE_LAS_INDUSTRIAS_QUIMICAS,impo_capitulo,Productos diversos de las industrias químicas,capitulo,,Millones de dólares CIF,
+IMP_CAP_ABONOS,impo_capitulo,Abonos,capitulo,,Millones de dólares CIF,
+IMP_CAP_RESIDUOS_INDUSTRIAS_ALIMENTARIAS_ALIMENTOS_PARA_ANIMALES,impo_capitulo,Residuos industrias alimentarias. Alimentos para animales,capitulo,,Millones de dólares CIF,
+IMP_CAP_PAPEL_CARTON_Y_SUS_MANUFACTURAS,impo_capitulo,"Papel, cartón y sus manufacturas",capitulo,,Millones de dólares CIF,
+IMP_CAP_GRASAS_Y_ACEITES_ANIMALES_O_VEGETALES,impo_capitulo,Grasas y aceites animales o vegetales,capitulo,,Millones de dólares CIF,
+IMP_CAP_CALZADO_BOTINES_ARTICULOS_ANALOGOS_Y_PARTES,impo_capitulo,"Calzado, botines, artículos análogos y partes",capitulo,,Millones de dólares CIF,
+IMP_CAP_ACEITES_ESENCIALES_PERFUMERIA_COSMETICOS,impo_capitulo,"Aceites esenciales, perfumería, cosméticos",capitulo,,Millones de dólares CIF,
+IMP_CAP_DISPOSICIONES_DE_TRATAMIENTO_ESPECIAL,impo_capitulo,Disposiciones de tratamiento especial,capitulo,,Millones de dólares CIF,
+IMP_CAP_ALGODON,impo_capitulo,Algodón,capitulo,,Millones de dólares CIF,
+IMP_CAP_PRODUCTOS_QUIMICOS_INORGANICOS,impo_capitulo,Productos químicos inorgánicos,capitulo,,Millones de dólares CIF,
+IMP_CAP_JUGUETES_ARTICULOS_PARA_RECREO_DEPORTE_PARTES_Y_ACCESORIOS,impo_capitulo,"Juguetes, artículos para recreo, deporte; partes y accesorios",capitulo,,Millones de dólares CIF,
+IMP_CAP_EXTRACTOS_CURTIENTES_PINTURAS_TINTAS,impo_capitulo,"Extractos curtientes, pinturas, tintas",capitulo,,Millones de dólares CIF,
+IMP_CAP_MUEBLES,impo_capitulo,Muebles,capitulo,,Millones de dólares CIF,
+IMP_CAP_COBRE_Y_SUS_MANUFACTURAS,impo_capitulo,Cobre y sus manufacturas,capitulo,,Millones de dólares CIF,
+IMP_CAP_ALUMINIO_Y_SUS_MANUFACTURAS,impo_capitulo,Aluminio y sus manufacturas,capitulo,,Millones de dólares CIF,
+IMP_CAP_PRENDAS_Y_COMPLEMENTOS_DE_VESTIR_EXCEPTO_DE_PUNTO,impo_capitulo,"Prendas y complementos de vestir, excepto de punto",capitulo,,Millones de dólares CIF,
+IMP_CAP_PRENDAS_Y_COMPLEMENTOS_DE_VESTIR_DE_PUNTO,impo_capitulo,"Prendas y complementos de vestir, de punto",capitulo,,Millones de dólares CIF,
+IMP_CAP_NAVEGACION_MARITIMA_O_FLUVIAL,impo_capitulo,Navegación marítima o fluvial,capitulo,,Millones de dólares CIF,
+IMP_CAP_FILAMENTOS_SINTETICOS_O_ARTIFICIALES,impo_capitulo,Filamentos sintéticos o artificiales,capitulo,,Millones de dólares CIF,
+IMP_CAP_FIBRAS_SINTETICAS_O_ARTIFICIALES_DISCONTINUAS,impo_capitulo,Fibras sintéticas o artificiales discontinuas,capitulo,,Millones de dólares CIF,
+IMP_CAP_HERRAMIENTAS_Y_UTILES_CUCHILLERIA_Y_CUBIERTOS,impo_capitulo,"Herramientas y útiles, cuchillería y cubiertos",capitulo,,Millones de dólares CIF,
+IMP_CAP_PREPARACIONES_ALIMENTICIAS_DIVERSAS,impo_capitulo,Preparaciones alimenticias diversas,capitulo,,Millones de dólares CIF,
+IMP_CAP_VIDRIO_Y_MANUFACTURAS,impo_capitulo,Vidrio y manufacturas,capitulo,,Millones de dólares CIF,
+IMP_CAP_FRUTOS_COMESTIBLES_CORTEZAS_DE_AGRIOS_O_MELONES,impo_capitulo,"Frutos comestibles, cortezas de agrios o melones",capitulo,,Millones de dólares CIF,
+IMP_CAP_AZUCARES_Y_ARTICULOS_CONFITERIA,impo_capitulo,Azúcares y artículos confitería,capitulo,,Millones de dólares CIF,
+IMP_CAP_SEMILLAS_Y_FRUTOS_OLEAGINOSOS_FORRAJES,impo_capitulo,"Semillas y frutos oleaginosos, forrajes",capitulo,,Millones de dólares CIF,
+IMP_CAP_BEBIDAS_LIQUIDOS_ALCOHOLICOS_Y_VINAGRE,impo_capitulo,"Bebidas, líquidos alcohólicos y vinagre",capitulo,,Millones de dólares CIF,
+IMP_CAP_PRODUCTOS_CERAMICOS,impo_capitulo,Productos cerámicos,capitulo,,Millones de dólares CIF,
+IMP_CAP_JABONES_CERAS_ARTIFICIALES_PASTAS,impo_capitulo,"Jabones, ceras artificiales, pastas",capitulo,,Millones de dólares CIF,
+IMP_CAP_MADERA_CARBON_VEGETAL_Y_MANUFACTURAS_DE_MADERA,impo_capitulo,"Madera, carbón vegetal y manufacturas de madera",capitulo,,Millones de dólares CIF,
+IMP_CAP_MANUFACTURAS_DIVERSAS_DE_METALES_COMUNES,impo_capitulo,Manufacturas diversas de metales comunes,capitulo,,Millones de dólares CIF,
+IMP_CAP_CAFE_TE_YERBA_MATE_Y_ESPECIAS,impo_capitulo,"Café, té, yerba mate y especias",capitulo,,Millones de dólares CIF,
+IMP_CAP_VEHICULOS_Y_MATERIAL_PARA_VIA_FERREA_APARATOS_DE_SENALIZACION,impo_capitulo,"Vehículos y material para vía férrea, aparatos de señalización",capitulo,,Millones de dólares CIF,
+IMP_CAP_MANUFACTURAS_DIVERSAS,impo_capitulo,Manufacturas diversas,capitulo,,Millones de dólares CIF,
+IMP_CAP_LEGUMBRES_Y_HORTALIZAS_PLANTAS_RAICES_Y_TUBERCULOS,impo_capitulo,"Legumbres y hortalizas, plantas, raíces y tubérculos",capitulo,,Millones de dólares CIF,
+IMP_CAP_PREPARACIONES_A_BASE_DE_CEREAL_HARINA_LECHE_PASTELERIA,impo_capitulo,"Preparaciones a base de cereal, harina, leche; pastelería",capitulo,,Millones de dólares CIF,
+IMP_CAP_SAL_AZUFRE_TIERRAS_Y_PIEDRAS_YESOS_CALES_Y_CEMENTOS,impo_capitulo,"Sal; azufre; tierras y piedras; yesos, cales y cementos",capitulo,,Millones de dólares CIF,
+IMP_CAP_MANUFACTURAS_DE_CUERO_ARTICULOS_DE_VIAJE_BOLSOS,impo_capitulo,"Manufacturas de cuero, artículos de viaje, bolsos",capitulo,,Millones de dólares CIF,
+IMP_CAP_PREPARACIONES_DE_CARNE_PESCADO_CRUSTACEOS_MOLUSCOS,impo_capitulo,"Preparaciones de carne, pescado, crustáceos, moluscos",capitulo,,Millones de dólares CIF,
+IMP_CAP_PESCADOS_Y_CRUSTACEOS_MOLUSCOS_E_INVERTEBRADOS_ACUATICOS,impo_capitulo,"Pescados y crustáceos, moluscos e invertebrados acuáticos",capitulo,,Millones de dólares CIF,
+IMP_CAP_PASTAS_DE_MADERA_DESPERDICIOS_DE_PAPEL_O_CARTON,impo_capitulo,"Pastas de madera, desperdicios de papel o cartón",capitulo,,Millones de dólares CIF,
+IMP_CAP_DEMAS_ARTICULOS_TEXTILES_CONFECCIONADOS,impo_capitulo,Demás artículos textiles confeccionados,capitulo,,Millones de dólares CIF,
+IMP_CAP_TEJIDOS_DE_PUNTO,impo_capitulo,Tejidos de punto,capitulo,,Millones de dólares CIF,
+IMP_CAP_MATERIAS_ALBUMINOIDEAS_COLAS,impo_capitulo,"Materias albuminoideas, colas",capitulo,,Millones de dólares CIF,
+IMP_CAP_PRODUCTOS_EDITORIALES_PRENSA_TEXTOS,impo_capitulo,"Productos editoriales, prensa, textos",capitulo,,Millones de dólares CIF,
+IMP_CAP_LECHE_Y_PRODUCTOS_LACTEOS_HUEVOS_MIEL,impo_capitulo,"Leche y productos lácteos, huevos, miel",capitulo,,Millones de dólares CIF,
+IMP_CAP_MANUFACTURAS_DE_PIEDRA_YESO_CEMENTO_MICA_Y_ANALOGAS,impo_capitulo,"Manufacturas de piedra, yeso, cemento, mica y análogas",capitulo,,Millones de dólares CIF,
+IMP_CAP_GUATA_FIELTRO_Y_TELAS_SIN_TEJER_CORDELES_CUERDAS_CORDAJES,impo_capitulo,"Guata, fieltro y telas sin tejer; cordeles ,cuerdas, cordajes",capitulo,,Millones de dólares CIF,
+IMP_CAP_CARNES_Y_DESPOJOS_COMESTIBLES,impo_capitulo,Carnes y despojos comestibles,capitulo,,Millones de dólares CIF,
+IMP_CAP_PREPARACIONES_DE_LEGUMBRES_U_HORTALIZAS_FRUTOS_OTRAS,impo_capitulo,"Preparaciones de legumbres u hortalizas, frutos, otras",capitulo,,Millones de dólares CIF,
+IMP_CAP_TABACO_SUCEDANEOS_DEL_TABACO_ELABORADOS,impo_capitulo,"Tabaco, sucedáneos del tabaco elaborados",capitulo,,Millones de dólares CIF,
+IMP_CAP_RELOJERIA,impo_capitulo,Relojería,capitulo,,Millones de dólares CIF,
+IMP_CAP_PERLAS_FINAS_PIEDRAS_Y_METALES_PRECIOSOS,impo_capitulo,"Perlas finas, piedras y metales preciosos",capitulo,,Millones de dólares CIF,
+IMP_CAP_CACAO_Y_SUS_PREPARACIONES,impo_capitulo,Cacao y sus preparaciones,capitulo,,Millones de dólares CIF,
+IMP_CAP_ARMAS_Y_MUNICIONES_SUS_PARTES_Y_ACCESORIOS,impo_capitulo,"Armas y municiones, sus partes y accesorios",capitulo,,Millones de dólares CIF,
+IMP_CAP_PRODUCTOS_FOTOGRAFICOS_CINEMATOGRAFICOS,impo_capitulo,"Productos fotográficos, cinematográficos",capitulo,,Millones de dólares CIF,
+IMP_CAP_ZINC_Y_MANUFACTURAS,impo_capitulo,Zinc y manufacturas,capitulo,,Millones de dólares CIF,
+IMP_CAP_TEJIDOS_IMPREGNADOS_RECUBIERTOS,impo_capitulo,"Tejidos impregnados, recubiertos",capitulo,,Millones de dólares CIF,
+IMP_CAP_POLVORAS_EXPLOSIVOS_FOSFOROS,impo_capitulo,"Pólvoras, explosivos, fósforos",capitulo,,Millones de dólares CIF,
+IMP_CAP_ARTICULOS_DE_SOMBRERERIA_Y_PARTES,impo_capitulo,Artículos de sombrerería y partes,capitulo,,Millones de dólares CIF,
+IMP_CAP_TEJIDOS_ESPECIALES_SUPERFICIES_TEXTILES_CON_PELO,impo_capitulo,"Tejidos especiales, superficies textiles con pelo",capitulo,,Millones de dólares CIF,
+IMP_CAP_MINERALES_ESCORIAS_Y_CENIZAS,impo_capitulo,"Minerales, escorias y cenizas",capitulo,,Millones de dólares CIF,
+IMP_CAP_PLANTAS_VIVAS_Y_PRODUCTOS_DE_LA_FLORICULTURA,impo_capitulo,Plantas vivas y productos de la floricultura,capitulo,,Millones de dólares CIF,
+IMP_CAP_ALFOMBRAS_Y_MATERIAS_TEXTILES,impo_capitulo,Alfombras y materias textiles,capitulo,,Millones de dólares CIF,
+IMP_CAP_INSTRUMENTOS_DE_MUSICA_PARTES_Y_ACCESORIOS,impo_capitulo,"Instrumentos de música, partes y accesorios",capitulo,,Millones de dólares CIF,
+IMP_CAP_PRODUCTOS_DE_MOLINERIA_MALTA_ALMIDON_Y_FECULA,impo_capitulo,"Productos de molinería, malta, almidón y fécula",capitulo,,Millones de dólares CIF,
+IMP_CAP_LANA_Y_PELO_FINO_U_ORDINARIO_HILADOS_Y_TEJIDOS_DE_CRIN,impo_capitulo,Lana y pelo fino u ordinario; hilados y tejidos de crin,capitulo,,Millones de dólares CIF,
+IMP_CAP_GOMAS_RESINAS_Y_DEMAS_JUGOS_Y_EXTRACTOS_VEGETALES,impo_capitulo,"Gomas, resinas, y demás jugos y extractos vegetales",capitulo,,Millones de dólares CIF,
+IMP_CAP_PLOMO_Y_MANUFACTURAS,impo_capitulo,Plomo y manufacturas,capitulo,,Millones de dólares CIF,
+IMP_CAP_DEMAS_PRODUCTOS_DE_ORIGEN_ANIMAL,impo_capitulo,Demás productos de origen animal,capitulo,,Millones de dólares CIF,
+IMP_CAP_PARAGUAS_BASTONES_LATIGOS_Y_SUS_PARTES,impo_capitulo,"Paraguas, bastones, látigos y sus partes",capitulo,,Millones de dólares CIF,
+IMP_CAP_PIELES_Y_CUEROS,impo_capitulo,Pieles y cueros,capitulo,,Millones de dólares CIF,
+IMP_CAP_NIQUEL_Y_SUS_MANUFACTURAS,impo_capitulo,Níquel y sus manufacturas,capitulo,,Millones de dólares CIF,
+IMP_CAP_DEMAS_FIBRAS_VEGETALES_HILADOS_DE_PAPEL,impo_capitulo,"Demás fibras vegetales, hilados de papel",capitulo,,Millones de dólares CIF,
+IMP_CAP_PLUMAS_FLORES_ARTIFICIALES_MANUFACTURA_DE_CABELLOS,impo_capitulo,"Plumas, flores artificiales; manufactura de cabellos",capitulo,,Millones de dólares CIF,
+IMP_CAP_ANIMALES_VIVOS,impo_capitulo,Animales vivos,capitulo,,Millones de dólares CIF,
+IMP_CAP_ESTANO_Y_MANUFACTURAS,impo_capitulo,Estaño y manufacturas,capitulo,,Millones de dólares CIF,
+IMP_CAP_DEMAS_METALES_COMUNES_CERMETS_Y_MANUFACTURAS,impo_capitulo,"Demás metales comunes, ""cermets"" y manufacturas",capitulo,,Millones de dólares CIF,
+IMP_CAP_OBJETOS_DE_ARTE_DE_COLECCION_O_DE_ANTIGUEDAD,impo_capitulo,"Objetos de arte, de colección o de antigüedad",capitulo,,Millones de dólares CIF,
+IMP_CAP_MATERIAS_TRENZABLES_Y_DEMAS_PRODUCTOS_VEGETALES,impo_capitulo,Materias trenzables y demás productos vegetales,capitulo,,Millones de dólares CIF,
+IMP_CAP_MANUFACTURA_DE_ESPARTERIA_Y_CESTERIA,impo_capitulo,Manufactura de espartería y cestería,capitulo,,Millones de dólares CIF,
+IMP_CAP_SEDA,impo_capitulo,Seda,capitulo,,Millones de dólares CIF,
+IMP_CAP_CORCHO_Y_SUS_MANUFACTURAS,impo_capitulo,Corcho y sus manufacturas,capitulo,,Millones de dólares CIF,
+IMP_CAP_PELETERIA_Y_CONFECCIONES,impo_capitulo,Peletería y confecciones,capitulo,,Millones de dólares CIF,
+IMP_ORIG_ESTADOS_UNIDOS,impo_origen,Estados Unidos,pais,,Millones de dólares CIF,
+IMP_ORIG_CHINA,impo_origen,China,pais,,Millones de dólares CIF,
+IMP_ORIG_MEXICO,impo_origen,México,pais,,Millones de dólares CIF,
+IMP_ORIG_BRASIL,impo_origen,Brasil,pais,,Millones de dólares CIF,
+IMP_ORIG_ARGENTINA,impo_origen,Argentina,pais,,Millones de dólares CIF,
+IMP_ORIG_ALEMANIA,impo_origen,Alemania,pais,,Millones de dólares CIF,
+IMP_ORIG_JAPON,impo_origen,Japón,pais,,Millones de dólares CIF,
+IMP_ORIG_COREA,impo_origen,Corea,pais,,Millones de dólares CIF,
+IMP_ORIG_INDIA,impo_origen,India,pais,,Millones de dólares CIF,
+IMP_ORIG_CANADA,impo_origen,Canadá,pais,,Millones de dólares CIF,
+IMP_ORIG_FRANCIA,impo_origen,Francia,pais,,Millones de dólares CIF,
+IMP_ORIG_ECUADOR,impo_origen,Ecuador,pais,,Millones de dólares CIF,
+IMP_ORIG_CHILE,impo_origen,Chile,pais,,Millones de dólares CIF,
+IMP_ORIG_ITALIA,impo_origen,Italia,pais,,Millones de dólares CIF,
+IMP_ORIG_PERU,impo_origen,Perú,pais,,Millones de dólares CIF,
+IMP_ORIG_ESPANA,impo_origen,España,pais,,Millones de dólares CIF,
+IMP_ORIG_REINO_UNIDO,impo_origen,Reino Unido,pais,,Millones de dólares CIF,
+IMP_ORIG_TAIWAN,impo_origen,Taiwán,pais,,Millones de dólares CIF,
+IMP_ORIG_VENEZUELA,impo_origen,Venezuela,pais,,Millones de dólares CIF,
+IMP_ORIG_SUIZA,impo_origen,Suiza,pais,,Millones de dólares CIF,
+IMP_ORIG_TRINIDAD_Y_TOBAGO,impo_origen,Trinidad y Tobago,pais,,Millones de dólares CIF,
+IMP_ORIG_RUSIA,impo_origen,Rusia,pais,,Millones de dólares CIF,
+IMP_ORIG_TAILANDIA,impo_origen,Tailandia,pais,,Millones de dólares CIF,
+IMP_ORIG_BELGICA,impo_origen,Bélgica,pais,,Millones de dólares CIF,
+IMP_ORIG_BOLIVIA,impo_origen,Bolivia,pais,,Millones de dólares CIF,
+IMP_ORIG_PAISES_BAJOS,impo_origen,Países Bajos,pais,,Millones de dólares CIF,
+IMP_ORIG_INDONESIA,impo_origen,Indonesia,pais,,Millones de dólares CIF,
+IMP_ORIG_VIETNAM,impo_origen,Vietnam,pais,,Millones de dólares CIF,
+IMP_ORIG_MALASIA,impo_origen,Malasia,pais,,Millones de dólares CIF,
+IMP_ORIG_SUECIA,impo_origen,Suecia,pais,,Millones de dólares CIF,
+IMP_ORIG_ISRAEL,impo_origen,Israel,pais,,Millones de dólares CIF,
+IMP_ORIG_AUSTRIA,impo_origen,Austria,pais,,Millones de dólares CIF,
+IMP_ORIG_PARAGUAY,impo_origen,Paraguay,pais,,Millones de dólares CIF,
+BAL_PAIS_TOTAL,balanza_pais,Total,total,,Millones de dólares FOB,
+BAL_PAIS_ALADI,balanza_pais,Aladi,pais,,Millones de dólares FOB,
+BAL_PAIS_COMUNIDAD_ANDINA,balanza_pais,Comunidad Andina,pais,,Millones de dólares FOB,
+BAL_PAIS_MERCOSUR,balanza_pais,MERCOSUR,pais,,Millones de dólares FOB,
+BAL_PAIS_UNION_EUROPEA,balanza_pais,Unión Europea,pais,,Millones de dólares FOB,
+BAL_PAIS_ESTADOS_UNIDOS,balanza_pais,Estados Unidos,pais,,Millones de dólares FOB,
+BAL_PAIS_VENEZUELA,balanza_pais,Venezuela,pais,,Millones de dólares FOB,
+BAL_PAIS_PERU,balanza_pais,Perú,pais,,Millones de dólares FOB,
+BAL_PAIS_CHILE,balanza_pais,Chile,pais,,Millones de dólares FOB,
+BAL_PAIS_ECUADOR,balanza_pais,Ecuador,pais,,Millones de dólares FOB,
+BAL_PAIS_JAPON,balanza_pais,Japón,pais,,Millones de dólares FOB,
+BAL_PAIS_ALEMANIA,balanza_pais,Alemania,pais,,Millones de dólares FOB,
+BAL_PAIS_MEXICO,balanza_pais,México,pais,,Millones de dólares FOB,
+BAL_PAIS_CANADA,balanza_pais,Canadá,pais,,Millones de dólares FOB,
+BAL_PAIS_BRASIL,balanza_pais,Brasil,pais,,Millones de dólares FOB,
+BAL_PAIS_CHINA,balanza_pais,China,pais,,Millones de dólares FOB,
+BAL_PAIS_RESTO_DE_PAISES,balanza_pais,Resto de países,pais,,Millones de dólares FOB,
+IMP_CUODE_TOTAL,impo_cuode,Total importaciones,total,,Millones de dólares CIF,
+IMP_CUODE_C,impo_cuode,Bienes de consumo,categoria,IMP_CUODE_TOTAL,Millones de dólares CIF,
+IMP_CUODE_1,impo_cuode,Bienes de consumo no duradero,grupo,IMP_CUODE_C,Millones de dólares CIF,
+IMP_CUODE_2,impo_cuode,Bienes de consumo duradero,grupo,IMP_CUODE_C,Millones de dólares CIF,
+IMP_CUODE_M,impo_cuode,Materias primas y productos intermedios,categoria,IMP_CUODE_TOTAL,Millones de dólares CIF,
+IMP_CUODE_3,impo_cuode,"Combustibles, lubricantes y conexos",grupo,IMP_CUODE_M,Millones de dólares CIF,
+IMP_CUODE_4,impo_cuode,Materias primas para la agricultura,grupo,IMP_CUODE_M,Millones de dólares CIF,
+IMP_CUODE_5,impo_cuode,Materias primas para la industria,grupo,IMP_CUODE_M,Millones de dólares CIF,
+IMP_CUODE_K,impo_cuode,Bienes de capital y materiales de construcción,categoria,IMP_CUODE_TOTAL,Millones de dólares CIF,
+IMP_CUODE_6,impo_cuode,Materiales de construcción,grupo,IMP_CUODE_K,Millones de dólares CIF,
+IMP_CUODE_7,impo_cuode,Bienes de capital para la agricultura,grupo,IMP_CUODE_K,Millones de dólares CIF,
+IMP_CUODE_8,impo_cuode,Bienes de capital para la industria,grupo,IMP_CUODE_K,Millones de dólares CIF,
+IMP_CUODE_9,impo_cuode,Equipo de transporte,grupo,IMP_CUODE_K,Millones de dólares CIF,
+IMP_CUODE_11,impo_cuode,Productos alimenticios,subgrupo,IMP_CUODE_1,Millones de dólares CIF,
+IMP_CUODE_12,impo_cuode,Bebidas,subgrupo,IMP_CUODE_1,Millones de dólares CIF,
+IMP_CUODE_13,impo_cuode,Tabaco,subgrupo,IMP_CUODE_1,Millones de dólares CIF,
+IMP_CUODE_14,impo_cuode,Productos farmacéuticos y de tocador,subgrupo,IMP_CUODE_1,Millones de dólares CIF,
+IMP_CUODE_15,impo_cuode,Vestuario y otras confecciones textiles,subgrupo,IMP_CUODE_1,Millones de dólares CIF,
+IMP_CUODE_19,impo_cuode,Otros bienes de consumo no duradero,subgrupo,IMP_CUODE_1,Millones de dólares CIF,
+IMP_CUODE_21,impo_cuode,Utensilios domésticos,subgrupo,IMP_CUODE_2,Millones de dólares CIF,
+IMP_CUODE_22,impo_cuode,Objetos de adorno uso personal y otros,subgrupo,IMP_CUODE_2,Millones de dólares CIF,
+IMP_CUODE_23,impo_cuode,Muebles y otros equipos para el hogar,subgrupo,IMP_CUODE_2,Millones de dólares CIF,
+IMP_CUODE_24,impo_cuode,Máquinas y aparatos de uso domestico,subgrupo,IMP_CUODE_2,Millones de dólares CIF,
+IMP_CUODE_25,impo_cuode,Vehículos de transporte particular,subgrupo,IMP_CUODE_2,Millones de dólares CIF,
+IMP_CUODE_29,impo_cuode,Armas y equipo militar,subgrupo,IMP_CUODE_2,Millones de dólares CIF,
+IMP_CUODE_31,impo_cuode,Combustibles.,subgrupo,IMP_CUODE_3,Millones de dólares CIF,
+IMP_CUODE_32,impo_cuode,Lubricantes,subgrupo,IMP_CUODE_3,Millones de dólares CIF,
+IMP_CUODE_33,impo_cuode,Electricidad,subgrupo,IMP_CUODE_3,Millones de dólares CIF,
+IMP_CUODE_41,impo_cuode,Alimentos para animales,subgrupo,IMP_CUODE_4,Millones de dólares CIF,
+IMP_CUODE_42,impo_cuode,Otras materias primas para la agricultura,subgrupo,IMP_CUODE_4,Millones de dólares CIF,
+IMP_CUODE_51,impo_cuode,Productos alimenticios,subgrupo,IMP_CUODE_5,Millones de dólares CIF,
+IMP_CUODE_52,impo_cuode,Productos agropecuarios no alimenticios,subgrupo,IMP_CUODE_5,Millones de dólares CIF,
+IMP_CUODE_53,impo_cuode,Productos mineros,subgrupo,IMP_CUODE_5,Millones de dólares CIF,
+IMP_CUODE_55,impo_cuode,Productos químicos y farmacéuticos,subgrupo,IMP_CUODE_5,Millones de dólares CIF,
+IMP_CUODE_61,impo_cuode,Materiales de construcción,subgrupo,IMP_CUODE_6,Millones de dólares CIF,
+IMP_CUODE_71,impo_cuode,Máquinas y herramientas,subgrupo,IMP_CUODE_7,Millones de dólares CIF,
+IMP_CUODE_72,impo_cuode,Otro equipo para la agricultura,subgrupo,IMP_CUODE_7,Millones de dólares CIF,
+IMP_CUODE_73,impo_cuode,Material de transporte y tracción,subgrupo,IMP_CUODE_7,Millones de dólares CIF,
+IMP_CUODE_81,impo_cuode,Máquinas y aparatos de oficina,subgrupo,IMP_CUODE_8,Millones de dólares CIF,
+IMP_CUODE_82,impo_cuode,Herramientas,subgrupo,IMP_CUODE_8,Millones de dólares CIF,
+IMP_CUODE_83,impo_cuode,Partes y accesorios de maquinaria industrial,subgrupo,IMP_CUODE_8,Millones de dólares CIF,
+IMP_CUODE_84,impo_cuode,Maquinaria industrial,subgrupo,IMP_CUODE_8,Millones de dólares CIF,
+IMP_CUODE_85,impo_cuode,Otro equipo fijo,subgrupo,IMP_CUODE_8,Millones de dólares CIF,
+IMP_CUODE_91,impo_cuode,Partes y accesorios de equipo de transporte,subgrupo,IMP_CUODE_9,Millones de dólares CIF,
+IMP_CUODE_92,impo_cuode,Equipo rodante de transporte,subgrupo,IMP_CUODE_9,Millones de dólares CIF,
+IMP_CUODE_93,impo_cuode,Equipo fijo de transporte,subgrupo,IMP_CUODE_9,Millones de dólares CIF,

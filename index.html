@@ -9,16 +9,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/estilos.css?v=25">
+<link rel="stylesheet" href="assets/estilos.css?v=26">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/comun.js?v=25"></script>
-<script src="assets/resumen.js?v=25"></script>
-<script src="assets/ipc.js?v=25"></script>
-<script src="assets/ise.js?v=25"></script>
-<script src="assets/empleo.js?v=25"></script>
-<script src="assets/tasas.js?v=25"></script>
-<script src="assets/presupuesto.js?v=25"></script>
+<script src="assets/comun.js?v=26"></script>
+<script src="assets/resumen.js?v=26"></script>
+<script src="assets/ipc.js?v=26"></script>
+<script src="assets/ise.js?v=26"></script>
+<script src="assets/empleo.js?v=26"></script>
+<script src="assets/tasas.js?v=26"></script>
+<script src="assets/presupuesto.js?v=26"></script>
+<script src="assets/comercio.js?v=26"></script>
 </head>
 <body>
 <div class="wrap">
@@ -35,6 +36,7 @@
       <a href="#ise" data-tab="ise">Actividad económica</a>
       <a href="#empleo" data-tab="empleo">Empleo</a>
       <a href="#tasas" data-tab="tasas">Tasas y dólar</a>
+      <a href="#comercio" data-tab="comercio">Comercio exterior</a>
       <a href="#presupuesto" data-tab="presupuesto">Presupuesto</a>
     </nav>
     <label class="toggle"><input type="checkbox" id="ver-gobiernos" checked> Marcar gobiernos en las gráficas</label>
@@ -242,6 +244,84 @@
     </div>
   </section>
 
+  <!-- ===================================================== COMERCIO EXTERIOR -->
+  <section class="tab" id="tab-comercio" hidden>
+    <div class="cargando">Cargando datos…</div>
+    <div class="contenido" hidden>
+      <div class="row spread mb"><p class="hint" style="margin:0">Los datos de arriba son los del último mes publicado. Más abajo puedes escoger cualquier mes.</p><span class="badge" id="com-ultima"></span></div>
+      <section class="kpis">
+        <div class="kpi"><div class="l">Exportaciones del mes</div><div class="v small" id="com-k1"></div><div class="d" id="com-k1d"></div></div>
+        <div class="kpi"><div class="l">Importaciones del mes</div><div class="v small" id="com-k2"></div><div class="d" id="com-k2d"></div></div>
+        <div class="kpi"><div class="l">Balanza del mes</div><div class="v small" id="com-k3"></div><div class="d" id="com-k3d"></div></div>
+        <div class="kpi"><div class="l">Balanza en lo corrido del año</div><div class="v small" id="com-k4"></div><div class="d" id="com-k4d"></div></div>
+      </section>
+      <section class="panel">
+        <span class="paso">1 · EL PANORAMA</span>
+        <h2>Lo que Colombia le vende y le compra al mundo</h2>
+        <p class="hint">Millones de dólares por mes. Las barras son la <strong>balanza comercial</strong>: exportaciones menos importaciones. Hacia arriba (verde azulado), el país vendió más de lo que compró; hacia abajo (rojo), compró más de lo que vendió.</p>
+        <div class="chartbox" style="height:340px"><canvas id="com-pan"></canvas></div>
+        <p class="interp" id="com-pan-txt"></p>
+      </section>
+      <section class="panel">
+        <span class="paso">2 · QUÉ VENDEMOS</span>
+        <div class="row spread"><h2>Las exportaciones según el producto</h2><div class="seg" id="com-tipo-med"><button data-v="usd" class="on">En dólares</button><button data-v="toneladas">En volumen (toneladas)</button></div></div>
+        <div class="grupos-ise">
+          <div><strong>Tradicionales</strong><span>Petróleo, carbón, café y ferroníquel: lo que Colombia exporta desde hace décadas. Su valor sube y baja con los precios internacionales.</span></div>
+          <div><strong>No tradicionales</strong><span>Todo lo demás: flores, banano, aguacate, químicos, plásticos, alimentos procesados, vehículos, confecciones…</span></div>
+          <div><strong>¿Dólares o volumen?</strong><span>Si el valor cae pero el volumen no, lo que bajó fue el precio. Si caen los dos, se está vendiendo menos.</span></div>
+        </div>
+        <div class="chartbox" style="height:320px"><canvas id="com-tipo"></canvas></div>
+        <p class="interp" id="com-tipo-txt"></p>
+      </section>
+      <section class="panel">
+        <span class="paso">3 · QUÉ COMPRAMOS</span>
+        <h2>Las importaciones según para qué se usan</h2>
+        <div class="grupos-ise">
+          <div><strong>Bienes de consumo</strong><span>Lo que compran directamente los hogares: carros, celulares, ropa, medicamentos, alimentos.</span></div>
+          <div><strong>Materias primas</strong><span>Insumos que las empresas transforman o gastan: químicos, plásticos, metales, combustibles, alimento para animales.</span></div>
+          <div><strong>Bienes de capital</strong><span>Maquinaria, equipos, vehículos de carga y materiales de construcción. Si crecen, las empresas están invirtiendo.</span></div>
+        </div>
+        <p class="hint">Millones de dólares CIF (incluye flete y seguro). Mes a mes desde abril de 2022.</p>
+        <div class="chartbox" style="height:300px"><canvas id="com-uso"></canvas></div>
+        <p class="interp" id="com-uso-txt"></p>
+      </section>
+      <section class="panel" id="com-paises-box">
+        <span class="paso">4 · CON QUIÉN</span>
+        <div class="row spread"><h2 id="com-paises-t"></h2><div class="seg" id="com-paises-anio"></div></div>
+        <p class="hint">Balanza comercial con cada país o bloque: exportaciones menos importaciones del año. Verde azulado: Colombia le vende más de lo que le compra. Rojo: al revés. Toca una barra para verla desde 1995.</p>
+        <div class="chartbox"><canvas id="com-paises"></canvas></div>
+        <div id="com-pais-tiempo" hidden></div>
+        <p class="interp" id="com-paises-txt"></p>
+      </section>
+      <div class="detalle-mes">
+      <div class="barra-mes"><span class="t">Detalle del mes</span><div id="com-periodo"></div><span class="s">Todo lo que sigue corresponde a este mes</span></div>
+      <section class="panel" id="com-v">
+        <span class="paso">5 · LO QUE SE VENDIÓ</span>
+        <h2 id="com-v-t"></h2>
+        <div class="row"><div class="seg" id="com-v-desg"><button data-v="cap" class="on">Por producto</button><button data-v="dest">Por destino</button></div>
+          <div class="seg" id="com-v-med"><button data-v="valor" class="on">Valor</button><button data-v="cambio">Cambio frente a un año antes</button></div></div>
+        <p class="hint" id="com-v-h" style="margin-top:8px"></p>
+        <div class="chartbox"><canvas id="com-v-bar"></canvas></div>
+        <div id="com-v-tiempo" hidden></div>
+        <p class="interp" id="com-v-txt"></p>
+      </section>
+      <section class="panel" id="com-c">
+        <span class="paso">6 · LO QUE SE COMPRÓ</span>
+        <h2 id="com-c-t"></h2>
+        <div class="row"><div class="seg" id="com-c-desg"><button data-v="uso" class="on">Por uso</button><button data-v="cap">Por producto</button><button data-v="orig">Por origen</button></div>
+          <div class="seg" id="com-c-med"><button data-v="valor" class="on">Valor</button><button data-v="cambio">Cambio frente a un año antes</button></div></div>
+        <div class="migas" id="com-c-migas" style="margin-top:10px"></div>
+        <p class="hint" id="com-c-h"></p>
+        <div class="chartbox"><canvas id="com-c-bar"></canvas></div>
+        <div id="com-c-tiempo" hidden></div>
+        <p class="interp" id="com-c-txt"></p>
+      </section>
+      </div>
+      <p class="foot">Fuente: DANE con datos de la DIAN (cifras provisionales). Las exportaciones se miden <strong>FOB</strong> (valor de la mercancía puesta en el barco). Las importaciones se publican <strong>CIF</strong> (incluye flete y seguro); para la balanza comercial el DANE usa las importaciones FOB, por eso la balanza no es exactamente exportaciones menos la cifra CIF.
+        Datos: <a href="datos/comercio/datos.csv">datos.csv</a> · <a href="datos/comercio/series.csv">series.csv</a> · <a href="datos/comercio/anual.csv">anual.csv</a></p>
+    </div>
+  </section>
+
   <!-- ===================================================== PRESUPUESTO -->
   <section class="tab" id="tab-presupuesto" hidden>
     <div class="cargando">Cargando datos…</div>
@@ -325,6 +405,7 @@
         <tr><td>Inflación</td><td>DANE</td><td>En los primeros días del mes siguiente</td></tr>
         <tr><td>Empleo</td><td>DANE</td><td>A finales del mes siguiente</td></tr>
         <tr><td>Actividad económica</td><td>DANE</td><td>Unos dos meses después</td></tr>
+        <tr><td>Comercio exterior</td><td>DANE (con datos de la DIAN)</td><td>Unos 45 a 50 días después de terminado el mes</td></tr>
         <tr><td>Presupuesto mes a mes</td><td>Ministerio de Hacienda</td><td>A comienzos del mes siguiente. A veces el Ministerio deja meses sin publicar; la página lo avisa.</td></tr>
         <tr><td>Presupuesto histórico por sector</td><td>Ministerio de Hacienda</td><td>Una vez al año, cuando cierra la vigencia</td></tr>
       </tbody></table></div>

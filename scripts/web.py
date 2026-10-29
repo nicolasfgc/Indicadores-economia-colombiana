@@ -223,6 +223,27 @@ def resumen():
     guardar("resumen.json", out)
 
 
+# ---------------------------------------------------------------- comercio exterior
+def comercio():
+    d = pd.read_csv(DATOS / "comercio" / "datos.csv")
+    s = pd.read_csv(DATOS / "comercio" / "series.csv", dtype=str).fillna("")
+    a = pd.read_csv(DATOS / "comercio" / "anual.csv")
+    fechas = sorted(d.fecha.unique())
+    usd = d[d.medida == "usd"].pivot(index="fecha", columns="id_serie", values="valor").reindex(fechas)
+    ton = d[d.medida == "toneladas"].pivot(index="fecha", columns="id_serie", values="valor").reindex(fechas)
+    serie = lambda col, dec: [limpiar(x, dec) for x in col]
+    anios = sorted(a.anio.unique().tolist())
+    an = a.pivot(index="anio", columns="id_serie", values="valor").reindex(anios)
+    guardar("comercio.json", {
+        "fechas": fechas,
+        "series": {r.id_serie: [r.nombre, r.tema, r.nivel, r.padre] for r in s.itertuples()},
+        "usd": {c: serie(usd[c], 2) for c in usd.columns},
+        "toneladas": {c: serie(ton[c], 0) for c in ton.columns},
+        "anios": [int(x) for x in anios],
+        "anual": {c: serie(an[c], 1) for c in an.columns},
+    })
+
+
 def main():
     print("Preparando datos para la web:")
     resumen()
@@ -232,6 +253,7 @@ def main():
     tasas()
     presupuesto()
     presupuesto_historico()
+    comercio()
 
 
 if __name__ == "__main__":

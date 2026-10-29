@@ -16,6 +16,7 @@ La idea es poder ir de lo general a lo particular: si la inflación sube, ver qu
 | Dólar (TRM) | Diaria, promedio y cierre de cada mes, variaciones | Diciembre 1991 | Superintendencia Financiera |
 | Presupuesto General de la Nación (gastos) | Apropiación inicial y vigente, adiciones, reducciones, compromisos, obligaciones y pagos, cada mes, por sector, entidad y rubro presupuestal (hasta 5 niveles), fuente, situación de fondos y recurso | Enero 2019 | Ministerio de Hacienda |
 | Presupuesto histórico por sector | Apropiación, compromisos, obligaciones y pagos por sector, anual, en precios corrientes y constantes; funcionamiento e inversión; Nación y recursos propios; desglose por concepto (personal, transferencias, deuda…); pérdidas de apropiación y rezago | 2000 | Ministerio de Hacienda |
+| Comercio exterior | Exportaciones (por tipo: café, carbón, petróleo, ferroníquel y no tradicionales; por capítulo del arancel; por destino), importaciones (por uso: consumo, materias primas y bienes de capital en tres niveles; por capítulo; por país de origen) y balanza comercial (mensual y anual por país), en millones de dólares | Enero 1992 (exportaciones por tipo); 2007–2008 (capítulos y países); abril 2022 (importaciones por uso, mensual) | DANE con datos de la DIAN |
 | Tasas de interés y UVR | Tasa de política monetaria, IBR (a un día, 1 y 3 meses), tasa interbancaria, CDT a 90 días, DTF y UVR. Diarias, promedio y cierre de cada mes | 1986–2012 según la serie | Banco de la República |
 
 Próximamente: encuestas sectoriales (industria, comercio, servicios) e ingresos del presupuesto. El listado completo está en [`datos/catalogo.csv`](datos/catalogo.csv).
@@ -103,6 +104,23 @@ Para comparar gobiernos con las mismas reglas, `datos/presupuesto_historico/` tr
 - Los archivos originales están en `fuentes/minhacienda/`. El sitio de Hacienda bloquea descargas automáticas, así que se actualizan a mano: basta con reemplazar los archivos (los años cerrados no cambian).
 - Para el detalle por entidad, rubro y proyecto (2019 en adelante) se usa `datos/presupuesto/`.
 
+### Comercio exterior
+
+`datos/comercio/` sigue el mismo formato largo: `datos.csv` (`fecha | id_serie | medida | valor`, con `medida` = `usd` en millones de dólares o `toneladas`), `series.csv` (qué es cada serie: `tema`, `nombre`, `nivel`, `padre`) y `anual.csv` (importaciones por uso desde 1999 y balanza por país desde 1995).
+
+| Prefijo de `id_serie` | Qué es |
+|---|---|
+| `BAL_` | Balanza comercial mensual: exportaciones FOB, importaciones FOB y balanza (2007 en adelante) |
+| `EXP_TIPO_` | Exportaciones por tipo de producto, en dólares FOB y toneladas (1992 en adelante) |
+| `EXP_CAP_` / `EXP_DEST_` | Exportaciones por capítulo del arancel y por principal destino (2008 en adelante) |
+| `IMP_CAP_` / `IMP_ORIG_` | Importaciones CIF por capítulo del arancel y por principal país de origen (2007 en adelante) |
+| `IMP_CUODE_` | Importaciones CIF por uso o destino económico: 3 categorías (`C` consumo, `M` materias primas, `K` capital), 9 grupos (`1`–`9`) y sus subgrupos (dos dígitos) |
+| `BAL_PAIS_` (en `anual.csv`) | Balanza comercial anual con bloques y principales países |
+
+- **FOB y CIF:** las exportaciones se miden FOB (la mercancía puesta en el barco). Las importaciones se publican CIF (incluye flete y seguro), pero para la balanza el DANE las usa FOB; por eso la balanza no es exactamente exportaciones menos importaciones CIF.
+- **Importaciones por uso mes a mes:** el DANE las publica solo en el anexo de cada mes (con el mismo mes del año anterior). La serie se arma con los anexos mensuales disponibles desde abril de 2023, lo que da datos desde abril de 2022; cada mes nuevo se agrega solo. Cuando un mes aparece en dos anexos, queda la cifra del más reciente (revisada).
+- Las cifras son provisionales y el DANE las revisa; el año en curso de los archivos anuales va hasta el último mes publicado.
+
 ### ISE: versiones
 
 El ISE tiene dos versiones (columna `version` en `series.csv`): **9 agrupaciones**, que sale cada mes, y **12 agrupaciones**, con más detalle (separa agro de minería e industria de construcción) pero que sale cada trimestre junto con el PIB. Los identificadores empiezan por `ISE9_` o `ISE12_`.
@@ -127,6 +145,7 @@ Cada actualización descarga solo lo nuevo (con pausas, para no saturar los serv
 - DANE, [Índice de Precios al Consumidor](https://www.dane.gov.co/index.php/estadisticas-por-tema/precios-y-costos/indice-de-precios-al-consumidor-ipc)
 - DANE, [Indicador de Seguimiento a la Economía](https://www.dane.gov.co/index.php/estadisticas-por-tema/cuentas-nacionales/indicador-de-seguimiento-a-la-economia-ise)
 - DANE, [Mercado laboral (GEIH)](https://www.dane.gov.co/index.php/estadisticas-por-tema/mercado-laboral/empleo-y-desempleo)
+- DANE, [Exportaciones](https://www.dane.gov.co/index.php/estadisticas-por-tema/comercio-internacional/exportaciones), [Importaciones](https://www.dane.gov.co/index.php/estadisticas-por-tema/comercio-internacional/importaciones) y [Balanza comercial](https://www.dane.gov.co/index.php/estadisticas-por-tema/comercio-internacional/balanza-comercial)
 - Ministerio de Hacienda en datos.gov.co, [Información de Gastos del PGN](https://www.datos.gov.co/d/5phs-yqfw)
 - Banco de la República, [estadísticas económicas](https://suameca.banrep.gov.co/estadisticas-economicas/)
 - Superintendencia Financiera en datos.gov.co, [TRM](https://www.datos.gov.co/Econom-a-y-Finanzas/Tasa-de-Cambio-Representativa-del-Mercado-TRM/32sa-8pi3)
