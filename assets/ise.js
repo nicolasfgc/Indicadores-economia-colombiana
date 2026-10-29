@@ -71,8 +71,8 @@ registrar("ise", (() => {
     const t = res(ds[0]);
     $("ise-hist-txt").innerHTML = `${per} toda la economía creció en promedio <strong>${fmt(t.prom)}%</strong> al año. En los sectores elegidos:<br>` +
       ds.slice(1).map(d => [d.label, res(d)]).filter(x => x[1]).map(([n, r]) =>
-        `• <strong>${n}</strong>: creció en promedio ${fmt(r.prom)}% ${r.prom > t.prom + 0.05 ? "(más que la economía)" : r.prom < t.prom - 0.05 ? "(menos que la economía)" : "(igual que la economía)"}; ` +
-        `tuvo ${r.neg} ${r.neg === 1 ? "mes" : "meses"} de caída y en ${etqMes(r.ult[1])} creció ${fmt(r.ult[0])}%.`).join("<br>");
+        `• <strong>${n}</strong>: ${r.prom >= 0 ? "creció" : "cayó"} en promedio ${fmt(Math.abs(r.prom))}% ${r.prom > t.prom + 0.05 ? "(más que la economía)" : r.prom < t.prom - 0.05 ? "(menos que la economía)" : "(igual que la economía)"}; ` +
+        `tuvo ${r.neg} ${r.neg === 1 ? "mes" : "meses"} de caída y en ${etqMes(r.ult[1])} ${r.ult[0] >= 0 ? "creció" : "cayó"} ${fmt(Math.abs(r.ult[0]))}%.`).join("<br>");
   }
 
   // "En el tiempo": el sector frente a toda la economía, dentro de esta misma sección
@@ -83,7 +83,7 @@ registrar("ise", (() => {
       [{label: "Toda la economía", data: tt, color: css("--muted"), ancho: 1.6}, {label: nom, data: d, color: css("--accent"), ancho: 2.5}],
       {unidad: "%", referencias: [{y: 0, t: ""}], inicio: 60, texto: (i0, i1) => { const tr = d.slice(i0, i1 + 1).filter(x => x != null); if (!tr.length) return "";
         const prom = tr.reduce((a, b) => a + b, 0) / tr.length, neg = tr.filter(x => x < 0).length;
-        return `Entre ${etqMes(F[i0])} y ${etqMes(F[i1])}, ${nom.toLowerCase()} creció en promedio <strong>${fmt(prom)}%</strong> al año y tuvo ${neg} ${neg === 1 ? "mes" : "meses"} de caída. En ${etqMesLargo(F[i1])} creció ${fmt(d[i1])}%, frente a ${fmt(tt[i1])}% de toda la economía.`; }});
+        return `Entre ${etqMes(F[i0])} y ${etqMes(F[i1])}, ${nom.toLowerCase()} creció en promedio <strong>${fmt(prom)}%</strong> al año y tuvo ${neg} ${neg === 1 ? "mes" : "meses"} de caída. En ${etqMesLargo(F[i1])} ${d[i1] >= 0 ? "creció" : "cayó"} ${fmt(Math.abs(d[i1]))}%, frente a ${fmt(tt[i1])}% de toda la economía.`; }});
   }
 
   function render() {
@@ -108,7 +108,7 @@ registrar("ise", (() => {
       ...g.hijos.map(h => ({id: h.id_serie, n: "   " + h.nombre_corto, v: v(h.id_serie, st.medida, f)})).sort((a, b) => (b.v ?? -1e9) - (a.v ?? -1e9))]).filter(x => x.v != null);
     else items = deVersion("agrupacion").map(s => ({id: s.id_serie, n: `${s.nombre_corto} (${GRUPO[grupoDe(s.id_serie)].t.split(" ")[1]})`, v: v(s.id_serie, st.medida, f)})).filter(x => x.v != null).sort((a, b) => b.v - a.v);
     barras("ise-bar", items, {unidad: "%", etiqueta: ETQ[st.medida], alClic: x => verEnTiempo(x.id),
-      colores: x => x.rama ? (x.v >= 0 ? css("--s4") : css("--warn")) : colorCrec(x)});
+      colores: colorCrec});
     const cl = x => x == null ? "" : x < 0 ? "pos" : "";
     const fila = (s, rama) => { const a = v(s.id_serie, "var_anual_original", f), b = v(s.id_serie, "var_anual_desest", f), c = v(s.id_serie, "var_mensual_desest", f);
       return `<tr${rama ? ' class="rama"' : ""}><td>${rama ? `<strong>${s.nombre_corto}</strong><span class="sub2">${GRUPO[claveGrupo(s.id_serie)].d.replace(/^./, x => x.toUpperCase())}</span>` : "&nbsp;&nbsp;&nbsp;" + s.nombre_corto}</td>` +
