@@ -25,12 +25,14 @@ function plata(millones, d = 1) {
 }
 
 const cache = {};
+// los datos cambian cuando el robot los actualiza: se piden con una marca por hora para no quedarse con una copia vieja del navegador
+const fresco = url => url + (url.includes("?") ? "&" : "?") + "h=" + new Date().toISOString().slice(0, 13);
 function json(url) {
-  if (!cache[url]) cache[url] = fetch(url).then(r => { if (!r.ok) throw new Error(url + ": " + r.status); return r.json(); });
+  if (!cache[url]) cache[url] = fetch(fresco(url)).then(r => { if (!r.ok) throw new Error(url + ": " + r.status); return r.json(); });
   return cache[url];
 }
 function csv(url) {
-  if (!cache[url]) cache[url] = new Promise((ok, err) => Papa.parse(url, {download: true, header: true, skipEmptyLines: true, complete: r => ok(r.data), error: err}));
+  if (!cache[url]) cache[url] = new Promise((ok, err) => Papa.parse(fresco(url), {download: true, header: true, skipEmptyLines: true, complete: r => ok(r.data), error: err}));
   return cache[url];
 }
 
