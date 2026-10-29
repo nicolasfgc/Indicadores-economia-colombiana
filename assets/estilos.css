@@ -1,18 +1,18 @@
 :root{
   --bg:#F8FAFC; --panel:#FFFFFF; --ink:#1E293B; --head:#0F172A; --muted:#64748B; --line:#E2E8F0;
-  --accent:#6D28D9; --accent-soft:#F1EBFD; --naranja:#F97316; --up:#DC2626; --down:#15803D; --warn:#D97706; --chip:#F1F5F9;
+  --accent:#6D28D9; --accent-soft:#F1EBFD; --naranja:#F97316; --up:#DC2626; --down:#15803D; --warn:#D97706; --chip:#F1F5F9; --barra:#6D28D9;
   --s1:#6D28D9; --s2:#F97316; --s3:#312E81; --s4:#0D9488; --s5:#0891B2; --s6:#DB2777; --s7:#65A30D; --s8:#7C3AED; --s9:#CA8A04; --s10:#64748B;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#0B1120; --panel:#131C2E; --ink:#E2E8F0; --head:#F8FAFC; --muted:#94A3B8; --line:#26334A;
-    --accent:#A78BFA; --accent-soft:#2A1F4A; --naranja:#FB923C; --up:#F87171; --down:#4ADE80; --warn:#FBBF24; --chip:#1A2438;
+    --accent:#A78BFA; --accent-soft:#2A1F4A; --naranja:#FB923C; --up:#F87171; --down:#4ADE80; --warn:#FBBF24; --chip:#1A2438; --barra:#5B21B6;
     --s1:#A78BFA; --s2:#FB923C; --s3:#818CF8; --s4:#2DD4BF; --s5:#22D3EE; --s6:#F472B6; --s7:#A3E635; --s8:#C4B5FD; --s9:#FACC15; --s10:#94A3B8;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0B1120; --panel:#131C2E; --ink:#E2E8F0; --head:#F8FAFC; --muted:#94A3B8; --line:#26334A;
-  --accent:#A78BFA; --accent-soft:#2A1F4A; --naranja:#FB923C; --up:#F87171; --down:#4ADE80; --warn:#FBBF24; --chip:#1A2438;
+  --accent:#A78BFA; --accent-soft:#2A1F4A; --naranja:#FB923C; --up:#F87171; --down:#4ADE80; --warn:#FBBF24; --chip:#1A2438; --barra:#5B21B6;
   --s1:#A78BFA; --s2:#FB923C; --s3:#818CF8; --s4:#2DD4BF; --s5:#22D3EE; --s6:#F472B6; --s7:#A3E635; --s8:#C4B5FD; --s9:#FACC15; --s10:#94A3B8;
 }
 *{box-sizing:border-box}
@@ -115,14 +115,14 @@ nav.tabs a:not(.on):hover{border-color:var(--accent);color:var(--accent);filter:
 
 /* bloque "detalle del mes": el selector queda pegado arriba mientras se recorre lo que depende de él */
 .detalle-mes{margin-top:8px}
-.barra-mes{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;background:var(--accent);color:#fff;border-radius:12px;padding:10px 16px;margin:0 0 14px;box-shadow:0 4px 14px rgba(15,23,42,.12)}
+.barra-mes{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;background:var(--barra);color:#fff;border-radius:12px;padding:10px 16px;margin:0 0 14px;box-shadow:0 4px 14px rgba(15,23,42,.12)}
 .barra-mes .t{font-weight:700}
 .barra-mes .s{font-size:13px;opacity:.9}
 .barra-mes .lbl{color:#fff;opacity:.9}
 .barra-mes select{border-color:transparent}
 .barra-mes .seg{border-color:rgba(255,255,255,.4)}
 .barra-mes .seg button{color:#fff}
-.barra-mes .seg button.on{background:#fff;color:var(--accent)}
+.barra-mes .seg button.on{background:#fff;color:var(--barra)}
 /* avisos sobre los datos */
 .aviso{border-left:4px solid var(--warn);background:var(--chip);border-radius:8px;padding:10px 14px;margin:10px 0 0;font-size:14px}
 .aviso strong{color:var(--head)}

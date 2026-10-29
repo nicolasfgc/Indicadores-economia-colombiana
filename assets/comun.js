@@ -142,13 +142,14 @@ async function tasaVsInflacion(canvasId, txtId) {
     {label: "Tasa del Banco de la República", data: t, color: css("--accent"), ancho: 2.5},
     {label: "Inflación anual", data: p, color: css("--naranja"), ancho: 2.5},
     {label: "Tasa real (tasa − inflación)", data: real, tipo: "bar", colores: real.map(x => x < 0 ? neg : pos)}],
-    {unidad: "%", eje0: true, referencias: [{y: 3, t: "Meta de inflación 3%"}], despues: (i0, i1) => {
+    {unidad: "%", fmtValor: x => fmt(x, 1) + "%", eje0: true, referencias: [{y: 3, t: "Meta de inflación 3%"}], despues: (i0, i1) => {
       const a = i1, r = real.slice(i0, i1 + 1), prom = r.reduce((x, y) => x + y, 0) / r.length, negs = r.filter(x => x < 0).length;
       const estado = real[a] > 3 ? "muy por encima de la inflación: endeudarse es caro, lo que frena el consumo y el crédito para que los precios bajen"
                    : real[a] > 0 ? "por encima de la inflación: el crédito cuesta algo más que lo que suben los precios"
                    : "por debajo de la inflación: endeudarse sale barato, lo que impulsa el crédito y el consumo";
-      $(txtId).innerHTML = `En <strong>${etqMesLargo(F[a])}</strong> la tasa del Banco de la República cerró en <strong>${fmt(t[a])}%</strong> y la inflación anual fue <strong>${fmt(p[a])}%</strong>. ` +
-        `La diferencia, llamada <strong>tasa real</strong>, es de ${fmt(real[a])} puntos: la tasa está ${estado}. ` +
+      const hoy = T.ultimos?.TPM, extra = a === F.length - 1 && hoy && hoy[1] !== t[a] ? ` (hoy está en ${fmt(hoy[1])}%)` : "";
+      $(txtId).innerHTML = `En <strong>${etqMesLargo(F[a])}</strong> la tasa del Banco de la República cerró en <strong>${fmt(t[a])}%</strong>${extra} y la inflación anual fue <strong>${fmt(p[a])}%</strong>. ` +
+        `La diferencia entre las dos, llamada <strong>tasa real</strong>, fue de ${fmt(real[a])} puntos. Eso quiere decir que la tasa está ${estado}. ` +
         `Entre ${etqMes(F[i0])} y ${etqMes(F[i1])} la tasa real promedió ${fmt(prom, 1)} puntos y fue negativa en ${negs} ${negs === 1 ? "mes" : "meses"}. ` +
         `Lo normal es que el Banco suba su tasa cuando la inflación se dispara y la baje cuando cede, casi siempre con algunos meses de retraso.`;
     }});

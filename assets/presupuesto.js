@@ -114,7 +114,7 @@ registrar("presupuesto", (() => {
   function kpis(p, s, f) {
     const fs = st.d.fechas, mesAnt = fs[fs.indexOf(f) - 1];
     $(p + "1").textContent = plata(s[A]);
-    $(p + "1d").innerHTML = s[DA] ? `${s[DA] > 0 ? "+" : ""}${plata(s[DA])} frente al mes anterior` : "sin cambios frente al mes anterior";
+    $(p + "1d").innerHTML = Math.abs(s[DA]) >= Math.max(1000, Math.abs(s[A]) * 0.001) ? `${s[DA] > 0 ? "+" : ""}${plata(s[DA])} frente al mes anterior` : "prácticamente igual al mes anterior";
     $(p + "2").textContent = s[A] ? fmt(s[C] / s[A] * 100, 1) + "%" : "–";
     $(p + "2d").textContent = `${plata(s[C])} comprometidos`;
     $(p + "3").textContent = s[A] ? fmt(s[O] / s[A] * 100, 1) + "%" : "–";
