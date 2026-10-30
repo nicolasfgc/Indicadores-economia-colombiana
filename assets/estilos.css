@@ -300,3 +300,7 @@ section.tab:not([hidden]) > .contenido:not([hidden]){animation:aparecer .45s cub
   .barra-mes{top:56px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
+
+/* vista mes a mes / por año en las series */
+.rango-modo{display:inline-flex;gap:2px;margin-right:8px;padding-right:10px;border-right:1px solid var(--line)}
+.subbar{gap:18px;flex-wrap:wrap}

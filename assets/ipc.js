@@ -44,7 +44,7 @@ registrar("ipc", (() => {
     const total = F.map(f => H.var_anual[H.fechas.indexOf(f)]);
     const ds = [{label: "Inflación total (anual)", data: total, color: c.length ? css("--muted") : css("--grafica"), ancho: c.length ? 1.6 : 2.5, dash: c.length ? [4, 3] : []}];
     c.forEach((id, k) => ds.push({label: nombre(id), data: F.map(f => val(id, "var_anual", f) ?? null), color: DISTINTOS()[k], ancho: 2.5}));
-    serie("ipc-hist", F, ds, {unidad: "%", referencias: [{y: 3, t: "Meta 3%"}, {y: 4, t: "4%"}, {y: 2, t: "2%"}],
+    serie("ipc-hist", F, ds, {agregar: "fin", unidad: "%", referencias: [{y: 3, t: "Meta 3%"}, {y: 4, t: "4%"}, {y: 2, t: "2%"}],
       despues: (i0, i1) => interpretar(F, ds, i0, i1)});
   }
   function interpretar(F, ds, i0, i1) {

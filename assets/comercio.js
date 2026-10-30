@@ -64,7 +64,7 @@ registrar("comercio", (() => {
       {label: "Exportaciones", data: e, color: css("--grafica"), ancho: 2.5},
       {label: "Importaciones", data: im, color: css("--naranja"), ancho: 2.5},
       {label: "Balanza comercial", data: b, tipo: "bar", colores: b.map(x => x < 0 ? colNeg() : colPos())}],
-      {fmtValor: x => dolCorto(x) + " M", eje0: true, referencias: [{y: 0, t: ""}], despues: (i0, i1) => {
+      {agregar: "suma", fmtValor: x => dolCorto(x) + " M", eje0: true, referencias: [{y: 0, t: ""}], despues: (i0, i1) => {
         const sum = a => a.slice(i0, i1 + 1).reduce((s, x) => s + (x || 0), 0);
         const se = sum(e), si = sum(im), sb = sum(b), n = i1 - i0 + 1, def = b.slice(i0, i1 + 1).filter(x => x < 0).length;
         const peor = b.slice(i0, i1 + 1).reduce((m, x, k) => x < m[0] ? [x, F[i0 + k]] : m, [Infinity, ""]);
@@ -83,7 +83,7 @@ registrar("comercio", (() => {
     const F = D.fechas.filter(f => f <= st.ult && V("EXP_TIPO_TOTAL", f) != null);
     const dat = id => F.map(f => ton ? (D.toneladas[id] || [])[D.fechas.indexOf(f)] ?? null : V(id, f));
     const ds = ids.map((id, k) => ({label: id === "EXP_TIPO_NOTRADICIONALES" ? "No tradicionales" : nombre(id), data: dat(id), color: DISTINTOS()[k], ancho: 2.2}));
-    serie("com-tipo", F, ds, {fmtValor: ton ? (x => fmt(x / 1000, 0) + " mil t") : (x => dolCorto(x) + " M"), despues: (i0, i1) => {
+    serie("com-tipo", F, ds, {agregar: "suma", fmtValor: ton ? (x => fmt(x / 1000, 0) + " mil t") : (x => dolCorto(x) + " M"), despues: (i0, i1) => {
       const sum = id => F.slice(i0, i1 + 1).reduce((s, f) => s + (V(id, f) || 0), 0), tot = sum("EXP_TIPO_TOTAL");
       const part = TIPOS.map(id => [id, sum(id) / tot * 100]);
       const nom = id => id === "EXP_TIPO_NOTRADICIONALES" ? "no tradicionales" : nombre(id).toLowerCase();
@@ -107,7 +107,7 @@ registrar("comercio", (() => {
   function usos() {
     const F = D.fechas.filter(f => f <= st.ult && V("IMP_CUODE_TOTAL", f) != null);
     serie("com-uso", F, USOS.map((id, k) => ({label: nombre(id), data: F.map(f => V(id, f)), color: DISTINTOS()[k], ancho: 2.5})),
-      {fmtValor: x => dolCorto(x) + " M", despues: (i0, i1) => {
+      {agregar: "suma", fmtValor: x => dolCorto(x) + " M", despues: (i0, i1) => {
         const sum = id => F.slice(i0, i1 + 1).reduce((s, f) => s + (V(id, f) || 0), 0), tot = sum("IMP_CUODE_TOTAL");
         const f1 = F[i1], f0 = hace(f1, 12);
         let txt = `Entre <strong>${etqMes(F[i0])}</strong> y <strong>${etqMes(f1)}</strong>, de cada 100 dólares importados ` +

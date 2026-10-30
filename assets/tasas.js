@@ -21,7 +21,7 @@ registrar("tasas", (() => {
     // dólar
     const ft = F.filter((f, i) => V.TRM.trm_promedio[i] != null), it = ft.map(f => F.indexOf(f));
     const trm = it.map(i => V.TRM.trm_promedio[i]);
-    serie("tas-trm", ft, [{label: "TRM promedio del mes", data: trm, color: css("--grafica"), ancho: 2.5}], {fmtValor: x => "$" + fmt(x, 0), fmtX: fx, despues: (i0, i1) => {
+    serie("tas-trm", ft, [{label: "TRM promedio del mes", data: trm, color: css("--grafica"), ancho: 2.5}], {agregar: "promedio", fmtValor: x => "$" + fmt(x, 0), fmtX: fx, despues: (i0, i1) => {
       const a = trm[i0], b = trm[i1], tr = trm.slice(i0, i1 + 1), mx = Math.max(...tr), mn = Math.min(...tr);
       const c = (b / a - 1) * 100;
       $("tas-trm-txt").innerHTML = `Entre <strong>${etqMes(ft[i0])}</strong> y <strong>${fx(ft[i1])}</strong> el dólar pasó de $${fmt(a, 0)} a $${fmt(b, 0)}: <strong>${c >= 0 ? "subió" : "bajó"} ${fmt(Math.abs(c), 1)}%</strong>. ` +
@@ -35,7 +35,7 @@ registrar("tasas", (() => {
     const fr = F.filter(f => f >= "1998-01-01");
     const datos = id => fr.map(f => (V[id].fin_mes || V[id].promedio)[F.indexOf(f)]);
     const tpm = datos("TPM");
-    serie("tas-tasas", fr, ids.map(id => ({label: NOMBRES[id], data: datos(id), ancho: id === "TPM" ? 3 : 1.5, dash: id === "DTF_90" ? [4, 3] : []})), {unidad: "%", fmtX: fx, despues: (i0, i1) => {
+    serie("tas-tasas", fr, ids.map(id => ({label: NOMBRES[id], data: datos(id), ancho: id === "TPM" ? 3 : 1.5, dash: id === "DTF_90" ? [4, 3] : []})), {agregar: "fin", unidad: "%", fmtX: fx, despues: (i0, i1) => {
       const tramo = tpm.slice(i0, i1 + 1).map((x, k) => [x, fr[i0 + k]]).filter(x => x[0] != null); if (!tramo.length) return;
       const mx = tramo.reduce((a, b) => b[0] > a[0] ? b : a), mn = tramo.reduce((a, b) => b[0] < a[0] ? b : a);
       let cambios = 0; for (let k = 1; k < tramo.length; k++) if (tramo[k][0] !== tramo[k - 1][0]) cambios++;
@@ -44,7 +44,7 @@ registrar("tasas", (() => {
         `Cuando el Banco la sube, las demás tasas la siguen y los créditos se encarecen: así busca frenar la inflación.`;
     }});
     const fu = F.filter((f, i) => V.UVR.fin_mes[i] != null);
-    serie("tas-uvr", fu, [{label: "UVR fin de mes", data: fu.map(f => V.UVR.fin_mes[F.indexOf(f)]), color: css("--s2"), ancho: 2.5}], {fmtValor: x => "$" + fmt(x, 2)});
+    serie("tas-uvr", fu, [{label: "UVR fin de mes", data: fu.map(f => V.UVR.fin_mes[F.indexOf(f)]), color: css("--s2"), ancho: 2.5}], {agregar: "fin", fmtValor: x => "$" + fmt(x, 2)});
   }
   return {iniciar, render};
 })());

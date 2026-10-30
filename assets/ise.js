@@ -49,13 +49,13 @@ registrar("ise", (() => {
                         : [{label: "Crecimiento anual", data: fs.map(f => v(t, "var_anual_original", f)), color: css("--muted"), ancho: 1.6},
                            {label: "Sin estacionalidad", data: fs.map(f => v(t, "var_anual_desest", f)), color: css("--grafica"), ancho: 2.5}];
     $("ise-hist-t").textContent = c.length ? "Los sectores elegidos frente a toda la economía" : "La economía en el tiempo";
-    serie("ise-hist", fs, ds, {unidad: "%", referencias: [{y: 0, t: ""}], despues: (i0, i1) => interpretar(fs, ds, i0, i1)});
+    serie("ise-hist", fs, ds, {agregar: "promedio", unidad: "%", referencias: [{y: 0, t: ""}], despues: (i0, i1) => interpretar(fs, ds, i0, i1)});
     // nivel de actividad: el total o los sectores elegidos (sin estacionalidad, 2015 = 100)
     $("ise-nivel-t").textContent = c.length ? "Nivel de actividad de los sectores elegidos" : "Nivel de actividad: toda la economía";
     const dn = c.length ? c.map((id, k) => ({label: nombreSel(id), data: fs.map(f => v(id, "indice_desest", f)), color: DISTINTOS()[k], ancho: 2.5}))
       : [{label: "Original", data: fs.map(f => v(t, "indice_original", f)), color: css("--muted"), ancho: 1.4},
          {label: "Sin estacionalidad", data: fs.map(f => v(t, "indice_desest", f)), color: css("--grafica"), ancho: 2.5}];
-    serie("ise-nivel", fs, dn, {fmtValor: x => fmt(x, 1), referencias: c.length ? [{y: 100, t: "Nivel de 2015"}] : []});
+    serie("ise-nivel", fs, dn, {agregar: "promedio", fmtValor: x => fmt(x, 1), referencias: c.length ? [{y: 100, t: "Nivel de 2015"}] : []});
   }
   function interpretar(fs, ds, i0, i1) {
     const res = d => { const tr = d.data.slice(i0, i1 + 1).map((x, k) => [x, fs[i0 + k]]).filter(x => x[0] != null); if (!tr.length) return null;

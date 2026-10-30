@@ -329,6 +329,24 @@ const pluginGobiernos = {id: "gobiernos", beforeDatasetsDraw(chart, a, opts) {
   }
   ctx.restore();
 }};
+// Líneas verticales donde empieza cada año (en series mensuales), con el año escrito abajo. Se apagan con "Marcar el inicio de cada año".
+let verAnios = true;
+const pluginAnios = {id: "anios", afterDatasetsDraw(chart, a, opts) {
+  if (!verAnios || !opts || !opts.activo) return;
+  const et = chart.data.labels, {ctx, chartArea: area, scales: {x}} = chart;
+  if (et.length < 3) return;
+  const paso = x.getPixelForValue(1) - x.getPixelForValue(0), pocos = et.length <= 30;
+  ctx.save(); ctx.font = "700 11px Manrope, sans-serif"; ctx.textBaseline = "bottom";
+  for (let i = 1; i < et.length; i++) {
+    if (String(et[i]).slice(0, 4) === String(et[i - 1]).slice(0, 4)) continue;
+    const px = x.getPixelForValue(i) - paso / 2;
+    if (px < area.left || px > area.right) continue;
+    ctx.setLineDash([3, 3]); ctx.strokeStyle = css("--muted"); ctx.globalAlpha = .45;
+    ctx.beginPath(); ctx.moveTo(px, area.top); ctx.lineTo(px, area.bottom); ctx.stroke();
+    if (pocos) { ctx.globalAlpha = .9; ctx.fillStyle = css("--muted"); ctx.fillText(String(et[i]).slice(0, 4), px + 4, area.bottom - 4); }
+  }
+  ctx.restore();
+}};
 // Líneas horizontales de referencia (p. ej. la meta de inflación)
 const pluginReferencias = {id: "referencias", afterDatasetsDraw(chart, a, opts) {
   if (!opts || !opts.lineas || !opts.lineas.length) return;
@@ -352,30 +370,102 @@ function leyendaRecordada(canvasId) {
     legend.chart.isDatasetVisible(item.datasetIndex) ? set.delete(item.text) : set.add(item.text);
   }};
 }
+// Vista "por año" de una serie mensual. opts.agregar (o s.agregar por serie) dice cómo se resume cada año:
+//   "suma" (homicidios, exportaciones...), "promedio" (desempleo, dólar...) o "fin" (el dato de diciembre, p. ej. la inflación anual).
+// El año en curso queda marcado como incompleto (más claro y con la etiqueta "hasta tal mes").
+const modoAnual = {};
+const aclarar = (c, t = .55) => { const h = String(c).trim().replace("#", ""); if (!/^[0-9a-f]{6}$/i.test(h)) return c;
+  const v = [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)), w = 255; return `rgb(${v.map(x => Math.round(x + (w - x) * t)).join(",")})`; };
+function aAnual(etiquetas, series, opts) {
+  const anios = [...new Set(etiquetas.map(e => e.slice(0, 4)))];
+  const idx = {}; etiquetas.forEach((e, i) => (idx[e.slice(0, 4)] ??= []).push(i));
+  // meses con dato en cada año (según la primera serie con datos), para saber qué años están incompletos
+  const base = series.find(s => s.data.some(x => x != null)) || series[0];
+  const meses = anios.map(y => idx[y].filter(i => base.data[i] != null));
+  const ultMes = anios.map((y, k) => meses[k].length ? +etiquetas[meses[k].at(-1)].slice(5, 7) : 0);
+  const parcial = anios.map((y, k) => meses[k].length > 0 && meses[k].length < 12 && (k === anios.length - 1 || k === 0));
+  const resumen = (s, y) => { const m = s.agregar || opts.agregar, v = idx[y].map(i => s.data[i]).filter(x => x != null);
+    if (!v.length) return null; return m === "suma" ? v.reduce((a, b) => a + b, 0) : m === "promedio" ? v.reduce((a, b) => a + b, 0) / v.length : v.at(-1); };
+  const nuevas = series.map(s => {
+    const m = s.agregar || opts.agregar, data = anios.map(y => resumen(s, y)), c = s.color;
+    // si la serie original se pintaba según el signo (p. ej. la balanza comercial), se conserva: rojo si es negativa
+    const colorDe = (v, k) => { const base = s.colores ? (v < 0 ? css("--rojo") : css("--verde")) : (c || css("--grafica")); return parcial[k] ? aclarar(base) : base; };
+    return m === "suma" ? {...s, data, tipo: "bar", colores: data.map((v, k) => colorDe(v, k)), eje: s.eje}
+      : {...s, data, tipo: "line", puntos: true, parcial: parcial.map((p, k) => p ? k : -1).filter(k => k >= 0)};
+  });
+  const valores = (s, y, hastaMes) => idx[y].filter(i => +etiquetas[i].slice(5, 7) <= hastaMes).map(i => s.data[i]).filter(x => x != null);
+  return {anios, nuevas, parcial, ultMes, resumen, valores, base, originales: series};
+}
+function textoAnual(A, opts, f) {
+  // la serie principal: la que dice "total" o la de línea más gruesa
+  const kp = Math.max(0, A.nuevas.findIndex(x => /total/i.test(x.label || "")) >= 0 ? A.nuevas.findIndex(x => /total/i.test(x.label || ""))
+    : A.nuevas.reduce((m, x, k, arr) => (x.ancho || 2) > (arr[m].ancho || 2) ? k : m, 0));
+  const s = A.nuevas[kp], orig = A.originales[kp], m = orig.agregar || opts.agregar, n = A.anios.length, anual12 = m === "fin" && opts.finEsAnual;
+  const completos = A.anios.map((y, k) => !A.parcial[k] && s.data[k] != null ? k : -1).filter(k => k >= 0);
+  if (!completos.length) return "";
+  const u = completos.at(-1), ant = completos.at(-2);
+  const nombre = (orig.label || "").toLowerCase();
+  const pct = (x, y) => y ? `${x >= y ? "+" : "−"}${fmt(Math.abs(x / y - 1) * 100, 1)}%` : "";
+  let t = m === "suma" ? `En <strong>${A.anios[u]}</strong> el total del año fue <strong>${f(s.data[u])}</strong>` :
+          m === "promedio" ? `En <strong>${A.anios[u]}</strong> el promedio del año fue <strong>${f(s.data[u])}</strong>` :
+          anual12 ? `En todo <strong>${A.anios[u]}</strong>: <strong>${f(s.data[u])}</strong>` : `En diciembre de <strong>${A.anios[u]}</strong> el dato fue <strong>${f(s.data[u])}</strong>`;
+  if (ant != null) t += m === "suma" ? ` (${pct(s.data[u], s.data[ant])} frente a ${A.anios[ant]})` : ` (en ${A.anios[ant]}: ${f(s.data[ant])})`;
+  t += nombre && A.nuevas.length > 1 && !/total/i.test(nombre) ? ` en ${nombre}. ` : ". ";
+  const k = n - 1;
+  if (A.parcial[k]) {
+    const hm = A.ultMes[k], mes = MESES_L[hm - 1], y = A.anios[k], yp = String(+y - 1);
+    const ahora = A.valores(orig, y, hm), antes = A.valores(orig, yp, hm);
+    t += `<strong>${y} todavía no termina</strong> (hay datos hasta ${mes}), así que no se compara con los años completos. `;
+    if (m === "suma" && antes.length === ahora.length) { const a1 = ahora.reduce((a, b) => a + b, 0), a0 = antes.reduce((a, b) => a + b, 0);
+      t += `De enero a ${mes} lleva ${f(a1)}; en el mismo periodo de ${yp} iba en ${f(a0)} (${pct(a1, a0)}).`; }
+    else if (m === "promedio" && ahora.length) t += `En lo que va del año el promedio es ${f(ahora.reduce((a, b) => a + b, 0) / ahora.length)}.`;
+    else if (ahora.length) t += anual12 ? `En los 12 meses hasta ${mes}: ${f(ahora.at(-1))}.` : `El último dato, de ${mes}, es ${f(ahora.at(-1))}.`;
+  }
+  return t;
+}
 function serie(canvasId, etiquetas, series, opts = {}) {
   ultimosArgs[canvasId] = [etiquetas, series, opts];
+  const mensual = etiquetas.length && /^\d{4}-\d{2}-01$/.test(etiquetas[0]) && /^\d{4}-\d{2}-01$/.test(etiquetas.at(-1));
+  const porAnio = !!(opts.agregar && mensual && modoAnual[canvasId]);
+  let A = null, fxBase = opts.fmtX || etqMes;
+  if (porAnio) {   // se pasa a la vista por año y se sigue con el mismo dibujo
+    A = aAnual(etiquetas, series, opts);
+    const ult = A.anios.length - 1;
+    fxBase = e => { const k = A.anios.indexOf(e); return A.parcial[k] ? `${e} (hasta ${MESES[A.ultMes[k] - 1]})` : e; };
+    etiquetas = A.anios; series = A.nuevas;
+  }
+  const clave = porAnio ? canvasId + "|año" : canvasId;
   const anual = etiquetas.length && etiquetas[0].length === 4;
   const n = etiquetas.length;
-  let r = rangos[canvasId];
+  let r = rangos[clave];
   if (!r || etiquetas.indexOf(r.d) < 0 || etiquetas.indexOf(r.h) < 0) {
     // por defecto: el último año (las series anuales, completas)
-    const k = opts.inicio != null ? opts.inicio : anual ? 0 : 12;
-    r = rangos[canvasId] = {d: etiquetas[desdeAtajo(etiquetas, k)], h: etiquetas[n - 1], k: String(k)};
+    const k = porAnio ? 0 : opts.inicio != null ? opts.inicio : anual ? 0 : 12;
+    r = rangos[clave] = {d: etiquetas[desdeAtajo(etiquetas, k)], h: etiquetas[n - 1], k: String(k)};
   }
   const i0 = etiquetas.indexOf(r.d), i1 = etiquetas.indexOf(r.h);
-  controlRango(canvasId, etiquetas, i0, i1, anual, opts.atajos, r.k);
+  controlRango(canvasId, etiquetas, i0, i1, anual, porAnio ? null : opts.atajos, r.k, opts.agregar && mensual ? (porAnio ? "año" : "mes") : null, fxBase);
   const et = etiquetas.slice(i0, i1 + 1);
   const pal = PALETA();
   const f = opts.fmtValor || (v => `${fmt(v)}${opts.unidad || ""}`);
-  const fx = opts.fmtX || etqMes;
-  if (opts.despues) setTimeout(() => opts.despues(i0, i1), 0);   // p. ej. actualizar el texto que interpreta el periodo visible
-  return dibujar(canvasId, {
+  const fx = fxBase;
+  // en series mensuales largas el eje muestra solo los años (en el primer mes de cada año), no "abr 2025, mar 2026..."
+  const largo = !anual && et.length > 30 && et.every(e => String(e).endsWith("-01"));
+  const cambioAnio = i => i > 0 && String(et[i]).slice(0, 4) !== String(et[i - 1]).slice(0, 4);
+  // el texto que interpreta la gráfica: en la vista por año se reemplaza por un resumen anual automático
+  const interp = (() => { let el = $(canvasId + "-rango")?.nextElementSibling; while (el && !el.classList.contains("interp") && !el.classList.contains("chartbox") && !el.classList.contains("panel")) el = el.nextElementSibling; return el && el.classList.contains("interp") ? el : null; })();
+  if (porAnio) { if (interp) interp.innerHTML = textoAnual(A, opts, x => x == null ? "–" : f(x)); }
+  else if (opts.despues) setTimeout(() => opts.despues(i0, i1), 0);   // p. ej. actualizar el texto que interpreta el periodo visible
+  const config = {
     type: "line",
     data: {labels: et, datasets: series.map((s, i) => {
       const c = s.color || pal[i % pal.length];
       const base = {label: s.label, data: s.data.slice(i0, i1 + 1), borderColor: c, order: s.tipo === "bar" ? 2 : 1, hidden: !!ocultas[canvasId]?.has(s.label)};
-      return s.tipo === "bar" ? {...base, type: "bar", backgroundColor: s.colores ? s.colores.slice(i0, i1 + 1) : c, borderWidth: 0, borderRadius: 2, yAxisID: s.eje || "y"}
-        : {...base, backgroundColor: c, fill: false, borderWidth: s.ancho || 2, borderDash: s.dash || [], pointRadius: 0, pointHoverRadius: 5, tension: .3, spanGaps: true, yAxisID: s.eje || "y"};
+      const parcial = (s.parcial || []).map(k => k - i0);
+      return s.tipo === "bar" ? {...base, type: "bar", backgroundColor: s.colores ? s.colores.slice(i0, i1 + 1) : c, borderWidth: 0, borderRadius: porAnio ? 5 : 2, yAxisID: s.eje || "y"}
+        : {...base, backgroundColor: c, fill: false, borderWidth: s.ancho || 2, borderDash: s.dash || [], pointRadius: s.puntos ? 3.5 : 0, pointHoverRadius: 5, tension: s.puntos ? .2 : .3, spanGaps: true, yAxisID: s.eje || "y",
+           ...(parcial.length ? {segment: {borderDash: ctx => parcial.includes(ctx.p1DataIndex) ? [5, 4] : (s.dash || undefined)},
+                                 pointBackgroundColor: base.data.map((v, k) => parcial.includes(k) ? css("--panel") : c)} : {})};
     })},
     options: {
       responsive: true, maintainAspectRatio: false, interaction: {mode: "index", intersect: false},
@@ -386,16 +476,23 @@ function serie(canvasId, etiquetas, series, opts = {}) {
                    legend.chart.isDatasetVisible(item.datasetIndex) ? set.delete(item.text) : set.add(item.text);
                  }},
         tooltip: {callbacks: {title: c => { const e = et[c[0].dataIndex]; const g = gobiernoDe(e); return fx(e) + (g ? ` · ${g}` : ""); },
-                              label: c => `${c.dataset.label}: ${(c.dataset.yAxisID === "y2" && opts.fmtValor2 ? opts.fmtValor2 : f)(c.raw)}`}},
-        gobiernos: {activo: opts.gobiernos !== false}, referencias: {lineas: opts.referencias || []}},
-      scales: {x: {grid: {display: false}, ticks: {color: css("--muted"), maxTicksLimit: 10, callback: (v, i) => fx(et[i])}},
+                              label: c => `${c.dataset.label}: ${(c.dataset.yAxisID === "y2" && opts.fmtValor2 ? opts.fmtValor2 : f)(c.raw)}`,
+                              footer: c => porAnio && A.parcial[A.anios.indexOf(et[c[0].dataIndex])] ? "Año incompleto: no se compara con años completos" : ""}},
+        gobiernos: {activo: opts.gobiernos !== false}, referencias: {lineas: opts.referencias || []}, anios: {activo: !anual}},
+      scales: {x: {grid: {display: false}, ticks: {color: css("--muted"), autoSkip: !largo, maxRotation: 0, ...(largo ? {} : {maxTicksLimit: 10}),
+                   callback: (v, i) => largo ? (i === 0 || cambioAnio(i) ? String(et[i]).slice(0, 4) : null) : fx(et[i])}},
                // el eje siempre incluye las líneas de referencia (meta de inflación, el cero…) aunque el periodo sea corto
-               y: {beginAtZero: !!opts.eje0, grid: {color: css("--line")}, ticks: {color: css("--muted"), callback: v => f(v)},
+               y: {beginAtZero: !!opts.eje0 || porAnio, grid: {color: css("--line")}, ticks: {color: css("--muted"), callback: v => f(v)},
                    ...(opts.referencias?.length ? {suggestedMin: Math.min(...opts.referencias.map(x => x.y)), suggestedMax: Math.max(...opts.referencias.map(x => x.y))} : {})},
-               ...(series.some(s => s.eje === "y2") ? {y2: {position: "right", grid: {display: false}, ticks: {color: css("--muted"), callback: v => (opts.fmtValor2 || f)(v)}}} : {})}
+               ...(series.some(s => s.eje === "y2") ? {y2: {position: "right", grid: {display: false}, beginAtZero: porAnio, ticks: {color: css("--muted"), callback: v => (opts.fmtValor2 || f)(v)}}} : {})}
     },
-    plugins: [pluginGobiernos, pluginReferencias]
-  });
+    plugins: [pluginGobiernos, pluginReferencias, pluginAnios]
+  };
+  // al pasar de mes a año (o al revés) cambia todo: se dibuja de nuevo en vez de animar la transición
+  const g = graficos[canvasId];
+  const ch = dibujar(canvasId, config, {nueva: !!g && g.$modo !== (porAnio ? "año" : "mes")});
+  ch.$modo = porAnio ? "año" : "mes";
+  return ch;
 }
 function redibujar(canvasId) { const a = ultimosArgs[canvasId]; if (a) serie(canvasId, ...a); }
 
@@ -407,32 +504,37 @@ function desdeAtajo(et, k) {
 }
 
 // Barra para escoger desde qué mes hasta qué mes (dos manijas) y atajos
-function controlRango(canvasId, etiquetas, i0, i1, anual, atajosPropios, activo) {
+function controlRango(canvasId, etiquetas, i0, i1, anual, atajosPropios, activo, modo, fx) {
   let c = $(canvasId + "-rango");
   const n = etiquetas.length;
+  if (c && c.dataset.modo !== String(modo) + "|" + String(anual)) { c.remove(); c = null; }   // cambió de mes a año: otros atajos
   if (!c) {
-    c = document.createElement("div"); c.className = "rango"; c.id = canvasId + "-rango";
+    c = document.createElement("div"); c.className = "rango"; c.id = canvasId + "-rango"; c.dataset.modo = String(modo) + "|" + String(anual);
     $(canvasId).parentElement.after(c);
     const atajos = atajosPropios || (anual ? [["10 años", 10], ["20 años", 20], ["Todo", 0]] : [["Año en curso", "ytd"], ["1 año", 12], ["5 años", 60], ["10 años", 120], ["Todo", 0]]);
-    c.innerHTML = `<div class="rango-top"><span class="rango-txt"></span><span class="rango-atajos">${atajos.map(([t, k]) => `<button data-k="${k}">${t}</button>`).join("")}</span></div>
+    c.innerHTML = `<div class="rango-top"><span class="rango-txt"></span><span class="rango-atajos">${modo ? `<span class="rango-modo"><button data-m="mes"${modo === "mes" ? ' class="on"' : ""}>Mes a mes</button><button data-m="año"${modo === "año" ? ' class="on"' : ""}>Por año</button></span>` : ""}${atajos.map(([t, k]) => `<button data-k="${k}">${t}</button>`).join("")}</span></div>
       <div class="dual"><div class="pista"><div class="relleno"></div></div><input type="range" class="r0" min="0" step="1"><input type="range" class="r1" min="0" step="1"></div>`;
     const a = c.querySelector(".r0"), b = c.querySelector(".r1");
+    const clave = () => modoAnual[canvasId] && c.dataset.modo.startsWith("año") ? canvasId + "|año" : canvasId;
+    const etActual = () => c._et || ultimosArgs[canvasId][0];
     const aplicar = () => {
-      const et = ultimosArgs[canvasId][0];
+      const et = etActual();
       let x = +a.value, y = +b.value; if (x > y) [x, y] = [y, x];
-      rangos[canvasId] = {d: et[x], h: et[y], k: null}; redibujar(canvasId);
+      rangos[clave()] = {d: et[x], h: et[y], k: null}; redibujar(canvasId);
     };
     let pendiente = null;
-    const alMover = () => { arrastrando = true; pintar(c, ultimosArgs[canvasId][0], +a.value, +b.value); if (!pendiente) pendiente = requestAnimationFrame(() => { pendiente = null; aplicar(); arrastrando = false; }); };
+    const alMover = () => { arrastrando = true; pintar(c, etActual(), +a.value, +b.value); if (!pendiente) pendiente = requestAnimationFrame(() => { pendiente = null; aplicar(); arrastrando = false; }); };
     a.oninput = alMover; b.oninput = alMover;
-    c.querySelectorAll(".rango-atajos button").forEach(btn => btn.onclick = () => {
-      const et = ultimosArgs[canvasId][0], k = btn.dataset.k;
-      rangos[canvasId] = {d: et[desdeAtajo(et, k)], h: et.at(-1), k}; redibujar(canvasId);
+    c.querySelectorAll(".rango-atajos button[data-k]").forEach(btn => btn.onclick = () => {
+      const et = etActual(), k = btn.dataset.k;
+      rangos[clave()] = {d: et[desdeAtajo(et, k)], h: et.at(-1), k}; redibujar(canvasId);
     });
+    c.querySelectorAll(".rango-modo button").forEach(btn => btn.onclick = () => { modoAnual[canvasId] = btn.dataset.m === "año"; redibujar(canvasId); });
   }
+  c._et = etiquetas; c._fx = fx;
   const a = c.querySelector(".r0"), b = c.querySelector(".r1");
   a.max = b.max = n - 1; a.value = i0; b.value = i1;
-  c.querySelectorAll(".rango-atajos button").forEach(btn => btn.classList.toggle("on", btn.dataset.k === activo));
+  c.querySelectorAll(".rango-atajos button[data-k]").forEach(btn => btn.classList.toggle("on", btn.dataset.k === activo));
   pintar(c, etiquetas, i0, i1);
 }
 function pintar(c, et, x, y) {
@@ -440,7 +542,8 @@ function pintar(c, et, x, y) {
   const n = Math.max(1, et.length - 1);
   c.querySelector(".relleno").style.left = (x / n * 100) + "%";
   c.querySelector(".relleno").style.width = ((y - x) / n * 100) + "%";
-  c.querySelector(".rango-txt").innerHTML = `Mostrando <strong>${etqMes(et[x])}</strong> a <strong>${etqMes(et[y])}</strong> · mueve las manijas para cambiar el periodo`;
+  const fx = c._fx || etqMes;
+  c.querySelector(".rango-txt").innerHTML = `Mostrando <strong>${fx(et[x])}</strong> a <strong>${fx(et[y])}</strong> · mueve las manijas para cambiar el periodo`;
 }
 
 // ------------------------------------------------------------ pestañas
@@ -466,6 +569,8 @@ async function mostrar(id) {
 window.addEventListener("hashchange", () => mostrar(location.hash.slice(1)));
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => actual && PESTANAS[actual].listo && PESTANAS[actual].render());
 document.addEventListener("DOMContentLoaded", () => {
+  const va = $("ver-anios");
+  if (va) va.onchange = () => { verAnios = va.checked; Object.keys(ultimosArgs).forEach(id => { if ($(id)?.offsetParent) redibujar(id); }); };
   const g = $("ver-gobiernos");
   if (g) g.onchange = () => { verGobiernos = g.checked; Object.keys(ultimosArgs).forEach(id => { if ($(id)?.offsetParent) redibujar(id); }); };
   mostrar(location.hash.slice(1) || "resumen");

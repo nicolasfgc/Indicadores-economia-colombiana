@@ -183,9 +183,9 @@ registrar("presupuesto", (() => {
     const F = mesesCompletos(st.d.fechas);
     const pctE = F.map(f => tot[f] && tot[f][A] ? tot[f][O] / tot[f][A] * 100 : null);
     const comp = F.map(f => tot[f] ? tot[f][DC] : null);
-    serie("pre-evo", F, [{label: "% ejecutado acumulado del año", data: pctE, color: css("--grafica"), ancho: 2.5},
-                         {label: "Comprometido en el mes", data: comp, tipo: "bar", eje: "y2", color: css("--s4"), colores: comp.map(x => x < 0 ? css("--rojo") : css("--s4"))}],
-      {fmtValor: x => x == null ? "sin dato" : fmt(x, 1) + "%", fmtValor2: x => x == null ? "sin dato" : plata(x), eje0: true, atajos: [["Año en curso", "ytd"], ["1 año", 12], ["3 años", 36], ["Todo", 0]]});
+    serie("pre-evo", F, [{label: "% ejecutado acumulado del año", data: pctE, color: css("--grafica"), ancho: 2.5, agregar: "fin"},
+                         {label: "Comprometido en el mes", data: comp, tipo: "bar", eje: "y2", agregar: "suma", color: css("--s4"), colores: comp.map(x => x < 0 ? css("--rojo") : css("--s4"))}],
+      {agregar: "fin", fmtValor: x => x == null ? "sin dato" : fmt(x, 1) + "%", fmtValor2: x => x == null ? "sin dato" : plata(x), eje0: true, atajos: [["Año en curso", "ytd"], ["1 año", 12], ["3 años", 36], ["Todo", 0]]});
   }
 
   async function detalle() {

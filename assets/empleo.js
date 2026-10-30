@@ -34,7 +34,7 @@ registrar("empleo", (() => {
                       : [{label: "Total nacional", data: nac.v[st.ind], color: css("--muted"), ancho: 1.6}, {label: "Sin estacionalidad", data: des.v[st.ind], color: css("--grafica"), ancho: 2.5}];
     $("emp-hist-t").textContent = `${IND[st.ind]} en el tiempo`;
     $("emp-hist-h").textContent = IND_EXPL[st.ind];
-    serie("emp-hist", F, ds, {unidad: "%", fmtValor: x => fmt(x, 1) + "%", despues: (i0, i1) => {
+    serie("emp-hist", F, ds, {agregar: "promedio", unidad: "%", fmtValor: x => fmt(x, 1) + "%", despues: (i0, i1) => {
       const s = st.cat ? serieDe(st.cat).v[st.ind] : nac.v[st.ind]; if (!s) return;
       const tramo = s.slice(i0, i1 + 1).map((x, k) => [x, F[i0 + k]]).filter(x => x[0] != null); if (!tramo.length) return;
       const prom = tramo.reduce((a, b) => a + b[0], 0) / tramo.length, min = tramo.reduce((a, b) => b[0] < a[0] ? b : a), max = tramo.reduce((a, b) => b[0] > a[0] ? b : a);
@@ -48,7 +48,7 @@ registrar("empleo", (() => {
     const brecha = F.map((f, i) => h[i] != null && m[i] != null ? +(m[i] - h[i]).toFixed(2) : null);
     $("emp-sexo-t").textContent = `${IND[st.indSexo]}: mujeres y hombres`;
     serie("emp-sexo", F, [{label: "Mujeres", data: m, color: css("--s2"), ancho: 2.5}, {label: "Hombres", data: h, color: css("--s1"), ancho: 2.5}],
-          {unidad: "%", fmtValor: x => fmt(x, 1) + "%"});
+          {agregar: "promedio", unidad: "%", fmtValor: x => fmt(x, 1) + "%"});
     const pos = css("--s2"), neg = css("--s1");
     serie("emp-brecha", F, [{label: "Brecha: mujeres − hombres (puntos)", data: brecha, tipo: "bar", colores: brecha.map(b => b == null ? null : b >= 0 ? pos : neg)}],
           {fmtValor: x => (x > 0 ? "+" : "") + fmt(x, 1) + " pts", eje0: true, despues: (i0, i1) => {
@@ -79,7 +79,7 @@ registrar("empleo", (() => {
     const sel = st.rama ? lista.find(x => x.id === st.rama) : null;
     $("emp-rama-t").textContent = sel ? `Personas ocupadas en ${sel.nombre.toLowerCase()}` : "Personas ocupadas en total";
     $("emp-rama-h").textContent = sel ? "Toca otra barra para cambiar de actividad. Miles de personas." : "Toca una barra de arriba para ver una actividad en el tiempo. Miles de personas.";
-    serie("emp-rama", F, [{label: sel ? sel.nombre : "Total de ocupados", data: (sel || total).v, color: css("--grafica"), ancho: 2.5}], {fmtValor: x => fmt(x, 0) + " mil"});
+    serie("emp-rama", F, [{label: sel ? sel.nombre : "Total de ocupados", data: (sel || total).v, color: css("--grafica"), ancho: 2.5}], {agregar: "promedio", fmtValor: x => fmt(x, 0) + " mil"});
   }
   function ciudades() {
     const f = st.mes;
