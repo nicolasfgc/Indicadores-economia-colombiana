@@ -423,6 +423,30 @@ function textoAnual(A, opts, f) {
   }
   return t;
 }
+// Botones "Por mes / Por año" arriba de la gráfica: van en la fila de controles de la sección (antes de opts.modoAntesDe si se indica)
+// o en una fila nueva justo encima. En la vista por año se esconden los controles que solo aplican mes a mes (opts.ocultarEnAnual).
+function selectorModo(canvasId, opts, porAnio) {
+  let el = $(canvasId + "-modo");
+  if (!el) {
+    el = document.createElement("div"); el.className = "seg modo-tiempo"; el.id = canvasId + "-modo";
+    el.innerHTML = `<button data-m="mes">Por mes</button><button data-m="año">Por año</button>`;
+    const caja = $(canvasId).parentElement, ref = opts.modoAntesDe && $(opts.modoAntesDe);
+    if (ref) ref.before(el);
+    else {
+      const sec = caja.closest("section, .tiempo-box") || caja.parentElement;
+      const filas = [...sec.querySelectorAll(".row.controles")].filter(f => f.compareDocumentPosition(caja) & Node.DOCUMENT_POSITION_FOLLOWING);
+      if (filas.length) filas.at(-1).appendChild(el);
+      else { const fila = document.createElement("div"); fila.className = "row controles"; fila.appendChild(el); caja.before(fila); }
+    }
+    el.querySelectorAll("button").forEach(b => b.onclick = () => {
+      modoAnual[canvasId] = b.dataset.m === "año";
+      const o = ultimosArgs[canvasId]?.[2] || opts;
+      if (o.alCambiarModo) o.alCambiarModo(); else redibujar(canvasId);
+    });
+  }
+  el.querySelectorAll("button").forEach(b => b.classList.toggle("on", (b.dataset.m === "año") === porAnio));
+  (opts.ocultarEnAnual || []).forEach(id => { const x = $(id); if (x) x.hidden = porAnio; });
+}
 function serie(canvasId, etiquetas, series, opts = {}) {
   ultimosArgs[canvasId] = [etiquetas, series, opts];
   const mensual = etiquetas.length && /^\d{4}-\d{2}-01$/.test(etiquetas[0]) && /^\d{4}-\d{2}-01$/.test(etiquetas.at(-1));
@@ -434,6 +458,7 @@ function serie(canvasId, etiquetas, series, opts = {}) {
     fxBase = e => { const k = A.anios.indexOf(e); return A.parcial[k] ? `${e} (hasta ${MESES[A.ultMes[k] - 1]})` : e; };
     etiquetas = A.anios; series = A.nuevas;
   }
+  if (opts.agregar && mensual) selectorModo(canvasId, opts, porAnio);
   const clave = porAnio ? canvasId + "|año" : canvasId;
   const anual = etiquetas.length && etiquetas[0].length === 4;
   const n = etiquetas.length;
@@ -512,7 +537,7 @@ function controlRango(canvasId, etiquetas, i0, i1, anual, atajosPropios, activo,
     c = document.createElement("div"); c.className = "rango"; c.id = canvasId + "-rango"; c.dataset.modo = String(modo) + "|" + String(anual);
     $(canvasId).parentElement.after(c);
     const atajos = atajosPropios || (anual ? [["10 años", 10], ["20 años", 20], ["Todo", 0]] : [["Año en curso", "ytd"], ["1 año", 12], ["5 años", 60], ["10 años", 120], ["Todo", 0]]);
-    c.innerHTML = `<div class="rango-top"><span class="rango-txt"></span><span class="rango-atajos">${modo ? `<span class="rango-modo"><button data-m="mes"${modo === "mes" ? ' class="on"' : ""}>Mes a mes</button><button data-m="año"${modo === "año" ? ' class="on"' : ""}>Por año</button></span>` : ""}${atajos.map(([t, k]) => `<button data-k="${k}">${t}</button>`).join("")}</span></div>
+    c.innerHTML = `<div class="rango-top"><span class="rango-txt"></span><span class="rango-atajos">${atajos.map(([t, k]) => `<button data-k="${k}">${t}</button>`).join("")}</span></div>
       <div class="dual"><div class="pista"><div class="relleno"></div></div><input type="range" class="r0" min="0" step="1"><input type="range" class="r1" min="0" step="1"></div>`;
     const a = c.querySelector(".r0"), b = c.querySelector(".r1");
     const clave = () => modoAnual[canvasId] && c.dataset.modo.startsWith("año") ? canvasId + "|año" : canvasId;
@@ -529,7 +554,6 @@ function controlRango(canvasId, etiquetas, i0, i1, anual, atajosPropios, activo,
       const et = etActual(), k = btn.dataset.k;
       rangos[clave()] = {d: et[desdeAtajo(et, k)], h: et.at(-1), k}; redibujar(canvasId);
     });
-    c.querySelectorAll(".rango-modo button").forEach(btn => btn.onclick = () => { modoAnual[canvasId] = btn.dataset.m === "año"; redibujar(canvasId); });
   }
   c._et = etiquetas; c._fx = fx;
   const a = c.querySelector(".r0"), b = c.querySelector(".r1");
