@@ -5903,6 +5903,7 @@ fecha,id_serie,medida,valor
 2026-09-01,UVR,promedio,418.1752
 2026-10-01,CDT_90,fin_mes,10.68
 2026-10-01,CDT_90,promedio,10.5052
+2026-10-01,DTF_90,promedio,10.52
 2026-10-01,IBR_1M,fin_mes,11.55
 2026-10-01,IBR_1M,promedio,11.5062
 2026-10-01,IBR_3M,fin_mes,11.685
