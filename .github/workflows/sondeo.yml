@@ -1,5 +1,8 @@
 name: sondeo
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/sondeo.yml"]
 permissions: {contents: write}
 jobs:
   s:
