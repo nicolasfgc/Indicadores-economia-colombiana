@@ -233,6 +233,13 @@ def resumen():
                        "impo": vt("IMP_CUODE_TOTAL", f), "impo_12": vt("IMP_CUODE_TOTAL", f12),
                        "balanza": vt("BAL_BALANZA", f), "corrido": corr(f[:4]), "corrido_ant": corr(int(f[:4]) - 1),
                        "petroleo_carbon": float((c.EXP_TIPO_PETROLEO + c.EXP_TIPO_CARBON).iloc[-12:].sum() / c.EXP_TIPO_TOTAL.iloc[-12:].sum() * 100)}
+    # deuda del Gobierno: saldo anual (% del PIB) y deuda nueva neta en lo corrido del año
+    dm, da = deuda_datos()
+    tot = (dm.FIN_INTERNO + dm.FIN_EXTERNO) / 1000
+    fu = tot.index[-1]
+    corr = lambda y: float(tot[(tot.index >= f"{y}-01-01") & (tot.index <= f"{y}{fu[4:]}")].sum())
+    out["deuda"] = {"anios": [int(x) for x in da.index], "v": da.DEUDA_PIB.round(2).tolist(), "saldo": round(float(da.SALDO.iloc[-1]), 1),
+                    "fecha": fu, "corrido": round(corr(fu[:4]), 2), "corrido_ant": round(corr(int(fu[:4]) - 1), 2)}
     guardar("resumen.json", out)
 
 
@@ -257,6 +264,26 @@ def comercio():
     })
 
 
+# ---------------------------------------------------------------- deuda del Gobierno Nacional Central
+def deuda_datos():
+    m = pd.read_csv(DATOS / "deuda" / "mensual.csv").pivot(index="fecha", columns="id_serie", values="valor").sort_index()
+    m = m.dropna(subset=["FIN_INTERNO", "FIN_EXTERNO"])
+    a = pd.read_csv(DATOS / "deuda" / "anual.csv").pivot(index="anio", columns="id_serie", values="valor").sort_index()
+    a = a.dropna(subset=["DEUDA_PIB"])
+    # saldo en pesos (aproximado): % del PIB × PIB nominal del año, en billones
+    a["SALDO"] = a.DEUDA_PIB * a.PIB_NOMINAL / 100 / 1000
+    return m, a
+
+
+def deuda():
+    m, a = deuda_datos()
+    b = lambda col: [limpiar(x / 1000, 3) for x in col]   # miles de millones -> billones
+    guardar("deuda.json", {"fechas": m.index.tolist(), "interno": b(m.FIN_INTERNO), "externo": b(m.FIN_EXTERNO),
+                           "total": b(m.FIN_INTERNO + m.FIN_EXTERNO), "intereses": b(m.INTERESES),
+                           "anios": [int(x) for x in a.index], "pct_pib": [limpiar(x, 2) for x in a.DEUDA_PIB],
+                           "saldo": [limpiar(x, 1) for x in a.SALDO]})
+
+
 def main():
     print("Preparando datos para la web:")
     resumen()
@@ -267,6 +294,7 @@ def main():
     presupuesto()
     presupuesto_historico()
     comercio()
+    deuda()
 
 
 if __name__ == "__main__":

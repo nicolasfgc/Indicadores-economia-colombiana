@@ -3,6 +3,7 @@ name: Actualizar datos
 # Calendario aproximado de publicación del DANE:
 #   IPC: primeros días del mes.   ISE: hacia la mitad del mes (con dos meses de rezago).
 #   Mercado laboral: final del mes siguiente.   Comercio exterior: unos 45-50 días después del mes.   TRM y tasas: diarias.   Presupuesto: mensual (MinHacienda).
+#   Deuda del Gobierno: mensual con 3-4 meses de rezago; el saldo total, una vez al año.
 # Corre todos los días a las 10:00 a. m. hora Colombia (15:00 UTC); el mercado laboral sale a fin de mes.
 # Si no hay datos nuevos, no guarda nada. También se puede correr a mano desde "Actions".
 on:
@@ -57,6 +58,10 @@ jobs:
       - name: Presupuesto histórico por sector
         if: always()
         run: python scripts/presupuesto_historico.py
+
+      - name: Deuda del Gobierno (Hacienda, vía Banco de la República)
+        if: always()
+        run: python scripts/deuda.py
 
       - name: Datos para la página web
         if: always()

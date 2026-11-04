@@ -2,7 +2,7 @@
 
 Un lugar abierto y gratuito para ver **cómo va la economía colombiana y por qué**, con las cifras oficiales y todo su detalle.
 
-👉 **Explorador:** https://nicolasfgc.github.io/Indicadores-economia-colombiana/ — inflación, actividad económica, empleo, tasas y dólar, y presupuesto (de sector a entidad, programa y rubro).
+👉 **Explorador:** https://nicolasfgc.github.io/Indicadores-economia-colombiana/ — inflación, actividad económica, empleo, tasas y dólar, comercio exterior, presupuesto (de sector a entidad, programa y rubro) y deuda del Gobierno.
 
 La idea es poder ir de lo general a lo particular: si la inflación sube, ver qué parte de la canasta la está empujando; si la economía se frena, ver qué sector cayó; y así hasta el último nivel que publica la fuente oficial.
 
@@ -18,6 +18,7 @@ La idea es poder ir de lo general a lo particular: si la inflación sube, ver qu
 | Presupuesto histórico por sector | Apropiación, compromisos, obligaciones y pagos por sector, anual, en precios corrientes y constantes; funcionamiento e inversión; Nación y recursos propios; desglose por concepto (personal, transferencias, deuda…); pérdidas de apropiación y rezago | 2000 | Ministerio de Hacienda |
 | Comercio exterior | Exportaciones (por tipo: café, carbón, petróleo, ferroníquel y no tradicionales; por capítulo del arancel; por destino), importaciones (por uso: consumo, materias primas y bienes de capital en tres niveles; por capítulo; por país de origen) y balanza comercial (mensual y anual por país), en millones de dólares | Enero 1992 (exportaciones por tipo); 2007–2008 (capítulos y países); abril 2022 (importaciones por uso, mensual) | DANE con datos de la DIAN |
 | Tasas de interés y UVR | Tasa de política monetaria, IBR (a un día, 1 y 3 meses), tasa interbancaria, CDT a 90 días, DTF y UVR. Diarias, promedio y cierre de cada mes | 1986–2012 según la serie | Banco de la República |
+| Deuda del Gobierno Nacional Central | Saldo de la deuda bruta (% del PIB y, aproximado, en billones de pesos), anual; deuda nueva neta (financiamiento interno y externo), déficit e intereses pagados, mensual | 1995 (saldo); enero 2004 (mensual) | Ministerio de Hacienda, vía Banco de la República |
 
 Próximamente: encuestas sectoriales (industria, comercio, servicios) e ingresos del presupuesto. El listado completo está en [`datos/catalogo.csv`](datos/catalogo.csv).
 
@@ -121,6 +122,22 @@ Para comparar gobiernos con las mismas reglas, `datos/presupuesto_historico/` tr
 - **Importaciones por uso mes a mes:** el DANE las publica solo en el anexo de cada mes (con el mismo mes del año anterior). La serie se arma con los anexos mensuales disponibles desde abril de 2023, lo que da datos desde abril de 2022; cada mes nuevo se agrega solo. Cuando un mes aparece en dos anexos, queda la cifra del más reciente (revisada).
 - Las cifras son provisionales y el DANE las revisa; el año en curso de los archivos anuales va hasta el último mes publicado.
 
+### Deuda del Gobierno
+
+`datos/deuda/` trae `mensual.csv` (`fecha | id_serie | valor`, en miles de millones de pesos), `anual.csv` (`anio | id_serie | valor`) y `series.csv`.
+
+| `id_serie` | Qué es |
+|---|---|
+| `DEUDA_PIB` (anual) | Deuda bruta del Gobierno Nacional Central al cierre del año, como % del PIB |
+| `PIB_NOMINAL` (anual) | PIB a precios corrientes (DANE), para pasar el porcentaje a pesos |
+| `FIN_INTERNO` / `FIN_EXTERNO` | Financiamiento interno y externo del mes (metodología de caja): lo que se pidió prestado menos lo que se pagó de deudas anteriores |
+| `BALANCE` | Déficit (−) o superávit (+) del mes; es igual a menos la suma del financiamiento |
+| `INTERESES` | Intereses pagados en el mes |
+
+- **Por qué del Banco de la República:** son las cifras oficiales del Ministerio de Hacienda, pero la página del Ministerio bloquea las descargas automáticas. El Banco de la República las publica en su servidor de estadísticas.
+- **Deuda nueva neta, no bruta:** el financiamiento es neto de lo que se pagó y también recoge cambios en la caja del Gobierno. Cuando el financiamiento interno y el externo se mueven fuerte en sentidos opuestos el mismo mes (por ejemplo, septiembre de 2025), es un canje: se cambian unas deudas por otras.
+- **Saldo en pesos:** se calcula como el porcentaje del PIB por el PIB nominal del año, así que es aproximado. El saldo solo se publica una vez al año.
+
 ### ISE: versiones
 
 El ISE tiene dos versiones (columna `version` en `series.csv`): **9 agrupaciones**, que sale cada mes, y **12 agrupaciones**, con más detalle (separa agro de minería e industria de construcción) pero que sale cada trimestre junto con el PIB. Los identificadores empiezan por `ISE9_` o `ISE12_`.
@@ -147,6 +164,7 @@ Cada actualización descarga solo lo nuevo (con pausas, para no saturar los serv
 - DANE, [Mercado laboral (GEIH)](https://www.dane.gov.co/index.php/estadisticas-por-tema/mercado-laboral/empleo-y-desempleo)
 - DANE, [Exportaciones](https://www.dane.gov.co/index.php/estadisticas-por-tema/comercio-internacional/exportaciones), [Importaciones](https://www.dane.gov.co/index.php/estadisticas-por-tema/comercio-internacional/importaciones) y [Balanza comercial](https://www.dane.gov.co/index.php/estadisticas-por-tema/comercio-internacional/balanza-comercial)
 - Ministerio de Hacienda en datos.gov.co, [Información de Gastos del PGN](https://www.datos.gov.co/d/5phs-yqfw)
+- Ministerio de Hacienda, cifras fiscales y de deuda del Gobierno Nacional Central, publicadas en las estadísticas del Banco de la República
 - Banco de la República, [estadísticas económicas](https://suameca.banrep.gov.co/estadisticas-economicas/)
 - Superintendencia Financiera en datos.gov.co, [TRM](https://www.datos.gov.co/Econom-a-y-Finanzas/Tasa-de-Cambio-Representativa-del-Mercado-TRM/32sa-8pi3)
 

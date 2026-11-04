@@ -1,0 +1,7 @@
+id_serie,nombre,unidad,frecuencia,fuente,ultimo_cargue
+DEUDA_PIB,Deuda bruta del Gobierno Nacional Central,% del PIB,anual,"Ministerio de Hacienda y Crédito Público, vía Banco de la República (serie 15328)",17 de julio de 2026
+PIB_NOMINAL,"PIB nominal (DANE, base 2015)",miles de millones de pesos,anual,"Departamento Administrativo Nacional de Estadística (DANE), vía Banco de la República (serie 15291)",21 de agosto de 2026
+FIN_INTERNO,Financiamiento interno neto del GNC (caja),miles de millones de pesos,mensual,"Ministerio de Hacienda y Crédito Público, vía Banco de la República (serie 16726)",18 de septiembre de 2026
+FIN_EXTERNO,Financiamiento externo neto del GNC (caja),miles de millones de pesos,mensual,"Ministerio de Hacienda y Crédito Público, vía Banco de la República (serie 16727)",18 de septiembre de 2026
+BALANCE,Déficit (−) o superávit (+) del GNC (caja),miles de millones de pesos,mensual,"Ministerio de Hacienda y Crédito Público, vía Banco de la República (serie 16725)",18 de septiembre de 2026
+INTERESES,Intereses pagados por el GNC (caja),miles de millones de pesos,mensual,"Ministerio de Hacienda y Crédito Público, vía Banco de la República (serie 16724)",18 de septiembre de 2026

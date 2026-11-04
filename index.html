@@ -13,13 +13,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="assets/comun.js?v=41b"></script>
-<script src="assets/resumen.js?v=41a"></script>
+<script src="assets/resumen.js?v=42a"></script>
 <script src="assets/ipc.js?v=41a"></script>
 <script src="assets/ise.js?v=41a"></script>
 <script src="assets/empleo.js?v=41a"></script>
 <script src="assets/tasas.js?v=41a"></script>
 <script src="assets/presupuesto.js?v=41a"></script>
 <script src="assets/comercio.js?v=41a"></script>
+<script src="assets/deuda.js?v=42a"></script>
 </head>
 <body>
 <header class="appbar">
@@ -42,6 +43,7 @@
       <a href="#tasas" data-tab="tasas">Tasas y dólar</a>
       <a href="#comercio" data-tab="comercio">Comercio exterior</a>
       <a href="#presupuesto" data-tab="presupuesto">Presupuesto</a>
+      <a href="#deuda" data-tab="deuda">Deuda</a>
     </nav>
 </div></div>
 <div class="wrap">
@@ -60,6 +62,7 @@
         <div class="tarjeta"><div class="tt"><h3>Tasa del Banco de la República</h3></div><div class="num" id="res-tpm-num"></div><div class="cambio" id="res-tpm-cambio"></div><div class="mini"><canvas id="res-tpm-g"></canvas></div><p id="res-tpm-txt"></p><a class="mas" href="#tasas">Ver más sobre tasas ›</a></div>
         <div class="tarjeta"><div class="tt"><h3>Comercio exterior</h3></div><div class="num" id="res-com-num"></div><div class="cambio" id="res-com-cambio"></div><div class="mini"><canvas id="res-com-g"></canvas></div><p id="res-com-txt"></p><a class="mas" href="#comercio">Ver más sobre comercio exterior ›</a></div>
         <div class="tarjeta"><div class="tt"><h3>Ejecución del presupuesto</h3></div><div class="num" id="res-pre-num"></div><div class="cambio" id="res-pre-cambio"></div><div class="mini"><canvas id="res-pre-g"></canvas></div><p id="res-pre-txt"></p><a class="mas" href="#presupuesto">Ver más sobre el presupuesto ›</a></div>
+        <div class="tarjeta"><div class="tt"><h3>Deuda del Gobierno</h3></div><div class="num" id="res-deu-num"></div><div class="cambio" id="res-deu-cambio"></div><div class="mini"><canvas id="res-deu-g"></canvas></div><p id="res-deu-txt"></p><a class="mas" href="#deuda">Ver más sobre la deuda ›</a></div>
       </div>
       <p class="foot">Fuentes: DANE, DIAN, Banco de la República, Superintendencia Financiera y Ministerio de Hacienda.</p>
     </div>
@@ -400,6 +403,39 @@
     </div>
   </section>
 
+  <!-- ===================================================== DEUDA -->
+  <section class="tab" id="tab-deuda" hidden>
+    <div class="cargando">Cargando datos…</div>
+    <div class="contenido" hidden>
+      <div class="row spread mb"><p class="hint" style="margin:0">La deuda del Gobierno Nacional Central: lo que el Gobierno pide prestado para cubrir lo que gasta por encima de lo que recibe.</p><span class="badge" id="deu-ultima"></span></div>
+      <section class="kpis">
+        <div class="kpi"><div class="l">Deuda total del Gobierno</div><div class="v small" id="deu-k1"></div><div class="d" id="deu-k1d"></div></div>
+        <div class="kpi"><div class="l">La misma deuda, en pesos</div><div class="v small" id="deu-k2"></div><div class="d" id="deu-k2d"></div></div>
+        <div class="kpi"><div class="l">Deuda nueva neta en el año</div><div class="v small" id="deu-k3"></div><div class="d" id="deu-k3d"></div></div>
+        <div class="kpi"><div class="l">Intereses pagados en el año</div><div class="v small" id="deu-k4"></div><div class="d" id="deu-k4d"></div></div>
+      </section>
+      <section class="panel">
+        <span class="paso"><b>1</b>Deuda nueva</span>
+        <h2>¿Cuánta deuda nueva tomó el Gobierno?</h2>
+        <div class="row controles mb"><div class="seg" id="deu-vista"><button data-v="total" class="on">Total</button><button data-v="partes">Interna y externa</button></div></div>
+        <p class="hint" id="deu-nueva-h"></p>
+        <div class="chartbox" style="height:330px"><canvas id="deu-nueva"></canvas></div>
+        <p class="interp" id="deu-nueva-txt"></p>
+      </section>
+      <section class="panel">
+        <span class="paso"><b>2</b>Deuda total</span>
+        <h2>¿Cuánto debe el Gobierno en total?</h2>
+        <div class="row controles mb"><div class="seg" id="deu-unidad"><button data-v="pib" class="on">Como % del PIB</button><button data-v="pesos">En billones de pesos</button></div></div>
+        <p class="hint" id="deu-saldo-h"></p>
+        <div class="chartbox" style="height:330px"><canvas id="deu-saldo"></canvas></div>
+        <p class="interp" id="deu-saldo-txt"></p>
+      </section>
+      <p class="foot">Fuente: Ministerio de Hacienda (cifras fiscales del Gobierno Nacional Central, metodología de caja), publicadas por el Banco de la República; PIB del DANE.
+        <strong>Deuda nueva neta</strong>: lo que el Gobierno pidió prestado menos lo que pagó de deudas anteriores (el financiamiento del déficit). La deuda total se publica una vez al año.
+        Datos: <a href="datos/deuda/mensual.csv">mensual.csv</a> · <a href="datos/deuda/anual.csv">anual.csv</a> · <a href="datos/deuda/series.csv">series.csv</a></p>
+    </div>
+  </section>
+
   <details class="sobre">
     <summary>¿Cada cuánto se actualizan los datos?</summary>
     <p class="hint" style="margin-top:8px">La página revisa todas las fuentes cada día a las 10 de la mañana y se actualiza sola apenas hay un dato nuevo. Cada entidad publica a su ritmo:</p>
@@ -413,6 +449,8 @@
         <tr><td>Actividad económica</td><td>DANE</td><td>Unos dos meses después</td></tr>
         <tr><td>Comercio exterior</td><td>DANE (con datos de la DIAN)</td><td>Unos 45 a 50 días después de terminado el mes</td></tr>
         <tr><td>Presupuesto mes a mes</td><td>Ministerio de Hacienda</td><td>A comienzos del mes siguiente. A veces el Ministerio deja meses sin publicar; la página lo avisa.</td></tr>
+        <tr><td>Deuda nueva del Gobierno</td><td>Ministerio de Hacienda (vía Banco de la República)</td><td>Mes a mes, con unos tres o cuatro meses de rezago</td></tr>
+        <tr><td>Deuda total del Gobierno</td><td>Ministerio de Hacienda (vía Banco de la República)</td><td>Una vez al año, a mediados del año siguiente</td></tr>
         <tr><td>Presupuesto histórico por sector</td><td>Ministerio de Hacienda</td><td>Una vez al año, cuando cierra la vigencia</td></tr>
       </tbody></table></div>
   </details>

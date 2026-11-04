@@ -76,6 +76,19 @@ registrar("resumen", (() => {
       mini("res-com-g", C.fechas, C.v, css("--s2"));
     }
 
+    // --- deuda del Gobierno
+    const Q = R.deuda;
+    if (Q) {
+      const k = Q.v.length - 1, y = Q.fecha.slice(0, 4), m = +Q.fecha.slice(5, 7);
+      const b = x => `$${fmt(x, 1)} billones`;
+      $("res-deu-num").textContent = pct(Q.v[k]) + " del PIB";
+      $("res-deu-cambio").textContent = `Cierre de ${Q.anios[k]} · ${sube(Q.v[k], Q.v[k - 1])} desde ${pct(Q.v[k - 1])} en ${Q.anios[k - 1]}`;
+      $("res-deu-txt").innerHTML = `El Gobierno debe unos <strong>$${fmt(Q.saldo, 0)} billones</strong>: por cada 100 pesos que produce el país en un año, debe ${fmt(Q.v[k], 0)}. ` +
+        `Hace diez años la deuda era ${pct(Q.v[k - 10])} del PIB. ` +
+        `Entre enero y ${MESES_L[m - 1]} de ${y} tomó ${b(Q.corrido)} de deuda nueva neta; en los mismos meses de ${+y - 1} habían sido ${b(Q.corrido_ant)}.`;
+      mini("res-deu-g", Q.anios.map(String), Q.v, css("--s1"), 40);
+    }
+
     // --- presupuesto
     const B = R.presupuesto;
     $("res-pre-num").textContent = pct(B.pct);
