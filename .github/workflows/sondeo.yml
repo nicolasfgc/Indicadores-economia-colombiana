@@ -1,0 +1,19 @@
+name: sondeo
+on: workflow_dispatch
+permissions: {contents: write}
+jobs:
+  s:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          mkdir -p out && cd out
+          UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/124 Safari/537.36"
+          for u in https://www.minhacienda.gov.co/deuda-publica https://www.irc.gov.co/ https://www.irc.gov.co/deuda-publica "https://www.minhacienda.gov.co/deuda-publica/estadisticas" ; do
+            n=$(echo "$u" | md5sum | cut -c1-8)
+            curl -sL -m 60 -A "$UA" "$u" -o p_$n.html -w "$u %{http_code} %{size_download} %{url_effective}\n" >> estado.txt || echo "$u FAIL" >> estado.txt
+          done
+          cat p_*.html | grep -oiE 'href="[^"]+"' | grep -iE 'deuda|xls|csv|saldo|estad' | sort -u > links.txt || true
+          head -c 3000 p_*.html > muestra.txt || true
+      - run: |
+          cd out && git init -q && git checkout -q -b sondeo && git add . && git -c user.name=bot -c user.email=bot@x commit -qm s && git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" sondeo
